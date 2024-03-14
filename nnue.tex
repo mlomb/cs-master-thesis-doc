@@ -1,0 +1,31 @@
+\section{Efficiently updatable neural networks}
+\subsection{Accumulator}
+\subsection{Stockfish quantization scheme}
+
+\blindmathtrue
+\label{sec:section1}
+\blindtext[5]
+
+
+This is text bla bla. \footnote[2]{This is a example footnote}
+
+More testing on section~\ref{sec:section1}.
+
+
+
+\textbf{Rango de activación}: en el modelo original usamos ClippedReLU, asi que queremos que el rango vaya de 0..1 a 0..127.
+
+
+Siendo $\bm{x}$, $\bm{w}$ y $\bm{b}$ los parámetros de una capa lineal sin cuantizar e $\bm{y}$ la salida de la misma, se tiene que:
+
+\begin{equation}
+\begin{aligned}
+\bm{y} &= \bm{x} \bm{w} + \bm{b} \\
+s_a s_w \bm{y} &= (s_a \bm{x}) (s_w \bm{w}) + s_a s_w \bm{b} \\
+\end{aligned}
+\end{equation}
+
+
+
+\vspace{1cm}
+$s_o ((s_a \bm{x}) (s_w \bm{w}) + s_a s_w \bm{b}) = s_a s_w s_o \bm{y}$

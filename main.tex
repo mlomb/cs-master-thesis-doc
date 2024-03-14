@@ -1,0 +1,52 @@
+\documentclass[10pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{a4wide}
+\usepackage{index}
+\usepackage{blindtext}
+\usepackage[graf, intHoriz, sinLU, showDirectores]{caratula}
+
+\usepackage{amsmath}
+\usepackage{bm}
+
+\integrante{Futuro Licenciado}{}{futuro.licenciado@dc.uba.ar}
+\titulo{Algo de ajedrez (?)}
+\fecha{\today}
+\materia{}
+\director{Director1, Nombre}{director1@dc.uba.ar}
+\director{Director2, Nombre}{director2@dc.uba.ar}
+
+\makeindex
+
+\begin{document}
+
+\maketitle
+\newpage
+
+\tableofcontents
+\newpage
+
+% TENTATIVO
+\section{Introduction}
+\subsection{Chess Engines}
+
+\section{Feature sets (board encodings)}
+\subsection{HalfP}
+\subsection{HalfKP}
+\subsection{Half\textit{(pieces)}P}
+\subsection{HalfTopN}
+
+\include{nnue.tex}
+
+\section{Training methods}
+\subsection{Stockfish evaluations}
+\subsection{PQR triplets}
+
+\section{Engine implementation}
+\subsection{Alpha-Beta}
+\subsection{Prunes}
+
+\section{Results}
+
+\end{document}
