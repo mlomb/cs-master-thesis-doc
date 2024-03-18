@@ -5,7 +5,7 @@
 \usepackage{a4wide}
 \usepackage{index}
 \usepackage{blindtext}
-\usepackage[graf, intHoriz, sinLU, showDirectores]{caratula}
+\usepackage[graf, intHoriz, sinLU, showDirectores]{assets/caratula}
 
 \usepackage{amsmath}
 \usepackage{bm}
@@ -27,26 +27,11 @@
 \tableofcontents
 \newpage
 
-% TENTATIVO
-\section{Introduction}
-\subsection{Chess Engines}
-
-\section{Feature sets (board encodings)}
-\subsection{HalfP}
-\subsection{HalfKP}
-\subsection{Half\textit{(pieces)}P}
-\subsection{HalfTopN}
-
-\include{nnue.tex}
-
-\section{Training methods}
-\subsection{Stockfish evaluations}
-\subsection{PQR triplets}
-
-\section{Engine implementation}
-\subsection{Alpha-Beta}
-\subsection{Prunes}
-
-\section{Results}
+\include{1_intro}
+\include{2_encodings}
+\include{3_nnue}
+\include{4_training}
+\include{5_engine}
+\include{6_results}
 
 \end{document}
