@@ -1,15 +1,25 @@
 \section{Efficiently updatable neural networks}
 
+NNUE (\reflectbox{NNUE} Efficiently updatable neural network) is a neural network architecture that allows for very fast inferences. It was invented for Shogi by Yu Nasu in 2018.
+% https://www.apply.computer-shogi.org/wcsc28/appeal/the_end_of_genesis_T.N.K.evolution_turbo_type_D/nnue.pdf
+
+In essence, NNUEs "Neural Network Update Efficient" are just regular neural networks that allow for really fast inferences.
+
+...
+Most of the information described here can be found in Stockfish's documentation about NNUEs [1].
+
+
 It is important to combine this with aggresive quantization techniques.
 
 \subsection{Architecture}
 
 
-[...] will
+arquitectura half, dos capas
 
 
 \subsection{Efficient updates}
 
+pesada al principio y liviana al final, acumular filas de la primera capa en domove, undomove
 
 \subsection{Stockfish quantization scheme}
 
@@ -42,3 +52,8 @@ s_a s_w \bm{y} &= (s_a \bm{x}) (s_w \bm{w}) + s_a s_w \bm{b} \\
 $s_o ((s_a \bm{x}) (s_w \bm{w}) + s_a s_w \bm{b}) = s_a s_w s_o \bm{y}$
 
 
+
+\subsection{Network sparsity}
+
+o combinar con 3.2?
+poner graficos con la sparsity de cada feature set, decir que es muy esparso todo y que se podría mejorar aún más
