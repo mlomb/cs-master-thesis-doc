@@ -1,7 +1,34 @@
+\newcommand{\fs}[1]{\textsc{#1}}
 
 \section{Feature sets (board encodings)}
-\subsection{HalfP}
-\subsection{HalfKP}
-\subsection{Half\textit{(pieces)}P}
-\subsection{HalfTopN}
-\subsection{HalfCenterKP}
+
+\subsection{Half-Piece}
+
+\fs{HalfP}
+$\langle piece\_square, piece\_type, piece\_color \rangle$
+
+\subsection{Half-King-Piece}
+
+\fs{HalfKP}
+$\langle side\_king\_square, piece\_square, piece\_type, piece\_color \rangle$
+
+There are variations to this feature set, such as \fs{HalfKAv2} or notably \fs{HalfKAv2\_hm} that is currently the latest feature set used by Stockfish 16.1 I will not consider them in this work.
+
+\subsection{Half-Relative(H$|$V$|$HV)King-Piece}
+
+\fs{HalfRelative(HV)KP}
+
+\subsection{Half-Compact}
+
+\fs{HalfC}
+$\langle piece\_rank, piece\_type, piece\_color \rangle \cup \langle piece\_file, piece\_type, piece\_color \rangle$
+
+\subsection{Half-Top(PP)}
+
+Statistical feature set
+Wasted features
+
+
+%\subsection{HalfTopN}
+%\subsection{HalfCenterKP}
+%\subsection{Half\textit{(pieces)}P}
