@@ -2,33 +2,45 @@
 
 \section{Feature sets (board encodings)}
 
-\subsection{Half-Piece}
+\subsection{\mdseries\fs{Half-Compact}}
 
-\fs{HalfP}
+$\langle piece\_rank, piece\_type, piece\_color \rangle \oplus \langle piece\_file, piece\_type, piece\_color \rangle$
+
+$(8*6*2)*2=192$ features
+
+\subsection{\mdseries\fs{Half-Piece}}
+
 $\langle piece\_square, piece\_type, piece\_color \rangle$
 
-\subsection{Half-King-Piece}
+$64*6*2=768$ features
 
-\fs{HalfKP}
-$\langle side\_king\_square, piece\_square, piece\_type, piece\_color \rangle$
+\subsection{\mdseries\fs{Half-Piece+Moves}}
 
-There are variations to this feature set, such as \fs{HalfKAv2} or notably \fs{HalfKAv2\_hm} that is currently the latest feature set used by Stockfish 16.1 I will not consider them in this work.
+\fs{HalfP} $\oplus \langle move\_from, move\_to \rangle$
 
-\subsection{Half-Relative(H$|$V$|$HV)King-Piece}
+$768 + 64*64=4864$ features
 
-\fs{HalfRelative(HV)KP}
+Not friendly to efficiently update the network. It is almost always better to do a full refresh on eval.
 
-\subsection{Half-Compact}
+\subsection{\mdseries\fs{Half-King-Piece}}
 
-\fs{HalfC}
-$\langle piece\_rank, piece\_type, piece\_color \rangle \cup \langle piece\_file, piece\_type, piece\_color \rangle$
+$\langle side\_king\_square, piece\_square, piece\_type, piece\_color \rangle$ excl. king
 
-\subsection{Half-Top(PP)}
+$64*64*5*2=40960$ features
 
-Statistical feature set
-Wasted features
+There are variations to this feature set, such as \fs{HalfKAv2} or notably \fs{HalfKAv2\_hm} that is currently the latest feature set used by Stockfish 16.1. I will not consider them in this work.
+
+\subsection{\mdseries\fs{Half-Relative(H$|$V$|$HV)King-Piece}}
 
 
-%\subsection{HalfTopN}
-%\subsection{HalfCenterKP}
-%\subsection{Half\textit{(pieces)}P}
+$\langle side\_king\_file - piece\_file + 7, side\_king\_rank - piece\_rank + 7, piece\_type, piece\_color \rangle$ excl. king
+
+$15*15*5*2=2250$ features (for HV)
+
+only H or only V have $8*15*5*2=1200$ features
+
+
+\subsection{\mdseries\fs{Half-Top(PP)}}
+
+Statistical feature set, blabla, wasted features blabla
+
