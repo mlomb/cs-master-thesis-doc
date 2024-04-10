@@ -1,9 +1,28 @@
 
 \section{Training}
+
 \subsection{Dataset}
 
+Lichess is a free online site to play chess, and it provides a database\footnote[1]{Lichess database: \url{https://database.lichess.org}} with all the games played on the site. It consists of serveral compressed PGN files\footnote[2]{Portable Game Notation: a textual format to store chess games (moves and metadata)} splitted by month since 2013, that add up to $1.7$ terabytes compressed. It contains over 5 billion games, that equates to around 200 billion positions. In reality, that many positions are too much to handle so I'll use only a fraction of them, but I restrict derived datasets to only take one sample per game, to maximize the diversity of positions.
+
+
 \subsection{Methods}
+
+
+
 \subsubsection{Stockfish evaluations}
+
+
 \subsubsection{PQR triplets}
+
+This is an additional technique I wanted to try, described in [METER REF BLOG]. Remember that we are trying to obtain a function $f$ (the model) to give an evaluation of a position. The method is based in the assumption that players make optimal or near-optimal moves most of the time, even if they are amateurs.
+
+\begin{enumerate}
+\item For two position in succession $p \rightarrow q$  observed in the game, we will have $f(p) \neq f(q)$.
+\item Going from $p$, not to $q$, but to a \textit{random} position $p \rightarrow r$, we must have $f(r) > f(q)$ because the random move is better for the next player and worse for the player that made the move.
+\end{enumerate}
+
+
+... With infinite compute, $f$ would be the result of running minimax to the end of the game, since minimax always finds optimal moves.
 
 \subsection{Metrics}
