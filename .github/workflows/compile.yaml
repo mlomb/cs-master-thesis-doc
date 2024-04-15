@@ -1,0 +1,19 @@
+name: Build docs
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build proposal
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: main.tex
+          working_directory: proposal
