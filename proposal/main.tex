@@ -1,7 +1,7 @@
-\documentclass[10pt,a4paper]{article}
+\documentclass[12pt]{article}
 
 \usepackage[utf8]{inputenc}
-\usepackage[english]{babel}
+\usepackage[spanish]{babel}
 \usepackage{a4wide}
 \usepackage{index}
 \usepackage{blindtext}
@@ -11,31 +11,25 @@
 \usepackage{bm}
 \usepackage{hyperref}
 
-\makeindex
+\usepackage{csquotes}
+\usepackage[backend=biber]{biblatex}
+\addbibresource{../refs.bib}
 
 \begin{document}
 
 \include{1_title}
-\include{2_intro}
+\input{2_intro}
 
 
-adasdasd
-asociadada
-sda
-sdaasd
-asociadada
-ads
+\blindtext[1]
 
 \section*{Antecedentes}
 
-adasdasdasd
-asociadaasd
-asociadadaasda
-sdasdas
-dado
+\blindtext[1]
 
 \section*{Actividades y metodología}
 
+\blindtext[1]
 
 \section*{Factibilidad}
 
@@ -73,10 +67,9 @@ Para entrenar los modelos, se prueban 2 alternativas:
 
 ``$PQR$'': No se usa ningún oráculo, se genera un nuevo dataset de triplas $(P,Q,R)$. Se toma una posición $P$ aleatoria en una partida. Luego se toma la posición observada como $Q$ (es decir la posición siguiente en la partida, la que se jugó, $P \rightarrow Q$). Finalmente se toma una posición $R$ aleatoria tal que $P \rightarrow R$ y $R \neq Q$. Suponiendo que $f$ es el modelo, la premisa de esta técnica es que los jugadores eligen movimientos que son buenos para ellos, pero malos para los otros, entonces $f(P)=-f(Q)$. Por la misma razón, ir de $P$ a $R$ (es decir no $Q$) una posición aleatoria, se espera que $f(R) > f(Q)$, porque el movimiento aleatorio es mejor para el jugador siguiente y peor para el que hizo el movimiento. Se utiliza una función de pérdida con esas inecuaciones.
 
-Como vemos en \cite{knuth:1984} si.
+Prueba de cita \cite{knuth:1984}.
 
 \newpage
-\bibliographystyle{plain}
-\bibliography{../refs}
+\printbibliography
 
 \end{document}

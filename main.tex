@@ -1,4 +1,4 @@
-\documentclass[10pt,a4paper]{article}
+\documentclass[12pt,a4paper]{article}
 
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
@@ -12,6 +12,10 @@
 \usepackage{bm}
 \usepackage{hyperref}
 
+\usepackage{csquotes}
+\usepackage[backend=biber]{biblatex}
+\addbibresource{refs.bib}
+
 \integrante{Futuro Licenciado}{}{futuro.licenciado@dc.uba.ar}
 \titulo{Algo de ajedrez (?)}
 \fecha{\today}
@@ -24,7 +28,6 @@
 \begin{document}
 
 \maketitle
-\newpage
 
 \tableofcontents
 \newpage
@@ -37,7 +40,9 @@
 \include{6_results}
 \include{7_conclusions}
 
-\bibliographystyle{plain}
-\bibliography{refs}
+Prueba de cita \cite{knuth:1984}.
+
+\newpage
+\printbibliography
 
 \end{document}
