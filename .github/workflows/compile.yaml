@@ -12,15 +12,24 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Build proposal
+      - name: Build proposal PDF
         uses: xu-cheng/latex-action@v3
         with:
           root_file: main.tex
           working_directory: proposal
-
-      - name: Upload proposal PDF file
-        uses: actions/upload-artifact@v4
+      - name: Build thesis PDF
+        uses: xu-cheng/latex-action@v3
         with:
-          name: proposal
-          path: proposal/main.pdf
+          root_file: main.tex
 
+      - name: Copy PDFs to public
+        run: |
+          mkdir -p public
+          cp proposal/main.pdf public/proposal.pdf
+          cp main.pdf public/thesis.pdf
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./public
