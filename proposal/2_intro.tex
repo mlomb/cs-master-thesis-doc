@@ -1,3 +1,5 @@
 \section*{Introducción}
 
-\blindtext[1]
+El desarrollo de engines de ajedrez es y ha sido un tema de interés en la comunidad de ajedrez y computación desde hace décadas. Los programadores desarrollan código cada vez más sofisticado para evaluar posiciones, haciendo los engines más fuertes. En los últimos años, el uso de redes neuronales en engines ha tomado relevancia, reemplazando gran parte de las heurísticas establecidas por humanos con la introducción de las redes neuronales ``\reflectbox{EUNN}''. Originalmente desarrolladas para el juego Shogi por Yu Nasu en 2018 \cite{nnue:2018}. Las ``Efficiently Updatable Neural-Networks'' son redes que permiten evaluar posiciones similares con menos cómputo que si se lo hiciera de forma completa.
+
+El motor de ajedrez Stockfish, uno de los más fuertes del mundo, ha incorporado redes NNUE mezclado con evaluación clásica en la versión 12\footnote[1]{\href{https://stockfishchess.org/blog/2020/introducing-nnue-evaluation/}{Introducing NNUE evaluation (Stockfish 12)}} (2020). A partir de Stockfish 16.1\footnote[2]{\href{https://stockfishchess.org/blog/2024/stockfish-16-1/}{Removal of handcrafted evaluation (Stockfish 16.1)}} (2024) la evaluación se realiza exclusivamente mediante redes NNUE.
