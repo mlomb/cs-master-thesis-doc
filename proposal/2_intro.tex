@@ -1,17 +1,20 @@
 \section*{Introducción}
 
-El desarrollo de engines de ajedrez es y ha sido un tema de interés en la comunidad de ajedrez y computación desde hace décadas. Los programadores desarrollan código cada vez más sofisticado para evaluar posiciones, haciendo los engines más fuertes. En los últimos años, el uso de redes neuronales en engines ha tomado relevancia, reemplazando gran parte de las heurísticas establecidas por humanos con la introducción de las redes neuronales ``\reflectbox{EUNN}''. Originalmente desarrolladas para el juego Shogi por Yu Nasu en 2018 \cite{nnue:2018}. Las ``Efficiently Updatable Neural-Networks'' son redes que permiten evaluar posiciones similares con menos cómputo que si se lo hiciera de forma completa.
+El desarrollo de engines de ajedrez es y ha sido un tema de interés en la comunidad de ajedrez y computación desde hace décadas. Los programadores desarrollan código cada vez más sofisticado para evaluar posiciones, haciendo los engines más fuertes, pero más complejos.
+
+El uso de redes neuronales en engines ha tomado relevancia a partir de la publicación de AlphaGo Zero \cite{alphagozero:2017} (2017) y su sucesor AlphaZero \cite{alphazero:2017,alphazero:2018} (2017/2018) por DeepMind.
+
+
+
+
+
+
+En los últimos años, el uso de redes neuronales en engines ha tomado relevancia, reemplazando gran parte de las heurísticas establecidas por humanos con la introducción de las redes neuronales ``\reflectbox{EUNN}''. Originalmente desarrolladas para el juego Shogi por Yu Nasu en 2018 \cite{nnue:2018}. Las ``Efficiently Updatable Neural-Networks'' son redes que permiten evaluar posiciones similares con menos cómputo que si se lo hiciera de forma completa.
 
 El motor de ajedrez Stockfish, uno de los más fuertes del mundo, ha incorporado redes NNUE mezclado con evaluación clásica en la versión 12\footnote[1]{\href{https://stockfishchess.org/blog/2020/introducing-nnue-evaluation/}{Introducing NNUE evaluation (Stockfish 12)}} (2020). A partir de Stockfish 16.1\footnote[2]{\href{https://stockfishchess.org/blog/2024/stockfish-16-1/}{Removal of handcrafted evaluation (Stockfish 16.1)}} (2024) la evaluación se realiza exclusivamente mediante redes NNUE.
 
 
 esta tecnica es la mas eficiente para que la gente se lo baje y lo use, leela y alphazero son inviables
-
-Alphagozero: \cite{alphagozero:2017}
-
-Azero: \cite{alphazero:2017}
-
-Azero2: \cite{alphazero:2018}
 
 deepblue: \cite{deepblue:2002}
 
@@ -25,3 +28,4 @@ mcts: \cite{mcts-survey:2012}
 
 % https://deepmind.google/discover/blog/alphazero-shedding-new-light-on-chess-shogi-and-go/
 % https://crimsonpublishers.com/cojra/pdf/COJRA.000563.pdf
+% https://arxiv.org/pdf/2209.11902.pdf
