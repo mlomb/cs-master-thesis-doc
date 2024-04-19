@@ -2,33 +2,16 @@
 
 El desarrollo de engines de ajedrez es y ha sido un tema de interés en la comunidad de ajedrez y computación desde hace décadas. IBM DeepBlue \cite{deepblue:2002} fue la primera máquina de ajedrez en ganarle a un campeón mundial ---Garry Kaspárov--- en 1997. A partir de entonces, los engines han evolucionado en fuerza y complejidad.
 
-Los engines tienen dos componentes principales: la búsqueda y la evaluación. La búsqueda es el proceso de explorar el árbol de posibles jugadas. La evaluación determina qué tan buena son esas posiciones para el que juega. Desde el origen de ajedrez por computadora en los años 50 hasta hace unos años, todos los engines han utilizado los algoritmos de búsqueda en árboles Minimax, Monte Carlo Tree Search (MCTS) \cite{mcts-survey:2012} o alguna de sus variantes, con funciones de evaluación muy complejas y artesanales que se basan en conocimiento humano sobre el juego.
+Los engines tienen dos componentes principales: la búsqueda y la evaluación. La búsqueda es el proceso de explorar el árbol de posibles jugadas. La evaluación determina qué tan buena son esas posiciones para el que juega. Desde el origen de ajedrez por computadora en los años 50 hasta hace unos años, todos los engines han utilizado los algoritmos de búsqueda en árboles Minimax, Monte Carlo Tree Search \cite{mcts-survey:2012} (MCTS) o alguna de sus variantes, con funciones de evaluación muy complejas y artesanales que se basan en conocimiento humano sobre el juego.
 
+Hasta los 2010s, el desarrollo de engines avanzaba a un paso lento pero consistente hasta que en 2017, Google DeepMind publicó AlphaGo Zero \cite{alphagozero:2017} y su sucesor AlphaZero \cite{alphazero:2017,alphazero:2018} (2018). Introducieron un nuevo enfoque para el desarrollo de engines de juegos de tablero: entrenar una red neuronal convolucional con un algoritmo de aprendizaje por refuerzo para que aprenda a jugar por sí misma. [hablamos de MCTS aca o nahh?]
 
-Hasta los 2010s, los engines se 
+Este cambio de paradigma en donde la evaluación de las posiciones se realiza mediante redes neuronales en vez de funciones construídas con conocimiento humano, cambió el enfoque del desarrollo de todos los engines modernos. En 2018, Yu Nasu introdujo las redes neuronales ``Efficiently Updatable Neural-Networks''  \cite{nnue:2018} (\reflectbox{EUNN}) para el juego Shogi. Las redes NNUE permiten evaluar posiciones similares con menos cómputo que si se lo hiciera de forma completa, lo que las hace ideales para ser utilizadas en engines con búsqueda de árbol. A partir de entonces, todos los engines modernos han incorporado redes NNUE o alguna especie de red neuronal a su evaluación.
 
-El uso de redes neuronales en engines ha tomado relevancia a partir de la publicación de AlphaGo Zero \cite{alphagozero:2017} (2017) y su sucesor AlphaZero \cite{alphazero:2017,alphazero:2018} (2017/2018) por DeepMind. Propusieron 
-
-
-En paralelo, existe otra técnica de búsqueda MCTS...
-
+El motor de ajedrez Stockfish, uno de los más fuertes del mundo, ha incorporado redes NNUE mezclado con evaluación clásica en la versión 12\footnote[1]{\href{https://stockfishchess.org/blog/2020/introducing-nnue-evaluation/}{Introducing NNUE evaluation (Stockfish 12)}} (2020). A partir de Stockfish 16.1\footnote[2]{\href{https://stockfishchess.org/blog/2024/stockfish-16-1/}{Removal of handcrafted evaluation (Stockfish 16.1)}} (2024) la evaluación se realiza exclusivamente mediante redes NNUE, eliminando todo el aspecto humano.
 
 
 
-En los últimos años, el uso de redes neuronales en engines ha tomado relevancia, reemplazando gran parte de las heurísticas establecidas por humanos con la introducción de las redes neuronales ``\reflectbox{EUNN}''. Originalmente desarrolladas para el juego Shogi por Yu Nasu en 2018 \cite{nnue:2018}. Las ``Efficiently Updatable Neural-Networks'' son redes que permiten evaluar posiciones similares con menos cómputo que si se lo hiciera de forma completa.
-
-El motor de ajedrez Stockfish, uno de los más fuertes del mundo, ha incorporado redes NNUE mezclado con evaluación clásica en la versión 12\footnote[1]{\href{https://stockfishchess.org/blog/2020/introducing-nnue-evaluation/}{Introducing NNUE evaluation (Stockfish 12)}} (2020). A partir de Stockfish 16.1\footnote[2]{\href{https://stockfishchess.org/blog/2024/stockfish-16-1/}{Removal of handcrafted evaluation (Stockfish 16.1)}} (2024) la evaluación se realiza exclusivamente mediante redes NNUE.
-
-
-esta tecnica es la mas eficiente para que la gente se lo baje y lo use, leela y alphazero son inviables
-
-mcts: \cite{mcts-survey:2012}
-
-[hablar de NNUEs y stockfish]
-[hablar de alphazero y leela]
-[decir que az y leela son "ineficientes" y nnue es la que va]
-
-[esta tesis propone engien basico (citar alpha beta) balbla nnue blabla training]
 
 % https://deepmind.google/discover/blog/alphazero-shedding-new-light-on-chess-shogi-and-go/
 % https://crimsonpublishers.com/cojra/pdf/COJRA.000563.pdf
