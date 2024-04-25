@@ -1,24 +1,20 @@
 \newpage
 \section*{Actividades y metodología}
 
-[no toque nada acá todavía]
-
 \textbf{Engine}
 
-Se implementará un engine de ajedrez con heurísticas y mejoras clásicas, usando una evaluación con NNUEs (cuantizadas y en SIMD). Se utilizará para medir la performance de los modelos: jugar partidas entre ellos (elo) y resolver puzzles.
-La implementación será negamax, con poda alfa-beta incluyendo las heurísticas: ordenamiento de movimientos (MVVA, killer/history), búsqueda quiescente, null-move y tabla de transposiciones. \\
-
-\textbf{Dataset}
-
-Se utilizará el dataset de Lichess, que cuenta con 5.5B de partidas públicas jugadas en Lichess, equivalentes a 1.71TB de PGNs comprimidos. En el dataset hay más de 200B de posiciones, pero dado la cantidad de partidas, voy a considerar solo una posición por partida, para mejorar la diversidad. Además se utilizará el dataset de puzzles de Lichess para evaluar la performance. \\
+Se implementará un engine de ajedrez con heurísticas y mejoras clásicas, usando una evaluación con NNUEs (cuantizadas y utilizando SIMD). La implementación será negamax, con poda alfa-beta incluyendo las heurísticas: ordenamiento de movimientos (MVVA, killer/history), búsqueda quiescente, null-move y tabla de transposiciones. \\
 
 \textbf{Entrenamiento}
 
-Para entrenar los modelos, se prueban 2 alternativas:
+Para entrenar los modelos, se probarán 2 técnicas: \\
 
-``Eval'': Se toman posiciones aleatorias del dataset de partidas y se utiliza Stockfish a profundidad fija como oráculo para obtener una evaluación, generando un nuevo dataset. Luego se entrena el modelo usando estos puntajes como target. Esto es lo mismo que hace Stockfish y debería ser lo mejor.
+``Estándar'': Se toman posiciones aleatorias del dataset de partidas y se utiliza Stockfish (oráculo) a profundidad fija para obtener una evaluación, generando un nuevo dataset. Luego se entrena el modelo usando estos puntajes como target. Esto es lo mismo que hace Stockfish y debería ser lo mejor.
+
+``$PQR$'': Está técnica, inspirada en \cite{dlchess:2014}, no utiliza ningún oráculo. Se genera un nuevo dataset de triplas $(P,Q,R)$. Se toma una posición $P$ aleatoria en una partida. Luego se toma la posición observada como $Q$ (es decir la posición siguiente en la partida, la que se jugó, $P \rightarrow Q$). Finalmente se toma una posición $R$ aleatoria tal que $P \rightarrow R$ y $R \neq Q$. Suponiendo que $f$ es el modelo, la premisa de esta técnica es que los jugadores eligen movimientos que son buenos para ellos, pero malos para el otro, entonces $f(P)=-f(Q)$. Por la misma razón, ir de $P$ a $R$ (es decir no $Q$) una posición aleatoria, se espera que $f(R) > f(Q)$, porque el movimiento aleatorio es mejor para el jugador siguiente y peor para el que hizo el movimiento. Se utiliza una función de pérdida con esas inecuaciones. \\
 
 
-\cite{dlchess:2014}
+\textbf{Dataset}
 
-``$PQR$'': No se usa ningún oráculo, se genera un nuevo dataset de triplas $(P,Q,R)$. Se toma una posición $P$ aleatoria en una partida. Luego se toma la posición observada como $Q$ (es decir la posición siguiente en la partida, la que se jugó, $P \rightarrow Q$). Finalmente se toma una posición $R$ aleatoria tal que $P \rightarrow R$ y $R \neq Q$. Suponiendo que $f$ es el modelo, la premisa de esta técnica es que los jugadores eligen movimientos que son buenos para ellos, pero malos para los otros, entonces $f(P)=-f(Q)$. Por la misma razón, ir de $P$ a $R$ (es decir no $Q$) una posición aleatoria, se espera que $f(R) > f(Q)$, porque el movimiento aleatorio es mejor para el jugador siguiente y peor para el que hizo el movimiento. Se utiliza una función de pérdida con esas inecuaciones.
+Se utilizará el dataset abierto de Lichess \cite{lichessdb} (CC0) que cuenta con 5.5 miles de millones de partidas públicas jugadas en el sitio, equivalentes a 1.71TB de PGNs\footnote[1]{Portable Game Notation: un formato para grabar los movimientos de una partida y metadatos.} comprimidos. En el dataset hay más de 200 miles de millones de posiciones, pero dado la cantidad de partidas, voy a considerar solo una posición por partida, para mejorar la diversidad. Además se utilizará el dataset de puzzles que también ofrece Lichess para evaluar el desempeño.
+
