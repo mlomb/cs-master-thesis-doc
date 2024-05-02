@@ -5,7 +5,7 @@ El objetivo de la tesis es experimentar con diferentes \textbf{feature sets} en 
 
 \textbf{NNUEs}
 
-Las NNUEs son redes neuronales utilizadas para evaluar las posiciones en los nodos hoja de las búsquedas de los engines. Estas redes tienen la particularidad de que su arquitectura permite evaluar posiciones similares con menos cómputo que si se lo hiciera de forma completa. Al explorar el árbol de búsqueda, el estado de la primera capa de la red se puede actualizar de forma eficiente, amortiguando el cómputo de la primera capa casi en su totalidad (que aprovechamos que sea la más densa y cara).
+Las NNUEs son redes neuronales utilizadas para evaluar las posiciones en los nodos hoja de las búsquedas de los engines. Estas redes tienen la particularidad de que su arquitectura permite evaluar posiciones similares con menos cómputo que si se lo hiciera de forma separada. Al explorar el árbol de búsqueda, el estado de la primera capa de la red se puede actualizar de forma eficiente, amortiguando el cómputo de la primera capa casi en su totalidad (que aprovechamos que sea la más densa y cara).
 
 Además, estas redes se cuantizan a 8 bits y se implementan mediante operaciones SIMD, haciendo el cómputo mucho más eficiente. \\
 
@@ -13,7 +13,7 @@ Además, estas redes se cuantizan a 8 bits y se implementan mediante operaciones
 
 Un feature set es un conjunto de características que podemos extraer de una posición, como la ubicación, el color y rol de las piezas. El objetivo es experimentar con diversos sets, teniendo de referencia los existentes y proponer otros nuevos.
 
-Por ejemplo, podemos definir el feature set natural \textsc{Half-Piece} (obviar el \textsc{Half}, tiene que ver con la arquitectura de la red) como $\langle piece\_square, piece\_role, piece\_color \rangle$, donde $piece\_square$ es la ubicación de la pieza en el tablero, $piece\_role$ es el tipo de pieza (peon, torre, etc) y $piece\_color$ es el color de la pieza. Cada tupla tiene asociada un índice en el vector de entrada de la red, que se setea a 1 si el feature está activo y 0 si no. Como tenemos 64 casillas, 6 tipos de piezas y 2 colores, hay $64*6*2=768$ features en este feature set.
+Por ejemplo, podemos definir el feature set natural \textsc{Half-Piece} (obviar el \textsc{Half}, tiene que ver con la arquitectura de la red) como $\langle piece\_square, piece\_role, piece\_color \rangle$, donde $piece\_square$ es la ubicación de la pieza en el tablero, $piece\_role$ es el tipo de pieza (peon, torre, etc) y $piece\_color$ es el color de la pieza. Cada tupla tiene asociada un índice en el vector de entrada de la red NNUE, que se setea a 1 si el feature está activo y 0 si no. Como tenemos 64 casillas, 6 tipos de piezas y 2 colores, hay $64*6*2=768$ features en este feature set.
 A modo de referencia, el feature set actual de Stockfish, \textsc{HalfKAv2\_hm} tiene 22.528 features. \\
 
 Adicionalmente, se entrenarán las redes con dos técnicas distintas: la que se utiliza en el estado del arte para entrenar engines modernos y una técnica propuesta en \cite{dlchess:2014}, descritas en la sección de metodología. \\
