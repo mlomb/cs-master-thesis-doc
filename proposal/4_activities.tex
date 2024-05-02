@@ -9,7 +9,7 @@ Se implementará un engine de ajedrez con heurísticas y mejoras clásicas, usan
 
 Para entrenar los modelos, se probarán 2 técnicas: \\
 
-``Estándar'': Se toman posiciones aleatorias del dataset de partidas y se utiliza Stockfish (oráculo) a profundidad fija para obtener una evaluación (medido en centipawns y relacionado a la probabilidad de victoria), generando un nuevo dataset. Luego se entrena el modelo usando estos puntajes como target. Esto es lo mismo que hace Stockfish y debería ser lo mejor (es el estado del arte).
+``Estándar'': Se toman posiciones aleatorias del dataset de partidas y se utiliza Stockfish (oráculo) a profundidad fija para obtener una evaluación (medida en centipawns y relacionada a la probabilidad de victoria), generando un nuevo dataset. Luego se entrena el modelo usando estos puntajes como target. Esto es lo mismo que hace Stockfish y debería ser lo mejor (es el estado del arte).
 
 ``$PQR$'': Esta técnica, inspirada en \cite{dlchess:2014}, no utiliza ningún oráculo. Se genera un nuevo dataset de triplas $(P,Q,R)$. Se toma una posición $P$ aleatoria en una partida. Luego se toma la posición observada como $Q$ (es decir, la posición siguiente en la partida, la que se jugó, $P \rightarrow Q$). Finalmente, se toma una posición $R$ aleatoria tal que $P \rightarrow R$ y $R \neq Q$. Suponiendo que $f$ es el modelo, la premisa de esta técnica es que los jugadores eligen movimientos que son buenos para ellos, pero malos para el otro, entonces $f(P)=-f(Q)$. Por la misma razón, ir de $P$ a $R$ (es decir, no $Q$) una posición aleatoria, se espera que $f(R) > f(Q)$, porque el movimiento aleatorio es mejor para el jugador siguiente y peor para el que hizo el movimiento. Se utiliza una función de pérdida con esas inecuaciones. \\
 
