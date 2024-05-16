@@ -8,12 +8,13 @@
 \newcommand{\pieceBoard}{
     \newcount\pieceindex
     \setcounter{pieceindex}{0}
-    \adjustbox{height={8.0em}}{
-    %\fbox{
+    \raisebox{-7ex}{
+        \centering
         \chessboard[
             tinyboard,
             showmover=false,
             margin=false,
+            padding=false,
             hlabel=false,
             vlabel=false,
             pgfstyle={text},
