@@ -1,22 +1,90 @@
+\newcommand{\white}{\fullmoon}
+\newcommand{\black}{\newmoon}
+
+\newcommand{\bigtimes}{\mathop{\raisebox{-0.5ex}{\scalebox{2}{$\times$}}}}
+
+% https://texdoc.org/serve/chessboard/0
+\newcounter{pieceindex}
+\newcommand{\pieceBoard}{
+    \newcount\pieceindex
+    \setcounter{pieceindex}{0}
+    \adjustbox{height={8.0em}}{
+    %\fbox{
+        \chessboard[
+            tinyboard,
+            showmover=false,
+            margin=false,
+            hlabel=false,
+            vlabel=false,
+            pgfstyle={text},
+            text=\fontsize{1.2ex}{1.2ex}\bfseries\sffamily \thepieceindex \stepcounter{pieceindex}, %  \currentwq
+            markboard
+        ]
+    }
+}
+\newcommand{\pieceRolesTable}{
+    \begin{tabular}{|l|}
+        \hline
+        \sympawn\ Pawn \\
+        \hline
+        \symknight\ Knight \\
+        \hline
+        \symbishop\ Bishop \\
+        \hline
+        \symrook\ Rook \\
+        \hline
+        \symqueen\ Queen \\
+        \hline
+        \symking\ King \\
+        \hline
+    \end{tabular}
+}
+\newcommand{\pieceColorsTable}{
+    \begin{tabular}{|l|}
+        \hline
+        $\white$ White \\
+        \hline
+        $\black$ Black \\
+        \hline
+    \end{tabular}
+}
+
 \newcommand{\fs}[1]{\textsc{#1}}
+
 
 % CAMBIAR TYPE POR ROLE
 
 \section{Feature sets (board encodings)}
 
-\subsection{\mdseries\fs{Half-Compact}}
 
-$\langle piece\_rank, piece\_type, piece\_color \rangle \oplus \langle piece\_file, piece\_type, piece\_color \rangle$
+\subsection{\mdseries\fs{Piece}}
 
-$(8*6*2)*2=192$ features
+This feature set is the most natural encoding for a chess position. 
 
-\subsection{\mdseries\fs{Half-Piece}}
+one to one mapping between pieces and features
+
+\begin{table}[h]
+\centering
+\begin{tabular}{ccccc}
+\pieceBoard & $\bigtimes$ & \pieceRolesTable & $\bigtimes$ & \pieceColorsTable \\
+\end{tabular}
+\caption{Optimized models (Softmax) final results with confidence intervals.}
+\end{table}
 
 $\langle piece\_square, piece\_type, piece\_color \rangle$
 
 $64*6*2=768$ features
 
-\subsection{\mdseries\fs{Half-Piece+Moves}}
+
+\subsection{\mdseries\fs{Compact}}
+
+This is one of the simplest feature sets.
+
+$\langle piece\_rank, piece\_type, piece\_color \rangle \oplus \langle piece\_file, piece\_type, piece\_color \rangle$
+
+$(8*6*2)*2=192$ features
+
+\subsection{\mdseries\fs{Piece+Moves}}
 
 \fs{HalfP} $\oplus \langle move\_from, move\_to \rangle$
 
@@ -31,6 +99,10 @@ $\langle side\_king\_square, piece\_square, piece\_type, piece\_color \rangle$ e
 $64*64*5*2=40960$ features
 
 There are variations to this feature set, such as \fs{HalfKAv2} or notably \fs{HalfKAv2\_hm} that is currently the latest feature set used by Stockfish 16.1. I will not consider them in this work.
+
+known as "KP" in the literature
+
+if we skip the king, you may be thinking where does it get the information about the other king's side, .... blabla arquitectura Half
 
 \subsection{\mdseries\fs{Half-Relative(H$|$V$|$HV)King-Piece}}
 
