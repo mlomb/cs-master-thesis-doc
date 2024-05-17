@@ -18,7 +18,8 @@
             hlabel=false,
             vlabel=false,
             pgfstyle={text},
-            text=\fontsize{1.2ex}{1.2ex}\bfseries\sffamily \thepieceindex \stepcounter{pieceindex}, %  \currentwq
+            %text=\fontsize{1.2ex}{1.2ex}\bfseries\sffamily \thepieceindex \stepcounter{pieceindex}, %  \currentwq
+            text=\fontsize{1.2ex}{1.2ex}\bfseries\sffamily \currentwq,
             markboard
         ]
     }
@@ -53,24 +54,55 @@
 \newcommand{\fs}[1]{\textsc{#1}}
 
 
-% CAMBIAR TYPE POR ROLE
-
 \section{Feature sets (board encodings)}
 
+A feature set is a set of tuples 
+
+Cosas
+
+\fs{File} = \{a, b, ..., h\}
+
+\fs{Rank} = \{1, 2, ..., 8\}
+
+\fs{Square} = \{a1, a2, ..., h8\}
+
+\fs{Role} = \{
+    \sympawn\ Pawn,
+    \symknight\ Knight,
+    \symbishop\ Bishop,
+    \symrook\ Rook,
+    \symqueen\ Queen,
+    \symking\ King\}
+
+\fs{Color} = \{$\white$ White, $\black$ Black\}
+
+Note that internally, \fs{Square} is stored as numbers 0 ... 63:
+
+\pieceBoard → \pieceBoard
+
+
+For example for $(h8, \symrook, \black)$
+
+file, color vs file, role
 
 \subsection{\mdseries\fs{Piece}}
 
-This feature set is the most natural encoding for a chess position. 
+This feature set is the most natural encoding for a chess position. There is a one-to-one mapping between pieces in the board and features:
 
-one to one mapping between pieces and features
+\begin{center}
+    $\fs{Piece} = \fs{Square}_{P} \times \fs{Role}_{P} \times \fs{Color}_{P}$ \\
+    for every $P$ piece in the board
+\end{center}
 
-\begin{table}[h]
-\centering
-\begin{tabular}{ccccc}
-\pieceBoard & $\bigtimes$ & \pieceRolesTable & $\bigtimes$ & \pieceColorsTable \\
-\end{tabular}
-\caption{Optimized models (Softmax) final results with confidence intervals.}
-\end{table}
+
+%\begin{table}[h]
+%\centering
+%\begin{tabular}{ccccc}
+%\pieceBoard & $\bigtimes$ & \pieceRolesTable & %$\bigtimes$ & \pieceColorsTable \\
+%\end{tabular}
+%\caption{some caption}
+%\end{table}
+
 
 $\langle piece\_square, piece\_type, piece\_color \rangle$
 
@@ -94,6 +126,8 @@ $768 + 64*64=4864$ features
 Not friendly to efficiently update the network. It is almost always better to do a full refresh on eval.
 
 \subsection{\mdseries\fs{Half-King-Piece}}
+
+$\fs{King-Piece} = \fs{Square}_{K} \times \fs{Piece}_{P}$ where $K$ is the king to move and $P$ is any \textit{non-king} piece
 
 $\langle side\_king\_square, piece\_square, piece\_type, piece\_color \rangle$ excl. king
 
@@ -119,3 +153,22 @@ only H or only V have $8*15*5*2=1200$ features
 
 Statistical feature set, blabla, wasted features blabla
 
+
+\subsection{Recap}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|c|c|c|c|}
+\hline
+Feature set & Tuple & \# features \\
+\hline
+\fs{Piece} & $\fs{Square}_{P} \times \fs{Role}_{P} \times \fs{Color}_{P}$ & 768  \\
+\fs{Compact} & asd & 192  \\
+\fs{Piece+Moves} & asd & 4864 \\
+\fs{King-Piece} & asd & 40,960 \\
+\fs{RelativeHV-King-Piece} & asd & 2250  \\
+\fs{TopPP} & asd & 64  \\
+\hline
+\end{tabular}
+\caption{Comparison of feature sets}
+\end{table}
