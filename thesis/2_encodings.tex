@@ -56,15 +56,41 @@
 
 \section{Feature sets (board encodings)}
 
-A feature set is a set of tuples 
+To evaluate a chess positions, we will use a neural network with an architecture explained in detail in the next chapter. In this chapter, we will build the input vector to such network, which can be described entirely by a feature set.
 
-Cosas
+A feature set is a set built by a cartesian product of smaller sets of features, where each set extracts a different aspect of a position. Let's consider some basic sets of features.
 
-\fs{File} = \{a, b, ..., h\}
+The following sets encode positional information about the board:
 
-\fs{Rank} = \{1, 2, ..., 8\}
+\begin{center}
+\begin{tabular}{cc}
 
-\fs{Square} = \{a1, a2, ..., h8\}
+$\begin{aligned}[t]
+\fs{File} &= \{a, b, ..., h\} \\
+\fs{Rank} &= \{1, 2, ..., 8\} \\
+\fs{Square} &= \{a1, a2, ..., h8\}
+\end{aligned}$
+
+&
+
+\raisebox{-10ex}{
+\chessboard[
+    tinyboard,
+    showmover=false,
+    pgfstyle={text},
+    %text=\fontsize{1.2ex}{1.2ex}\bfseries\sffamily \thepieceindex \stepcounter{pieceindex}, %  \currentwq
+    text=\fontsize{1.2ex}{1.2ex}\bfseries\sffamily \currentwq,
+    markboard
+]
+}
+
+\end{tabular}
+\end{center}
+
+That may or may not be related to a piece on the board.
+
+.\\
+.\\
 
 \fs{Role} = \{
     \sympawn\ Pawn,
@@ -74,7 +100,12 @@ Cosas
     \symqueen\ Queen,
     \symking\ King\}
 
-\fs{Color} = \{$\white$ White, $\black$ Black\}
+\fs{Color} = \{$\white$ White, $\black$ Black\} \\
+
+The input to the network is a one-dimensional vector with multi-hot encoding.
+
+
+Since
 
 Note that internally, \fs{Square} is stored as numbers 0 ... 63:
 
@@ -90,8 +121,8 @@ file, color vs file, role
 This feature set is the most natural encoding for a chess position. There is a one-to-one mapping between pieces in the board and features:
 
 \begin{center}
-    $\fs{Piece} = \fs{Square}_{P} \times \fs{Role}_{P} \times \fs{Color}_{P}$ \\
-    for every $P$ piece in the board
+    $\fs{Piece} = \fs{Square}_{p} \times \fs{Role}_{p} \times \fs{Color}_{p}$ \\
+    for every $p$ piece in the board
 \end{center}
 
 
