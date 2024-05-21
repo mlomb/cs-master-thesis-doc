@@ -58,7 +58,7 @@
 
 To evaluate a chess positions, we will use a neural network with an architecture explained in detail in the next chapter. In this chapter, we will build the input vector to such network, which can be described entirely by a feature set.
 
-A feature set is a set built by a cartesian product of smaller sets of features, where each set extracts a different aspect of a position. Let's consider some basic sets of features.
+A feature set is a set built by a cartesian product of smaller sets of features, where each set extracts a different aspect of a position. hablar de el subset "activado" Let's consider some basic sets of features.
 
 The following sets encode positional information about the board:
 
@@ -87,20 +87,24 @@ $\begin{aligned}[t]
 \end{tabular}
 \end{center}
 
+Each set is associated with some information extracted from the position. For example, a feature set could be $\fs{Square}_{P}$ where $P$ is \textit{any} piece of the board, meaning that the squares that will be active will be the ones where there is \textit{any} kind of piece. Another possible feature set could be $\fs{Square}_{K}$, where $r$ is 
+
 That may or may not be related to a piece on the board.
+move from/to
+two Square-s
 
-.\\
-.\\
-
-\fs{Role} = \{
+\begin{center}
+$\begin{aligned}[t]
+\fs{Role} &= \text{\{
     \sympawn\ Pawn,
     \symknight\ Knight,
     \symbishop\ Bishop,
     \symrook\ Rook,
     \symqueen\ Queen,
-    \symking\ King\}
-
-\fs{Color} = \{$\white$ White, $\black$ Black\} \\
+    \symking\ King\}} \\
+\fs{Color} &= \text{\{\white\ White, \black\ Black\}}
+\end{aligned}$
+\end{center}
 
 The input to the network is a one-dimensional vector with multi-hot encoding.
 
