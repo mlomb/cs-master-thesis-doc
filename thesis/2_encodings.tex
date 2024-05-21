@@ -56,11 +56,11 @@
 
 \section{Feature sets (board encodings)}
 
-To evaluate a chess positions, we will use a neural network with an architecture explained in detail in the next chapter. In this chapter, we will build the input vector to such network, which can be described entirely by a feature set.
+To evaluate chess positions, we will use a neural network with an architecture explained in detail in the next chapter. In this chapter, we will build the one-dimensional input vector for such network, which can be described entirely by a feature set.
 
-A feature set is a set built by a cartesian product of smaller sets of features, where each set extracts a different aspect of a position. hablar de el subset "activado" Let's consider some basic sets of features.
+A feature set is a set built by a cartesian product of smaller sets of features, where each set extracts a different aspect of a position. Each tuple in the feature set corresponds to an element in the input vector, which will be set to $1$ if the aspects captured by the tuple are present in the position, and $0$ otherwise. If a tuple is present in a position, we say that the tuple is \textit{active}.
 
-The following sets encode positional information about the board:
+Let's consider some basic sets of features. The following sets encode positional information about the board:
 
 \begin{center}
 \begin{tabular}{cc}
@@ -87,11 +87,7 @@ $\begin{aligned}[t]
 \end{tabular}
 \end{center}
 
-Each set is associated with some information extracted from the position. For example, a feature set could be $\fs{Square}_{P}$ where $P$ is \textit{any} piece of the board, meaning that the squares that will be active will be the ones where there is \textit{any} kind of piece. Another possible feature set could be $\fs{Square}_{K}$, where $r$ is 
-
-That may or may not be related to a piece on the board.
-move from/to
-two Square-s
+And the following encode information about the pieces:
 
 \begin{center}
 $\begin{aligned}[t]
@@ -101,12 +97,45 @@ $\begin{aligned}[t]
     \symbishop\ Bishop,
     \symrook\ Rook,
     \symqueen\ Queen,
-    \symking\ King\}} \\
+    \symking\ King\}}\footnote[1]{The color of the pieces have no meaning in the definition and are present for illustrative purposes.} \\
 \fs{Color} &= \text{\{\white\ White, \black\ Black\}}
 \end{aligned}$
 \end{center}
 
-The input to the network is a one-dimensional vector with multi-hot encoding.
+Since each set has to capture some information from the position, it must be stated explicitly. For example, consider the feature set $\fs{File}_{P} \times \fs{Color}_{P}$ where $P$ is \textit{any} piece in the board, meaning that the tuples $(file, color)$ that will be active are the ones where there is at least one piece in $file$ with the color $color$ (disregarding any other kind of information, like the piece's role). Another possible feature set could be $\fs{File}_{P} \times \fs{Role}_{P}$, with a similar interpretation. An illustration of the active features of these two feature sets for the same position is shown in Figure \ref{fig:active_features}.
+
+\begin{figure}[h]
+\centering
+\label{fig:active_features}
+
+\begin{tabular}{cc}
+\raisebox{-7ex}{
+\chessboard[
+    tinyboard,
+    showmover=false,
+    setwhite={kc3, nc2, pa2, Pd4},
+    addblack={Kc8,bh7, pa7}
+]
+}
+
+&
+
+\begin{tabular}{|c|p{4cm}|p{4cm}|p{0cm}}
+\cline{2-3}
+\multicolumn{1}{c|}{} & \multicolumn{2}{c|}{\centering Feature set} \\
+\cline{2-3}
+\multicolumn{1}{c|}{} & \centering $\fs{File}_{P} \times \fs{Color}_{P}$ & \centering $\fs{File}_{P} \times \fs{Role}_{P}$ & \\
+\cline{1-3}
+Active features &
+(a, \white), (a, \black), (c, \black), (c, \white), (d, \white), (h, \black) &
+(a, \sympawn), (c, \symking), (c, \symknight), (d, \sympawn), (h, \symbishop) \\
+\cline{1-3}
+\end{tabular}
+
+\end{tabular}
+
+\caption{Active features of the feature sets $\fs{File}_{P} \times \fs{Color}_{P}$ and $\fs{File}_{P} \times \fs{Role}_{P}$ for the same position}
+\end{figure}
 
 
 Since
