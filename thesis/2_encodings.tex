@@ -97,7 +97,7 @@ $\begin{aligned}[t]
     \symbishop\ Bishop,
     \symrook\ Rook,
     \symqueen\ Queen,
-    \symking\ King\}}\footnote[1]{The color of the pieces have no meaning in the definition and are present for illustrative purposes.} \\
+    \symking\ King\}}\textsuperscript{1} \\
 \fs{Color} &= \text{\{\white\ White, \black\ Black\}}
 \end{aligned}$
 \end{center}
@@ -113,6 +113,7 @@ Since each set has to capture some information from the position, it must be sta
 \chessboard[
     tinyboard,
     showmover=false,
+    hlabel=false,
     setwhite={kc3, nc2, pa2, Pd4},
     addblack={Kc8,bh7, pa7}
 ]
@@ -137,17 +138,11 @@ Active features &
 \caption{Active features of the feature sets $\fs{File}_{P} \times \fs{Color}_{P}$ and $\fs{File}_{P} \times \fs{Role}_{P}$ for the same position}
 \end{figure}
 
+\footnotetext[1]{The color of the pieces have no meaning in the definition. They are present for illustrative purposes.}
 
-Since
+\subsection{Indexing}
 
-Note that internally, \fs{Square} is stored as numbers 0 ... 63:
-
-\pieceBoard → \pieceBoard
-
-
-For example for $(h8, \symrook, \black)$
-
-file, color vs file, role
+The mapping between the tuples in a feature set and the elements in the input vector is computed using the order of the sets in the cartesian product and the size of each set, like strides in a multi-dimensional array. For this to work, each element in a set $S$ must correspond to a number between $0$ and $|S| - 1$. For example, the feature set $A \times B \times C$ has $|A| \times |B| \times |C|$ elements, and the tuple $(a, b, c)$ is mapped to the element $a \times |B| \times |C| + b \times |C| + c$.
 
 \subsection{\mdseries\fs{Piece}}
 
