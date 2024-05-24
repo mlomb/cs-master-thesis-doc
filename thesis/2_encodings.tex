@@ -102,7 +102,7 @@ $\begin{aligned}[t]
 \end{aligned}$
 \end{center}
 
-Since each set has to capture some information from the position, it must be stated explicitly. For example, consider the feature set $\fs{File}_{P} \times \fs{Color}_{P}$ where $P$ is \textit{any} piece in the board, meaning that the tuples $(file, color)$ that will be active are the ones where there is at least one piece in $file$ with the color $color$ (disregarding any other kind of information, like the piece's role). Another possible feature set could be $\fs{File}_{P} \times \fs{Role}_{P}$, with a similar interpretation. An illustration of the active features of these two feature sets for the same position is shown in Figure \ref{fig:active_features}.
+Since each set has to capture some information from the position, it must be stated explicitly. For example, consider the feature set $\fs{File}_{P} \times \fs{Color}_{P}$ where $P$ is \textit{any} piece in the board, meaning that the tuples $(file, color)$ that will be active are the ones where there is at least one piece in $file$ with the color $color$ (disregarding any other kind of information, like the piece's role). Another possible feature set could be $\fs{File}_{P} \times \fs{Role}_{P}$, with a similar interpretation. An illustration of the active features of these two feature sets for the same board is shown in Figure \ref{fig:active_features}.
 
 \begin{figure}[h]
 \centering
@@ -135,22 +135,37 @@ Active features &
 
 \end{tabular}
 
-\caption{Active features of the feature sets $\fs{File}_{P} \times \fs{Color}_{P}$ and $\fs{File}_{P} \times \fs{Role}_{P}$ for the same position}
+\caption{Active features of the feature sets $\fs{File}_{P} \times \fs{Color}_{P}$ and $\fs{File}_{P} \times \fs{Role}_{P}$ for the same board}
 \end{figure}
 
 \footnotetext[1]{The color of the pieces have no meaning in the definition. They are present for illustrative purposes.}
 
+\subsection{Sum $\oplus$}
+
+% what to talk about:
+% we want the network to find patterns between the two sets
+% some feature sets can be built merging the features of two or more sets
+
+The sum of two feature sets $\fs{A}$ and $\fs{B}$, denoted by $\fs{A} \oplus \fs{B}$, is a new feature set comprised of the tuples of both sets $\fs{A}$ and $\fs{B}$. These tuples do not interfere with each other, even if they have the same basic elements (e.g. h, 8, \symrook, \black), they \textbf{must} have different interpretations.
+For example, given the feature sets $\fs{File}_{W}$ where $W$ is any white piece in the board and $\fs{File}_{B}$ where $B$ is any black piece in the board, the feature set $\fs{File}_{W} \oplus \fs{File}_{B}$ will have the basic elements $\{a, b, ..., h\}$ for both white and black pieces, but each with a different interpretation.
+
+The sum operator is useful when we want to let the network find patterns combining information between two sets of features.
+
+
+
 \subsection{Indexing}
 
-The mapping between the tuples in a feature set and the elements in the input vector is computed using the order of the sets in the cartesian product and the size of each set, like strides in a multi-dimensional array. For this to work, each element in a set $S$ must correspond to a number between $0$ and $|S| - 1$. For example, the feature set $A \times B \times C$ has $|A| \times |B| \times |C|$ elements, and the tuple $(a, b, c)$ is mapped to the element $a \times |B| \times |C| + b \times |C| + c$.
+The input to the network is a one-dimensional vector, so we need a way to map the tuples in a feature set to the elements in the input vector. The correct index for a tuple is computed using the order of the sets in the cartesian product and the size of each set, like strides in a multi-dimensional array. For this to work, each element in a set $S$ must correspond to a number between $0$ and $|S| - 1$. For example, the feature set $A \times B \times C$ has $|A| \times |B| \times |C|$ elements, and the tuple $(a, b, c)$ is mapped to the element indexed at $a \times |B| \times |C| + b \times |C| + c$.
+
+The same striding logic applies to feature sets built with the sum operator, recursively. example?
 
 \subsection{\mdseries\fs{Piece}}
 
 This feature set is the most natural encoding for a chess position. There is a one-to-one mapping between pieces in the board and features:
 
 \begin{center}
-    $\fs{Piece} = \fs{Square}_{p} \times \fs{Role}_{p} \times \fs{Color}_{p}$ \\
-    for every $p$ piece in the board
+    $\fs{Piece} = \fs{Square}_{P} \times \fs{Role}_{P} \times \fs{Color}_{P}$ \\
+    for every $P$ piece in the board
 \end{center}
 
 
@@ -163,20 +178,24 @@ This feature set is the most natural encoding for a chess position. There is a o
 %\end{table}
 
 
-$\langle piece\_square, piece\_type, piece\_color \rangle$
-
 $64*6*2=768$ features
 
 
 \subsection{\mdseries\fs{Compact}}
 
-This is one of the simplest feature sets.
+This is a very compact feature set that contains all the board information, meaning everything can be reconstructed by the neural network. It is built 
 
-$\langle piece\_rank, piece\_type, piece\_color \rangle \oplus \langle piece\_file, piece\_type, piece\_color \rangle$
+\begin{center}
+    $\fs{Compact} = (\fs{File}_{P} \times \fs{Role}_{P} \times \fs{Color}_{P}) \oplus (\fs{Rank}_{P} \times \fs{Role}_{P} \times \fs{Color}_{P})$ \\
+    for every $P$ piece in the board
+\end{center}
 
-$(8*6*2)*2=192$ features
+$2*(8*6*2)=192$ features
 
 \subsection{\mdseries\fs{Piece+Moves}}
+
+This feature set comes up from seeing the patterns recognized by the Piece feature set in section 5.5.5. When we observe... attack patterns...:
+P..
 
 \fs{HalfP} $\oplus \langle move\_from, move\_to \rangle$
 
