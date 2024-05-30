@@ -54,7 +54,7 @@
 \newcommand{\fs}[1]{\textsc{#1}}
 
 
-\section{Feature sets (board encodings)}
+\section{Feature set (board encoding)}
 
 To evaluate chess positions, we will use a neural network with an architecture explained in detail in the next chapter. In this chapter, we will build the one-dimensional input vector for such network, which can be described entirely by a feature set.
 
@@ -157,53 +157,37 @@ The sum operator is useful when we want to let the network find patterns combini
 
 The input to the network is a one-dimensional vector, so we need a way to map the tuples in a feature set to the elements in the input vector. The correct index for a tuple is computed using the order of the sets in the cartesian product and the size of each set, like strides in a multi-dimensional array. For this to work, each element in a set $S$ must correspond to a number between $0$ and $|S| - 1$. For example, the feature set $A \times B \times C$ has $|A| \times |B| \times |C|$ elements, and the tuple $(a, b, c)$ is mapped to the element indexed at $a \times |B| \times |C| + b \times |C| + c$.
 
-The same striding logic applies to feature sets built with the sum operator, recursively. example?
+The same striding logic applies to feature sets built with the sum operator, recursively. [example?]
 
-\subsection{\mdseries\fs{Piece}}
+\subsection{Feature sets}
+
+In this section, we will define the feature sets that will be used in the experiments. We will start with some of the most basic yet reasonable feature sets, then move to feature sets that are used by engines or were used in the past, and finally some that have not been tried, to the best of our knowledge.
+
+\subsubsection{\mdseries\fs{Piece}}
 
 This feature set is the most natural encoding for a chess position. There is a one-to-one mapping between pieces in the board and features:
 
 \begin{center}
     $\fs{Piece} = \fs{Square}_{P} \times \fs{Role}_{P} \times \fs{Color}_{P}$ \\
-    for every $P$ piece in the board
+    for every $P$ piece in the board \\
+    ~\\
+    $64*6*2=768$ features
 \end{center}
 
+For every position, role and color each piece could be, there is a feature. There are 16 tuples in the set that will never be active: (a8..h8, \sympawn, \white) and (a1..h1, \sympawn, \black) that correspond to the white pawns in the last rank and the black pawns in the first rank. This is because pawns promote to another piece when they reach the opponent side of the board. Effectively, these will be dead neurons in the network, but this way we can keep the indexing straightforward. Most feature sets will have dead features, and the same logic applies.
 
-%\begin{table}[h]
-%\centering
-%\begin{tabular}{ccccc}
-%\pieceBoard & $\bigtimes$ & \pieceRolesTable & %$\bigtimes$ & \pieceColorsTable \\
-%\end{tabular}
-%\caption{some caption}
-%\end{table}
+\subsubsection{\mdseries\fs{Compact}}
 
-
-$64*6*2=768$ features
-
-
-\subsection{\mdseries\fs{Compact}}
-
-This is a very compact feature set that contains all the board information, meaning everything can be reconstructed by the neural network. It is built 
+This is a very compact feature set that still retains all the information of the board, meaning everything can be reconstructed by the neural network:
 
 \begin{center}
     $\fs{Compact} = (\fs{File}_{P} \times \fs{Role}_{P} \times \fs{Color}_{P}) \oplus (\fs{Rank}_{P} \times \fs{Role}_{P} \times \fs{Color}_{P})$ \\
-    for every $P$ piece in the board
+    for every $P$ piece in the board \\
 \end{center}
 
-$2*(8*6*2)=192$ features
+The $\fs{Compact}$ feature set has $2*(8*6*2)=192$ features.
 
-\subsection{\mdseries\fs{Piece+Moves}}
-
-This feature set comes up from seeing the patterns recognized by the Piece feature set in section 5.5.5. When we observe... attack patterns...:
-P..
-
-\fs{HalfP} $\oplus \langle move\_from, move\_to \rangle$
-
-$768 + 64*64=4864$ features
-
-Not friendly to efficiently update the network. It is almost always better to do a full refresh on eval.
-
-\subsection{\mdseries\fs{Half-King-Piece}}
+\subsubsection{\mdseries\fs{King-Piece}}
 
 $\fs{King-Piece} = \fs{Square}_{K} \times \fs{Piece}_{P}$ where $K$ is the king to move and $P$ is any \textit{non-king} piece
 
@@ -217,7 +201,19 @@ known as "KP" in the literature
 
 if we skip the king, you may be thinking where does it get the information about the other king's side, .... blabla arquitectura Half
 
-\subsection{\mdseries\fs{Half-Relative(H$|$V$|$HV)King-Piece}}
+\subsubsection{\mdseries\fs{Piece+Moves}}
+
+This feature set comes up from seeing the patterns recognized by the Piece feature set in section 5.5.5. When we observe... attack patterns...:
+P..
+
+\fs{HalfP} $\oplus \langle move\_from, move\_to \rangle$
+
+$768 + 64*64=4864$ features
+
+Not friendly to efficiently update the network. It is almost always better to do a full refresh on eval.
+
+
+\subsubsection{\mdseries\fs{Half-Relative(H$|$V$|$HV)King-Piece}}
 
 
 $\langle side\_king\_file - piece\_file + 7, side\_king\_rank - piece\_rank + 7, piece\_type, piece\_color \rangle$ excl. king
@@ -227,12 +223,12 @@ $15*15*5*2=2250$ features (for HV)
 only H or only V have $8*15*5*2=1200$ features
 
 
-\subsection{\mdseries\fs{Half-Top(PP)}}
+\subsubsection{\mdseries\fs{Half-Top(PP)}}
 
 Statistical feature set, blabla, wasted features blabla
 
 
-\subsection{Recap}
+\subsection{Summary}
 
 \begin{table}[h]
 \centering
