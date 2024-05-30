@@ -159,6 +159,12 @@ The input to the network is a one-dimensional vector, so we need a way to map th
 
 The same striding logic applies to feature sets built with the sum operator, recursively. [example?]
 
+\subsection{Dead features}
+
+[arreglar, lo movi]
+For every position, role and color each piece could be, there is a feature. There are 16 tuples in the set that will never be active: (a8..h8, \sympawn, \white) and (a1..h1, \sympawn, \black) that correspond to the white pawns in the last rank and the black pawns in the first rank. This is because pawns promote to another piece when they reach the opponent side of the board. Effectively, these will be dead neurons in the network, but this way we can keep the indexing straightforward. Most feature sets will have dead features, and the same logic applies.
+
+
 \subsection{Feature sets}
 
 In this section, we will define the feature sets that will be used in the experiments. We will start with some of the most basic yet reasonable feature sets, then move to feature sets that are used by engines or were used in the past, and finally some that have not been tried, to the best of our knowledge.
@@ -174,8 +180,6 @@ This feature set is the most natural encoding for a chess position. There is a o
     $64*6*2=768$ features
 \end{center}
 
-For every position, role and color each piece could be, there is a feature. There are 16 tuples in the set that will never be active: (a8..h8, \sympawn, \white) and (a1..h1, \sympawn, \black) that correspond to the white pawns in the last rank and the black pawns in the first rank. This is because pawns promote to another piece when they reach the opponent side of the board. Effectively, these will be dead neurons in the network, but this way we can keep the indexing straightforward. Most feature sets will have dead features, and the same logic applies.
-
 \subsubsection{\mdseries\fs{Compact}}
 
 This is a very compact feature set that still retains all the information of the board, meaning everything can be reconstructed by the neural network:
@@ -183,17 +187,18 @@ This is a very compact feature set that still retains all the information of the
 \begin{center}
     $\fs{Compact} = (\fs{File}_{P} \times \fs{Role}_{P} \times \fs{Color}_{P}) \oplus (\fs{Rank}_{P} \times \fs{Role}_{P} \times \fs{Color}_{P})$ \\
     for every $P$ piece in the board \\
+    ~\\
+    $2*(8*6*2)=192$ features
 \end{center}
-
-The $\fs{Compact}$ feature set has $2*(8*6*2)=192$ features.
 
 \subsubsection{\mdseries\fs{King-Piece}}
 
-$\fs{King-Piece} = \fs{Square}_{K} \times \fs{Piece}_{P}$ where $K$ is the king to move and $P$ is any \textit{non-king} piece
-
-$\langle side\_king\_square, piece\_square, piece\_type, piece\_color \rangle$ excl. king
-
-$64*64*5*2=40960$ features
+\begin{center}
+    $\fs{King-Piece} = \fs{Square}_{K} \times \fs{Piece}_{P}$ \\
+    where $K$ is the king to move and $P$ is every \textit{non-king} piece in the board \\
+    ~\\
+    $64*(64*5*2)=40960$ features
+\end{center}
 
 There are variations to this feature set, such as \fs{HalfKAv2} or notably \fs{HalfKAv2\_hm} that is currently the latest feature set used by Stockfish 16.1. I will not consider them in this work.
 
@@ -201,10 +206,21 @@ known as "KP" in the literature
 
 if we skip the king, you may be thinking where does it get the information about the other king's side, .... blabla arquitectura Half
 
-\subsubsection{\mdseries\fs{Piece+Moves}}
+\subsubsection{\mdseries\fs{Piece-Move}}
 
 This feature set comes up from seeing the patterns recognized by the Piece feature set in section 5.5.5. When we observe... attack patterns...:
 P..
+
+from y to?
+
+With that defined...
+
+\begin{center}
+    $\fs{Piece-Move} = \fs{Piece} \oplus (\fs{Square}_{P} \times \fs{Square}_{move(P)})$ \\
+    for every $P$ piece in the board \\
+    ~\\
+    $64*(64*5*2)=40960$ features
+\end{center}
 
 \fs{HalfP} $\oplus \langle move\_from, move\_to \rangle$
 
@@ -227,6 +243,7 @@ only H or only V have $8*15*5*2=1200$ features
 
 Statistical feature set, blabla, wasted features blabla
 
+[JUGAR CON DIAGONALES]
 
 \subsection{Summary}
 
@@ -237,10 +254,15 @@ Statistical feature set, blabla, wasted features blabla
 Feature set & Tuple & \# features \\
 \hline
 \fs{Piece} & $\fs{Square}_{P} \times \fs{Role}_{P} \times \fs{Color}_{P}$ & 768  \\
-\fs{Compact} & asd & 192  \\
+\hline
+\fs{Compact} & \makecell{$(\fs{File}_{P} \times \fs{Role}_{P} \times \fs{Color}_{P}) \oplus$ \\ $(\fs{Rank}_{P} \times \fs{Role}_{P} \times \fs{Color}_{P})$} & 192  \\
+\hline
+\fs{King-Piece} & $\fs{Square}_{K} \times \fs{Piece}_{P}$ & 40,960 \\
+\hline
 \fs{Piece+Moves} & asd & 4864 \\
-\fs{King-Piece} & asd & 40,960 \\
+\hline
 \fs{RelativeHV-King-Piece} & asd & 2250  \\
+\hline
 \fs{TopPP} & asd & 64  \\
 \hline
 \end{tabular}
