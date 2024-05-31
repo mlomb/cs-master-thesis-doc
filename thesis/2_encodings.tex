@@ -219,12 +219,8 @@ With that defined...
     $\fs{Piece-Move} = \fs{Piece} \oplus (\fs{Square}_{P} \times \fs{Square}_{move(P)})$ \\
     for every $P$ piece in the board \\
     ~\\
-    $64*(64*5*2)=40960$ features
+    $768 + 64*64=4864$ features
 \end{center}
-
-\fs{HalfP} $\oplus \langle move\_from, move\_to \rangle$
-
-$768 + 64*64=4864$ features
 
 Not friendly to efficiently update the network. It is almost always better to do a full refresh on eval.
 

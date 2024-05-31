@@ -1,12 +1,13 @@
-
 \section{Training}
+
+
 
 \subsection{Dataset}
 
-Lichess is a free online site to play chess, and it provides a database\footnote[1]{Lichess database: \url{https://database.lichess.org}} with all the games played on the site. It consists of serveral compressed PGN files\footnote[2]{Portable Game Notation: a textual format to store chess games (moves and metadata)} splitted by month since 2013, that add up to $1.7$ terabytes compressed. It contains over 5 billion games, that equates to around 200 billion positions. In reality, that many positions are too much to handle so I'll use only a fraction of them, but I restrict derived datasets to only take one sample per game, to maximize the diversity of positions.
+Lichess is a free online site to play chess, and thankfully it provides a CC0 database \cite{lichessdb} with all the games ever played on the site. It consists of serveral compressed PGN files\footnote{Portable Game Notation: a textual format to store chess games (moves and metadata)} splitted by month since 2013, that add up to $1.71$TB compressed. The whole database contains over 5.5 billion games, that equates to around 200 billion positions. In practice, that many positions are too much to handle so I'll use only a fraction of them and take only one sample per game to maximize the diversity of positions.
 
-
-decir que la data de entrenamiento no es la misma. SF original usaba datos de handcrafted, hoy en dia usa de LC0. Nosotros usamos de Lichess, computada por el SF moderno
+% The Lichess database also provides a database of puzzles
+% hablar de esto en otro lado (results? eval?)
 
 \subsection{Methods}
 
@@ -14,19 +15,28 @@ decir que la data de entrenamiento no es la misma. SF original usaba datos de ha
 
 \subsubsection{Stockfish evaluations}
 
+The main method to train the network will use the latest Stockfish evaluations as target. The idea is to train the network to predict the evaluation of a position as Stockfish would do.
+
+
+decir que la data de entrenamiento no es la misma. SF original usaba datos de handcrafted, hoy en dia usa de LC0. Nosotros usamos de Lichess, computada por el SF moderno
+decir que no usamos el outcome de la partida para el score
+
 
 \subsubsection{PQR triplets}
 
-This is an additional technique I wanted to try, described in [METER REF BLOG]. Remember that we are trying to obtain a function $f$ (the model) to give an evaluation of a position. The method is based in the assumption that players make optimal or near-optimal moves most of the time, even if they are amateurs.
+This is an additional technique we wanted to try, described in \cite{dlchess:2014}. Remember that we are trying to obtain a function $f$ (the model) to give an evaluation of a position. The method is based in the assumption that players make optimal or near-optimal moves most of the time, even if they are amateurs.
 
 \begin{enumerate}
 \item For two position in succession $p \rightarrow q$  observed in the game, we will have $f(p) \neq f(q)$.
 \item Going from $p$, not to $q$, but to a \textit{random} position $p \rightarrow r$, we must have $f(r) > f(q)$ because the random move is better for the next player and worse for the player that made the move.
 \end{enumerate}
 
-
-... With infinite compute, $f$ would be the result of running minimax to the end of the game, since minimax always finds optimal moves.
+With infinite compute, $f$ would be the result of running minimax to the end of the game, since minimax always finds optimal moves.
 
 \subsection{Metrics}
 
 asd \cite{nnue:2018}
+
+\subsection{Setup}
+
+arquitectura, rust, pasado de samples
