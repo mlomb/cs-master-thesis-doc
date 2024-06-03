@@ -9,13 +9,20 @@ Lichess is a free online site to play chess, and thankfully it provides a CC0 da
 % The Lichess database also provides a database of puzzles
 % hablar de esto en otro lado (results? eval?)
 
+\subsection{Filtering}
+
+A single game can have lots of positions, most of which are shared with millions of other games. This is a problem of its own, trying to keep samples 
+
+
 \subsection{Methods}
 
 
 
 \subsubsection{Stockfish evaluations}
 
-The main method to train the network will use the latest Stockfish evaluations as target. The idea is to train the network to predict the evaluation of a position as Stockfish would do.
+The main method to train the network will use the latest Stockfish evaluations as target. The objective is to train the network to predict the evaluation of a position as Stockfish would do.
+
+First, we need to generate the training data, that means running the latest Stockfish on lots of positions and saving the evaluation. This is a very expensive process, depending on the depth of the search and the number of positions.
 
 
 decir que la data de entrenamiento no es la misma. SF original usaba datos de handcrafted, hoy en dia usa de LC0. Nosotros usamos de Lichess, computada por el SF moderno
