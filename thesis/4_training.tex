@@ -9,10 +9,8 @@ Lichess is a free online site to play chess, and thankfully it provides a CC0 da
 % The Lichess database also provides a database of puzzles
 % hablar de esto en otro lado (results? eval?)
 
-\subsection{Filtering}
-
-A single game can have lots of positions, most of which are shared with millions of other games. This is a problem of its own, trying to keep samples 
-
+A single game can have lots of positions, most of which are shared with millions of other
+games, mostly during the early game. This is a problem of its own: trying to sample positions from a game with a suitable distribution. In this work, I have chosen to only consider positions in games after 20 half-moves.
 
 \subsection{Methods}
 
@@ -22,16 +20,22 @@ A single game can have lots of positions, most of which are shared with millions
 
 The main method to train the network will use the latest Stockfish evaluations as target. The objective is to train the network to predict the evaluation of a position as Stockfish would do.
 
-First, we need to generate the training data, that means running the latest Stockfish on lots of positions and saving the evaluation. This is a very expensive process, depending on the depth of the search and the number of positions.
+First, we need to generate the training data. It is not known what makes a dataset good, but usually you can use the previous version of an engine to evaluate positions to train the next version. Stockfish uses a combination of datasets generated this way and evaluations from Lc0 that are more expensive to compute but have a higher quality, given the type of engine (it uses MCTS with a deep neural network).
+
+I have chosen to generate the training set using evaluations from Stockfish 16.1 at depth 9, as recommended by the authors of nnue-pytorch \cite{nnue-pytorch}. For each game, I uniformly sample a position (after 20 half-moves), run Stockfish and store the centipawn evaluation.
+
+\setcounter{secnumdepth}{4}
+\paragraph{CP-space to WDL-space}
+
+The evaluations from Stockfish are in centipawns, which is not the exact number the network has to use as target.
 
 
-decir que la data de entrenamiento no es la misma. SF original usaba datos de handcrafted, hoy en dia usa de LC0. Nosotros usamos de Lichess, computada por el SF moderno
 decir que no usamos el outcome de la partida para el score
 
 
 \subsubsection{PQR triplets}
 
-This is an additional technique we wanted to try, described in \cite{dlchess:2014}. Remember that we are trying to obtain a function $f$ (the model) to give an evaluation of a position. The method is based in the assumption that players make optimal or near-optimal moves most of the time, even if they are amateurs.
+This is an additional technique I wanted to try, described in \cite{dlchess:2014}. Remember that we are trying to obtain a function $f$ (the model) to give an evaluation of a position. The method is based in the assumption that players make optimal or near-optimal moves most of the time, even if they are amateurs.
 
 \begin{enumerate}
 \item For two position in succession $p \rightarrow q$  observed in the game, we will have $f(p) \neq f(q)$.
