@@ -1,8 +1,12 @@
 \section{Training}
 
+% hablar lo que que tenemos y lo que estamos haciendo
+% tenemos el la arquitectura definida, con el feature set y sabemos que da un numerito. ahora hay qeu definir con que datos lo entrenamos y qué es el numerito que buscamos (a partir de los datos)
 
+Given a feature set, the network architecture is completely defined, along with how to encode a position into its inputs. This section will describe two methods to train the networks, each with its own loss function and training dataset.
+[mas?]
 
-\subsection{Dataset}
+\subsection{Source dataset}
 
 Lichess is a free online site to play chess, and thankfully it provides a CC0 database \cite{lichessdb} with all the games ever played on the site. It consists of serveral compressed PGN files\footnote{Portable Game Notation: a textual format to store chess games (moves and metadata)} splitted by month since 2013, that add up to $1.71$TB compressed. The whole database contains over 5.5 billion games, that equates to around 200 billion positions. In practice, that many positions are too much to handle so I'll use only a fraction of them and take only one sample per game to maximize the diversity of positions.
 
@@ -10,13 +14,11 @@ Lichess is a free online site to play chess, and thankfully it provides a CC0 da
 % hablar de esto en otro lado (results? eval?)
 
 A single game can have lots of positions, most of which are shared with millions of other
-games, mostly during the early game. This is a problem of its own: trying to sample positions from a game with a suitable distribution. In this work, I have chosen to only consider positions in games after 20 half-moves.
+games, mostly during the early game. This is a problem of its own: trying to sample positions from a game with a suitable distribution. In this work, I have chosen to only consider positions 20 half-moves into the game.
 
-\subsection{Methods}
+Each training method will generate a new derived dataset based on the positions described above, to later train the network.
 
-
-
-\subsubsection{Stockfish evaluations}
+\subsection{Method 1: Stockfish evaluations}
 
 The main method to train the network will use the latest Stockfish evaluations as target. The objective is to train the network to predict the evaluation of a position as Stockfish would do.
 
@@ -25,7 +27,8 @@ First, we need to generate the training data. It is not known what makes a datas
 I have chosen to generate the training set using evaluations from Stockfish 16.1 at depth 9, as recommended by the authors of nnue-pytorch \cite{nnue-pytorch}. For each game, I uniformly sample a position (after 20 half-moves), run Stockfish and store the centipawn evaluation.
 
 \setcounter{secnumdepth}{4}
-\paragraph{CP-space to WDL-space}
+\subsubsection{CP-space to WDL-space}
+% I guess it is to steer the old network to the new one while making 
 
 The evaluations from Stockfish are in centipawns, which is not the exact number the network has to use as target.
 
@@ -33,7 +36,7 @@ The evaluations from Stockfish are in centipawns, which is not the exact number 
 decir que no usamos el outcome de la partida para el score
 
 
-\subsubsection{PQR triplets}
+\subsection{Method 2: PQR triplets}
 
 This is an additional technique I wanted to try, described in \cite{dlchess:2014}. Remember that we are trying to obtain a function $f$ (the model) to give an evaluation of a position. The method is based in the assumption that players make optimal or near-optimal moves most of the time, even if they are amateurs.
 
