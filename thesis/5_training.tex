@@ -47,10 +47,29 @@ This is an additional technique I wanted to try, described in \cite{dlchess:2014
 
 With infinite compute, $f$ would be the result of running minimax to the end of the game, since minimax always finds optimal moves.
 
-\subsection{Metrics}
-
-asd \cite{nnue:2018}
-
 \subsection{Setup}
 
-arquitectura, rust, pasado de samples
+hablar de Rust y Python
+
+The training process is separated in two steps:
+
+\begin{enumerate}
+\item Generate the training data from the Lichess database (the source dataset), for \textbf{a specific method}.
+\item Train the network using the generated training data and \textbf{a specific feature set}.
+\end{enumerate}
+
+Doing it this way allows to generate the training data once per method and train the network with different feature sets. Since generating the training data is the most time-consuming part of the process and I was iterating lots of different feature sets, it is ideal to have it separated. I could have an intermediate step, to generate the raw network input data from the method and feature set, but it is a waste in terms of practicallity and disk space. \\
+
+The first step....
+
+\begin{figure}[h]
+\centering
+\makebox[\textwidth]{\includegraphics[width=\textwidth]{../assets/training/database_to_train_data.pdf}}
+\caption{Diagram of the first step of the training process}
+\end{figure}
+
+
+During the first step
+
+
+hablar del pasado de samples
