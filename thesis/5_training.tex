@@ -3,12 +3,12 @@
 % hablar lo que que tenemos y lo que estamos haciendo
 % tenemos el la arquitectura definida, con el feature set y sabemos que da un numerito. ahora hay qeu definir con que datos lo entrenamos y qué es el numerito que buscamos (a partir de los datos)
 
-Given a feature set, the network architecture is completely defined, along with how to encode a position into its inputs. This section will describe two methods to train the networks, each with its own loss function and training dataset.
+Given a feature set, the network architecture is completely defined, along with how to encode a position into its inputs. This section will describe the two methods to train the networks, each with its own loss function and training dataset.
 [mas?]
 
 \subsection{Source dataset}
 
-Lichess is a free online site to play chess, and thankfully it provides a CC0 database \cite{lichessdb} with all the games ever played on the site. It consists of serveral compressed PGN files\footnote{Portable Game Notation: a textual format to store chess games (moves and metadata)} splitted by month since 2013, that add up to $1.71$TB compressed. The whole database contains over 5.5 billion games, that equates to around 200 billion positions. In practice, that many positions are too much to handle so I'll use only a fraction of them and take only one sample per game to maximize the diversity of positions.
+Lichess is a free online site to play chess, and thankfully it provides a CC0 database \cite{lichessdb} with all the games ever played on the site. It consists of serveral compressed PGN files\footnote{Portable Game Notation: a textual format to store chess games (moves and metadata)} splitted by month since 2013, that add up to $1.71$TB compressed. The whole database contains over 5.5 billion games, that equates to around 200 billion positions. In practice, that many positions are too much to handle so I'll use only a fraction of them and take only one sample per game to increase the diversity of positions.
 
 % The Lichess database also provides a database of puzzles
 % hablar de esto en otro lado (results? eval?)
@@ -24,7 +24,7 @@ The main method to train the network will use the latest Stockfish evaluations a
 
 First, we need to generate the training data. It is not known what makes a dataset good, but usually you can use the previous version of an engine to evaluate positions to train the next version. Stockfish uses a combination of datasets generated this way and evaluations from Lc0 that are more expensive to compute but have a higher quality, given the type of engine (it uses MCTS with a deep neural network).
 
-I have chosen to generate the training set using evaluations from Stockfish 16.1 at depth 9, as recommended by the authors of nnue-pytorch \cite{nnue-pytorch}. For each game, I uniformly sample a position (after 20 half-moves), run Stockfish and store the centipawn evaluation.
+I have chosen to generate the training set using evaluations from Stockfish version 16.1 at depth 9, as recommended by the authors of nnue-pytorch \cite{nnue-pytorch}. For each game, I uniformly sample a position (after 20 half-moves), run Stockfish and store the centipawn evaluation.
 
 \setcounter{secnumdepth}{4}
 \subsubsection{CP-space to WDL-space}
@@ -34,6 +34,19 @@ The evaluations from Stockfish are in centipawns, which is not the exact number 
 
 
 decir que no usamos el outcome de la partida para el score
+
+\[
+L_\varepsilon(y,f(x,w))=
+\max\{0, |y-f(x,w)|-\varepsilon\}
+\]
+
+
+\subsubsection{Loss function}
+
+\[
+L_\varepsilon(y,f(x,w))=
+\max\{0, |y-f(x,w)|-\varepsilon\}
+\]
 
 
 \subsection{Method 2: PQR triplets}
@@ -47,9 +60,19 @@ This is an additional technique I wanted to try, described in \cite{dlchess:2014
 
 With infinite compute, $f$ would be the result of running minimax to the end of the game, since minimax always finds optimal moves.
 
+
+\subsubsection{Loss function}
+
+
+\[
+L_\varepsilon(y,f(x,w))=
+\max\{0, |y-f(x,w)|-\varepsilon\}
+\]
+
+
 \subsection{Setup}
 
-hablar de Rust y Python
+The project is written in two languages: Rust and Python. The Rust part is used to process PGN files, generate training data and provide final training batches for Python to consume. The Python part defines the Pytorch model, runs the training loop, quantizes the model and evaluates it.
 
 The training process is separated in two steps:
 
@@ -60,12 +83,13 @@ The training process is separated in two steps:
 
 Doing it this way allows to generate the training data once per method and train the network with different feature sets. Since generating the training data is the most time-consuming part of the process and I was iterating lots of different feature sets, it is ideal to have it separated. I could have an intermediate step, to generate the raw network input data from the method and feature set, but it is a waste in terms of practicallity and disk space. \\
 
-The first step....
+As depicted in Figure \ref{fig:database_to_train_data}, the first step takes PGN files from the Lichess database and a training method (in this case, \textcolor{orange}{\textit{eval}}, which stands for Stockfish evaluations) and builds a traning dataset from it. In this case, each sample is a FEN position (in \textcolor{red}{red}) and the centipawn evaluation (in \textcolor{blue}{blue}).
 
 \begin{figure}[h]
 \centering
 \makebox[\textwidth]{\includegraphics[width=\textwidth]{../assets/training/database_to_train_data.pdf}}
 \caption{Diagram of the first step of the training process}
+\label{fig:database_to_train_data}
 \end{figure}
 
 
