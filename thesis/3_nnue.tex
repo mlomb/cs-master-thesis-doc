@@ -1,20 +1,31 @@
 \section{Efficiently updatable neural networks}
 
-NNUE (\reflectbox{NNUE} Efficiently updatable neural network) is a neural network architecture that allows for very fast inferences. It was invented for Shogi by Yu Nasu in 2018.
-% https://www.apply.computer-shogi.org/wcsc28/appeal/the_end_of_genesis_T.N.K.evolution_turbo_type_D/nnue.pdf
+NNUE (\reflectbox{NNUE} Efficiently updatable neural network) is a neural network architecture that allows for very fast subsequent evaluations for minimal input changes. It was invented for Shogi by Yu Nasu in 2018 \cite{nnue:2018}, later adapted to Chess for use in Stockfish in 2019 and may be used in other board games as well. Most of the information described in this chapter can be found in the excellent Stockfish documentation \cite{nnue-pytorch}.
 
-In essence, NNUEs "Neural Network Update Efficient" are just regular neural networks that allow for really fast inferences.
 
 ...
-Most of the information described here can be found in Stockfish's documentation about NNUEs [1].
 
+goes very well with incremental updates
 
 It is important to combine this with aggresive quantization techniques.
+
+
+\begin{figure}[h]
+\centering
+\subfloat[\centering Linear layer]{{\includegraphics[width=5cm]{../assets/nnue/mv.pdf} }}%
+\qquad
+\subfloat[\centering Linear layer with sparse inputs]{{\includegraphics[width=5cm]{../assets/nnue/mvs.pdf} }}%
+\caption{Linear layer operation comparison. Figures from \cite{nnue-pytorch}.}
+\label{fig:linear_comparison}
+\end{figure}
+
+
 
 \subsection{Architecture}
 
 
 arquitectura half, dos capas
+for this thesis...
 
 
 \subsection{Efficient updates}
@@ -24,9 +35,8 @@ pesada al principio y liviana al final, acumular filas de la primera capa en dom
 \subsection{Stockfish quantization scheme}
 
 
-This is text bla bla. \footnote[2]{This is a example footnote}
 
-More testing on section~\ref{sec:section1}.
+This is text bla bla. \footnote[2]{This is a example footnote}
 
 
 
