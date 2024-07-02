@@ -81,9 +81,9 @@ The training process is separated in two steps:
 \item Train the network using the generated training data and \textbf{a specific feature set}.
 \end{enumerate}
 
-Doing it this way allows to generate the training data once per method and train the network with different feature sets. Since generating the training data is the most time-consuming part of the process and I was iterating lots of different feature sets, it is ideal to have it separated. I could have an intermediate step, to generate the raw network input data from the method and feature set, but it is a waste in terms of practicallity and disk space. \\
+Doing it this way allows to generate the training data once per method and train the network with different feature sets. Since generating the training data is the most time-consuming part of the process and I was iterating lots of different feature sets, it is ideal to have it separated. I could have an intermediate step, to generate the raw batch data from the method and feature set, but it is a waste in terms of practicallity and disk space. \\
 
-As depicted in Figure \ref{fig:database_to_train_data}, the first step takes PGN files from the Lichess database and a training method (in this case \textcolor{orange}{\textit{eval}}, which stands for Stockfish evaluations) and builds a traning dataset from it. In this case, each sample is a FEN position (in \textcolor{red}{red}) and the centipawn evaluation (in \textcolor{blue}{blue}).
+As depicted in Figure \ref{fig:database_to_train_data}, the first step takes PGN files from the Lichess database and a training method (in this case \textcolor{orange}{\textit{eval}}, which stands for Stockfish evaluations) and builds a traning dataset from it. In this case, each sample is a FEN position (in \textcolor{red}{red}) and the centipawn evaluation (in \textcolor{blue}{blue}). \\
 
 \begin{figure}[h]
 \centering
@@ -92,12 +92,13 @@ As depicted in Figure \ref{fig:database_to_train_data}, the first step takes PGN
 \label{fig:database_to_train_data}
 \end{figure}
 
-% hay un mecanismo de sincronizacion usando standard input y output.
-% hablar del pasado de samples
 
-Once the first step is done, the training can begin. The training process is started by running a Python script (\texttt{scrips/train.py}) and it requires to define the model architecture (number of neurons and hidden layers), general training parameters (learning rate, batch size, epochs, checkpoints, etc) and the feature set to use, which in turn determines the size of the batches. For example, if PQR is used, the size of a sample is 3 times the size of the feature set, and if it is eval, it is the size of the feature set plus 1 for the centipawn evaluation (target).
+Once the first step is done, the training can begin. The training process is started by running a Python script (\texttt{scrips/train.py}) and it requires to define the model architecture (number of neurons and hidden layers), general training parameters (learning rate, batch size, epochs, checkpoints, etc) and the feature set to use, which in turn determines the size of the batches. For example, if PQR is used, the size of a sample is 3 times the size of the feature set, and if it is eval, it is the size of the feature set plus 1 for the centipawn evaluation (the target).
 
-The training data obtained in the previous step has to be converted to an actual tensor of floats to be consumed by Pytorch. This is done by a Rust subprocess running the subcommand \texttt{samples-service} that read the training data files and generates training batches for the specified feature set in a shared memory buffer. The Python script copies the data from the buffer at the start of each iteration, allowing Rust to generate the next batch (in the CPU) while Pytorch is training the current one (in the GPU). To coordinate the 
+The training data obtained in the previous step has to be converted to an actual tensor of floats to be consumed by Pytorch. This is done by a Rust subprocess running the subcommand \texttt{samples-service} that read the training data files and generates training batches for the specified feature set in a shared memory buffer. The Python script copies the data from the buffer at the start of each iteration, allowing Rust to generate the next batch (in the CPU) while Pytorch is training the current one (in the GPU). To coordinate the memory access between the two processes, a single byte is sent using standard I/O.
+
+Given that the input vector is multiple-hot encoded, the data written by the Rust process are not float values. Instead, they are 64-bit integers acting as a bitset. Before passing the vector to the model, it is expanded into floats. This means 64 floats can be packed into a single 64-bit integer, meaning a \textbf{96.875\%} reduction in memory usage (from 256 to 8 bytes). The speedup obtained by this optimization was substantial. \\
+
+[wandb? evaluation?]
 
 
-The memory from the batch is directly copied to the GPU, 
