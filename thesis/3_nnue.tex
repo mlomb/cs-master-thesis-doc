@@ -1,13 +1,25 @@
 \section{Efficiently updatable neural networks}
 
-NNUE (\reflectbox{NNUE} Efficiently updatable neural network) is a neural network architecture that allows for very fast subsequent evaluations for minimal input changes. It was invented for Shogi by Yu Nasu in 2018 \cite{nnue:2018}, later adapted to Chess for use in Stockfish in 2019 and may be used in other board games as well. Most of the information described in this chapter can be found in the excellent Stockfish documentation \cite{nnue-pytorch}.
+NNUE (\reflectbox{NNUE} Efficiently updatable neural network) is a neural network architecture that allows for very fast subsequent evaluations for minimal input changes. It was invented for Shogi by Yu Nasu in 2018 \cite{nnue:2018}, later adapted to Chess for use in Stockfish in 2019 and may be used in other board games as well. Most of the information described in this chapter can be found in the excellent Stockfish NNUE documentation \cite{nnue-pytorch}. \\
+
+NNUE operates in the following priciples:
+
+\begin{itemize}
+    \item \textbf{Input sparsity}: The network should have a relatively low amount of non-zero inputs, determined by the chosen feature set. The presented feature sets have between 0.1\% and 2\% of non-zero inputs for a typical position. Having a low amount of non-zero inputs places a low upper bound on the time required to evaluate the network in its entirety, caused by some feature sets like \fs{HalfKP} when the king is moved.
+    \item \textbf{Efficient updates}: From one evaluation to the next, the number of inputs changes should be minimal. This allows for the most expensive part of the network to be efficiently updated, instead of recomputed from scratch.
+    \item \textbf{Simple architecture}: The network should be composed of a few and simple operators, that can be efficiently implemented with low-precision arithmetic in integer domain using CPU hardware. [no accelerators, aggresive quantization techniques]
+\end{itemize}
+
+[tradeoff between speed and accuracy]
+
+\subsection{Architecture}
 
 
-...
+arquitectura half, dos capas
+for this thesis...
 
-goes very well with incremental updates
 
-It is important to combine this with aggresive quantization techniques.
+\subsection{Efficient updates}
 
 
 \begin{figure}[h]
@@ -20,23 +32,11 @@ It is important to combine this with aggresive quantization techniques.
 \end{figure}
 
 
-
-\subsection{Architecture}
-
-
-arquitectura half, dos capas
-for this thesis...
-
-
-\subsection{Efficient updates}
+goes very well with incremental updates
 
 pesada al principio y liviana al final, acumular filas de la primera capa en domove, undomove
 
 \subsection{Stockfish quantization scheme}
-
-
-
-This is text bla bla. \footnote[2]{This is a example footnote}
 
 
 
