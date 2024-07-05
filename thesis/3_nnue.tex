@@ -22,8 +22,9 @@ for this thesis...
 
 \subsection{Efficient updates}
 
+asdsad
 
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 \subfloat[\centering Linear layer]{{\includegraphics[width=5cm]{../assets/nnue/mv.pdf} }}%
 \qquad
@@ -34,7 +35,7 @@ for this thesis...
 
 dasdasdasdasd
 
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 \storechessboardstyle{3x3}{tinyboard,maxfield=c3,margin=false,showmover=false,hlabel=true,vlabel=true,pgfstyle=color,color=blue}
 \begin{tikzpicture}[
@@ -76,9 +77,31 @@ goes very well with incremental updates
 
 pesada al principio y liviana al final, acumular filas de la primera capa en domove, undomove
 
-\subsection{Stockfish quantization scheme}
+\subsection{Quantization}
+
+% https://github.com/official-stockfish/nnue-pytorch/blob/master/docs/nnue.md#quantization
+
+The weights and operations in the neural network are in float domain. Floating point operations are too slow to achieve maximum performance, as it sacrifices too much speed. Quantizing the network to integer domain will inevitable introduce some error, but it far outweights the performance gain. In general, the deeper the network the more error is accumulated. Since NNUEs are very shallow by design, the error is negligible.
+
+The objective is to take advantage of modern CPUs that allow doing low-precision integer arithmetic in parallel with 8, 16, 32 or even 64 8-bit integer values at a time. To take advantage of this, we want to use the smallest integer type possible everywhere, to process more values at once. \\
+
+\subsubsection{Stockfish quantization scheme}
+
+In this thesis, I will use the same quantization scheme used in the engine Stockfish \cite{nnue-pytorch}. It uses int8 ($-128..127$) for inputs and weights, and int16 ($-32768..32767$) where int8 is not possible.
+
+\paragraph[short]{Input} Inputs are quantized to 8 bits, so the range of values is $-128..127$. Since the inputs are hot encoded, the float values are 0.0 or 1.0, so the quantized values are either 0 or 127.
+
+\paragraph[short]{Accumulator layer} The purpose of this layer is to accumulate rows of the first layer's weight matrix, which are values in 8 bits. Since the output of this layer will be the input for the next linear layer and it has the ClippedReLU activation, the output will also be in 8 bits.
+But since we are accumulating 8 bits values and
 
 
+and to output a clipped value of 8 bits for the next layer.
+
+we can't accumulate using 8 bits since it would overflow.
+
+\paragraph[short]{Linear layer} asdasdasd
+
+\paragraph[short]{ClippedReLU} asdasdasd
 
 \textbf{Rango de activación}: en el modelo original usamos ClippedReLU, asi que queremos que el rango vaya de 0..1 a 0..127.
 
@@ -97,9 +120,11 @@ s_a s_w \bm{y} &= (s_a \bm{x}) (s_w \bm{w}) + s_a s_w \bm{b} \\
 \vspace{1cm}
 $s_o ((s_a \bm{x}) (s_w \bm{w}) + s_a s_w \bm{b}) = s_a s_w s_o \bm{y}$
 
-
+The implementation was tested comparing with the output of the Pytorch model.
 
 \subsection{Network sparsity}
 
 o combinar con 3.2?
 poner graficos con la sparsity de cada feature set, decir que es muy esparso todo y que se podría mejorar aún más
+
+% Real effect of the factorizer :)
