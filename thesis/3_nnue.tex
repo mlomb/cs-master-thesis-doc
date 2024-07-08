@@ -5,7 +5,7 @@ NNUE (\reflectbox{NNUE} Efficiently updatable neural network) is a neural networ
 NNUE operates in the following priciples:
 
 \begin{itemize}
-    \item \textbf{Input sparsity}: The network should have a relatively low amount of non-zero inputs, determined by the chosen feature set. The presented feature sets have between 0.1\% and 2\% of non-zero inputs for a typical position. Having a low amount of non-zero inputs places a low upper bound on the time required to evaluate the network in its entirety, caused by some feature sets like \fs{HalfKP} when the king is moved.
+    \item \textbf{Input sparsity}: The network should have a relatively low amount of non-zero inputs, determined by the chosen feature set. The presented feature sets have between 0.1\% and 2\% of non-zero inputs for a typical position. Having a low amount of non-zero inputs places a low upper bound on the time required to evaluate the network in its entirety, which can happen using some feature sets like \fs{HalfKP} that triggers a complete refresh when the king is moved.
     \item \textbf{Efficient updates}: From one evaluation to the next, the number of inputs changes should be minimal. This allows for the most expensive part of the network to be efficiently updated, instead of recomputed from scratch.
     \item \textbf{Simple architecture}: The network should be composed of a few and simple operators, that can be efficiently implemented with low-precision arithmetic in integer domain using CPU hardware. [no accelerators, aggresive quantization techniques]
 \end{itemize}
@@ -14,10 +14,16 @@ NNUE operates in the following priciples:
 
 \subsection{Architecture}
 
+For this thesis, I have chosen to use the standard NNUE architecture, which consist of multiple linear (fully connected) layers and clipped ReLU activations. In the literature, there are other architectures that make use of polling layers, sigmoid activations and others, but since this work is about experimenting with feature sets and training methods, I have chosen to stick with the standard architecture.
 
 arquitectura half, dos capas
 
-for this thesis...
+\paragraph[short]{Linear layer}
+
+
+\paragraph[short]{Clipped ReLU}
+
+
 
 
 \subsection{Efficient updates}
@@ -83,13 +89,25 @@ pesada al principio y liviana al final, acumular filas de la primera capa en dom
 
 The weights and operations in the neural network are in float domain. Floating point operations are too slow to achieve maximum performance, as it sacrifices too much speed. Quantizing the network to integer domain will inevitable introduce some error, but it far outweights the performance gain. In general, the deeper the network the more error is accumulated. Since NNUEs are very shallow by design, the error is negligible.
 
-The objective is to take advantage of modern CPUs that allow doing low-precision integer arithmetic in parallel with 8, 16, 32 or even 64 8-bit integer values at a time. To take advantage of this, we want to use the smallest integer type possible everywhere, to process more values at once. \\
+The objective is to take advantage of modern CPUs that allow doing low-precision integer arithmetic in parallel with 8, 16, 32 or even 64 8-bit integer values at a time. To achieve this, the best is to use the smallest integer type possible everywhere, to process more values at once. \\
+
+[...]
 
 \subsubsection{Stockfish quantization scheme}
 
 In this thesis, I will use the same quantization scheme used in the engine Stockfish \cite{nnue-pytorch}. It uses int8 ($-128..127$) for inputs and weights, and int16 ($-32768..32767$) where int8 is not possible.
+To convert the float values to integer, we need to multiply the weights and biases by some constant to translate them to a different range of values. Each layer is different, so I'll go through each one.
 
-\paragraph[short]{Input} Inputs are quantized to 8 bits, so the range of values is $-128..127$. Since the inputs are hot encoded, the float values are 0.0 or 1.0, so the quantized values are either 0 or 127.
+\begin{figure}[H]
+\centering
+\makebox[\textwidth]{\includegraphics[width=\textwidth]{../assets/nnue/quantization.pdf}}
+\caption{Simplified network showcasing all layers with quantization values}
+\label{fig:quantization}
+\end{figure}
+
+\paragraph[short]{Input} Since we are using an accumualtor, there is not a real input to the model.
+
+Inputs are quantized to 8 bits, so the range of values is $-128..127$. Since the inputs are hot encoded, the float values are 0.0 or 1.0, so the quantized values are either 0 or 127.
 
 \paragraph[short]{Accumulator layer} The purpose of this layer is to accumulate rows of the first layer's weight matrix, which are values in 8 bits. Since the output of this layer will be the input for the next linear layer and it has the ClippedReLU activation, the output will also be in 8 bits.
 But since we are accumulating 8 bits values and
@@ -99,9 +117,11 @@ and to output a clipped value of 8 bits for the next layer.
 
 we can't accumulate using 8 bits since it would overflow.
 
-\paragraph[short]{Linear layer} asdasdasd
+COLUMN MAJOR
 
-\paragraph[short]{ClippedReLU} asdasdasd
+\paragraph[short]{Linear layer} no se tiene el mismo problema que en el accumulator layer porque la multiplicacion en SIMD se hace en 32 bits (osea sin hacer overflow), para despues aplicar clippedrelu a eso.
+
+\paragraph[short]{ClippedReLU} Al estar cuantizado, el clipping pasa a ser de 0..1 a 0..127. El tamaño del input puede variar, 32 bits si viene del acumulador o 16 si viene de una capa intermedia, pero el resultado siempre está en 8 bits.
 
 \textbf{Rango de activación}: en el modelo original usamos ClippedReLU, asi que queremos que el rango vaya de 0..1 a 0..127.
 
@@ -120,7 +140,9 @@ s_a s_w \bm{y} &= (s_a \bm{x}) (s_w \bm{w}) + s_a s_w \bm{b} \\
 \vspace{1cm}
 $s_o ((s_a \bm{x}) (s_w \bm{w}) + s_a s_w \bm{b}) = s_a s_w s_o \bm{y}$
 
-The implementation was tested comparing with the output of the Pytorch model.
+. \\
+
+The Stockfish repository provides a AVX2 implementation of the previous operations in C++. They have been ported to Rust for this thesis. The implementation was tested using the Pytorch model as reference (output match).
 
 \subsection{Network sparsity}
 
