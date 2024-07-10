@@ -16,19 +16,16 @@ NNUE operates in the following priciples:
 
 For this thesis, I have chosen to use the standard NNUE architecture, which consist of multiple linear (fully connected) layers and clipped ReLU activations. In the literature, there are other architectures that make use of polling layers, sigmoid activations and others, but since this work is about experimenting with feature sets and training methods, I have chosen to stick with the standard architecture.
 
-arquitectura half, dos capas
+\paragraph[short]{Linear layer} A linear layer is a matrix multiplication followed by a bias addition. It takes \textbf{in\_features} input values and produces \textbf{out\_features} output values. The operation is $\bm{y} = \bm{W} \bm{x} + \bm{b}$, where:
 
-\paragraph[short]{Linear layer}
+\begin{enumerate}
+\item $\bm{x}$ the input column vector of shape \textbf{in\_features}.
+\item $\bm{W}$ the weight matrix of shape (\textbf{out\_features}, \textbf{in\_features}).
+\item $\bm{b}$ the bias column vector of shape \textbf{out\_features}.
+\item $\bm{y}$ the output column vector of shape \textbf{out\_features}.
+\end{enumerate}
 
-
-\paragraph[short]{Clipped ReLU}
-
-
-
-
-\subsection{Efficient updates}
-
-asdsad
+The operation $\bm{W} \bm{x}$ can be simplified to \enquote{if $\bm{x_i}$ is not zero, take the column $\bm{A_i}$, multiply it by $\bm{x_i}$ and add it to the result}. This means that we can skip the processing of columns that have a zero input, as depicted in Figure \ref{fig:linear_comparison}.
 
 \begin{figure}[H]
 \centering
@@ -38,6 +35,21 @@ asdsad
 \caption{Linear layer operation comparison. Figures from \cite{nnue-pytorch}.}
 \label{fig:linear_comparison}
 \end{figure}
+
+In the case of the first layer, the input is a very sparse one-hot encoded vector. This means that very few columns will have to be processed and the multiplication can be skipped altogether, due all inputs being either 0 or 1.
+
+\paragraph[short]{Clipped ReLU} This is a simple activation that clips the output in the range $[0, 1]$. The operation is $\bm{y=\min(\max(x,0),1)}$.
+The output of this activation function is the input for the next layer, and because of the aggresive quantization that will be described later, it is necessary to restrain the values so it does not overflow.
+
+
+arquitectura half, dos capas
+
+
+
+
+\subsection{Efficient updates}
+
+asdsad
 
 dasdasdasdasd
 
