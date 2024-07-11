@@ -12,7 +12,7 @@ NNUE operates in the following priciples:
 
 [tradeoff between speed and accuracy]
 
-\subsection{Architecture}
+\subsection{Layers}
 
 For this thesis, I have chosen to use the standard NNUE architecture, which consist of multiple linear (fully connected) layers and clipped ReLU activations. In the literature, there are other architectures that make use of polling layers, sigmoid activations and others, but since this work is about experimenting with feature sets and training methods, I have chosen to stick with the standard architecture.
 
@@ -39,19 +39,12 @@ The operation $\bm{W} \bm{x}$ can be simplified to \enquote{if $\bm{x_i}$ is not
 In the case of the first layer, the input is a very sparse one-hot encoded vector. This means that very few columns will have to be processed and the multiplication can be skipped altogether, due all inputs being either 0 or 1.
 
 \paragraph[short]{Clipped ReLU} This is a simple activation that clips the output in the range $[0, 1]$. The operation is $\bm{y=\min(\max(x,0),1)}$.
-The output of this activation function is the input for the next layer, and because of the aggresive quantization that will be described later, it is necessary to restrain the values so it does not overflow.
-
-
-arquitectura half, dos capas
-
-
-
+The output of this activation function is the input for the next layer, and because of the aggresive quantization that will be described later, it is necessary to restrain the values so it does not overflow. \\
 
 \subsection{Efficient updates}
 
-asdsad
-
-dasdasdasdasd
+When running a depth-first search algorithm, the state of the position is updated with every time time the algorithm \textit{makes} and \textit{unmakes} moves, usually before and after the recursion.
+NNUEs are designed to work with this kind of search, since every time the algorithm \textit{makes} (or \textit{unmakes}) a move, the changes in the position are minimal (at most two pieces are affected), meaning that the amount of features becoming active or inactive is minimal as well. This is depicted in Figure \ref{fig:updates_tree}.
 
 \begin{figure}[H]
 \centering
@@ -87,11 +80,19 @@ dasdasdasdasd
     \path[<-] (F) edge node[align=center] {} (C);
 
 \end{tikzpicture}
-\caption{Partial tree of feature updates (\textcolor{Red}{removals} and \textcolor{Green}{additions}) for $\fs{SQUARE}_P \times \fs{COLOR}_P$ in a simplified 3x3 pawn-only board.}
+\caption{Partial tree of feature updates (\textcolor{Red}{removals} and \textcolor{Green}{additions}) for $\fs{SQUARE}_P \times \fs{COLOR}_P$ (white's point of view) in a simplified 3x3 pawn-only board.}
 \label{fig:updates_tree}
 \end{figure}
 
-goes very well with incremental updates
+To take advantage of this during search, instead of computing all the features active in a position and then evaluate the network in its entirety, we can \textbf{accumulate} the output of the first linear layer and update it with when the position changes. Linear layers can be computed adding the corresponding columns of the weight matrix into the output, so when a feature becomes active or inactive, we can add or subtract the corresponding column to the output.
+
+
+Recall that the way I defined feature sets, they always encode the position from white's position.
+
+
+\subsection{Network}
+
+arquitectura half, dos capas
 
 pesada al principio y liviana al final, acumular filas de la primera capa en domove, undomove
 
