@@ -43,7 +43,7 @@ The output of this activation function is the input for the next layer, and beca
 
 \subsection{Efficient updates}
 
-When running a depth-first search algorithm, the state of the position is updated with every time time the algorithm \textit{makes} and \textit{unmakes} moves, usually before and after the recursion.
+When running a depth-first search algorithm, the state of the position is updated every time the algorithm \textit{makes} and \textit{unmakes} moves, usually before and after the recursion.
 NNUEs are designed to work with this kind of search, since every time the algorithm \textit{makes} (or \textit{unmakes}) a move, the changes in the position are minimal (at most two pieces are affected), meaning that the amount of features becoming active or inactive is minimal as well. This is depicted in Figure \ref{fig:updates_tree}.
 
 \begin{figure}[H]
@@ -84,11 +84,12 @@ NNUEs are designed to work with this kind of search, since every time the algori
 \label{fig:updates_tree}
 \end{figure}
 
-To take advantage of this during search, instead of computing all the features active in a position and then evaluate the network in its entirety, we can \textbf{accumulate} the output of the first linear layer and update it with when the position changes. Linear layers can be computed adding the corresponding columns of the weight matrix into the output, so when a feature becomes active or inactive, we can add or subtract the corresponding column to the output.
+To take advantage of this during search, instead of computing all the features active in a position and then evaluate the network in its entirety, we can \textbf{accumulate} the output of the first linear layer and update it with when the position changes. Linear layers can be computed adding the corresponding columns of the weight matrix into the output, so when a feature becomes active or inactive, we can add or subtract the corresponding column to the output. When the evaluation is needed, only the following layers (usually small) have to be computed. \\
 
+Recall that the way I defined feature sets, they always encode the position from white's point of view. This means that its not possible to use the same \textbf{accumulator} for both players. So when running the search, we have to keep two accumulators, one for white and one for black, where the black board is flipped and has the colors swapped to match the point of view.
+[mencionar que tambien realmente es porque queremos codificar el que mueve y se va swapeando]
 
-Recall that the way I defined feature sets, they always encode the position from white's position.
-
+[agregar grafico de black → white board → encode, para mostrar como se flipea / swapea. arriba el white → encode; poner los features activos quizas?]
 
 \subsection{Network}
 
@@ -156,10 +157,5 @@ $s_o ((s_a \bm{x}) (s_w \bm{w}) + s_a s_w \bm{b}) = s_a s_w s_o \bm{y}$
 . \\
 
 The Stockfish repository provides a AVX2 implementation of the previous operations in C++. They have been ported to Rust for this thesis. The implementation was tested using the Pytorch model as reference (output match).
-
-\subsection{Network sparsity}
-
-o combinar con 3.2?
-poner graficos con la sparsity de cada feature set, decir que es muy esparso todo y que se podría mejorar aún más
 
 % Real effect of the factorizer :)
