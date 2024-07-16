@@ -147,12 +147,12 @@ The objective is to take advantage of modern CPUs that allow doing low-precision
 In this thesis, I will use the same quantization scheme used in the engine Stockfish \cite{nnue-pytorch}. It uses \int{8} $[-128, 127]$ for inputs and weights, and \int{16} $[-32768, 32767]$ where \int{8} is not possible.
 To convert the float values to integer, we need to multiply the weights and biases by some constant to translate them to a different range of values. Each layer is different, so I'll go through each one.
 
-\begin{figure}[H]
-\centering
-\makebox[\textwidth]{\includegraphics[width=\textwidth]{../assets/nnue/quantization.pdf}}
-\caption{Simplified network showcasing all layers with quantization values}
-\label{fig:quantization}
-\end{figure}
+%\begin{figure}[H]
+%\centering
+%\makebox[\textwidth]{\includegraphics[width=\textwidth]{../%assets/nnue/quantization.pdf}}
+%\caption{Simplified network showcasing all layers with %quantization values}
+%\label{fig:quantization}
+%\end{figure}
 
 \paragraph[short]{ClippedReLU} The output of the activation in float domain is in the range $[0, 1]$ and we want to use \int{8} in the quantized version, so we can clamp in the range [0, 127] instead. The input data type may change depending on the previous layer: if it comes from the accumulator, it will be \int{32}, and if it comes from a linear layer, it will be \int{16}.
 
@@ -192,12 +192,15 @@ s_a \bm{y} &= \frac{(s_W \bm{W}) (s_a \bm{x}) + s_a s_W \bm{b}}{s_W} \\
 \end{aligned}
 \end{equation}
 
-From that equation we can extract that, to obtain the result we want, which is the output of the layer scaled to the activation range ($s_a \bm{y}$), we must multiply the result of the operation by $s_W$ (2). Also that the bias must be scaled by $(s_a s_W)$.
+From that equation we can extract that, to obtain the result we want, which is the output of the layer scaled to the activation range ($s_a \bm{y}$), we must divide the result of the operation by $s_W$ (2). Also that the bias must be scaled by $(s_a s_W)$. \\
 
-The last linear layer is a bit different, since we don't want the output to be scaled to $(s_a)$ but rather
+The last linear layer is a bit different, since we don't want the output to be scaled to $(s_a)$ but rather to the range $[-9600, 9600]$ to be used in the evaluation function. The scaling factor for the output of the last layer is $s_o=9600$.
 
-\vspace{1cm}
-$s_o ((s_a \bm{x}) (s_W \bm{w}) + s_a s_W \bm{b}) = s_a s_W s_o \bm{y}$
+\begin{equation}
+\begin{aligned}
+s_o ((s_a \bm{x}) (s_W \bm{w}) + s_a s_W \bm{b}) = s_a s_W s_o \bm{y}
+\end{aligned}
+\end{equation}
 
 
 
@@ -208,6 +211,8 @@ $s_o ((s_a \bm{x}) (s_W \bm{w}) + s_a s_W \bm{b}) = s_a s_W s_o \bm{y}$
 no se tiene el mismo problema que en el accumulator layer porque la multiplicacion en SIMD se hace en 32 bits (osea sin hacer overflow), para despues aplicar clippedrelu a eso.
 
 . \\
+
+\subsection{Implementation}
 
 The Stockfish repository provides a AVX2 implementation of the previous operations in C++. They have been ported to Rust for this thesis. The implementation was tested using the Pytorch model as reference (output match).
 
