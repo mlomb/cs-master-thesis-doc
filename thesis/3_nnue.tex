@@ -194,7 +194,13 @@ s_a \bm{y} &= \frac{(s_W \bm{W}) (s_a \bm{x}) + s_a s_W \bm{b}}{s_W} \\
 
 From that equation we can extract that, to obtain the result we want, which is the output of the layer scaled to the activation range ($s_a \bm{y}$), we must divide the result of the operation by $s_W$ (2). Also that the bias must be scaled by $(s_a s_W)$. \\
 
-The last linear layer is a bit different, since we don't want the output to be scaled to $(s_a)$ but rather to the range $[-9600, 9600]$ to be used in the evaluation function. The scaling factor for the output of the last layer is $s_o=9600$.
+The last linear layer is a bit different since there is no activation afterwards, so we don't want the output to be scaled to the activation range $(s_a)$. To be consistent with the Stockfish engine, the output values should be in the range $[-10000,10000]$.
+
+
+
+% The scaling factor for the output of the last layer is $s_o=9600$.
+
+$s_o=9600$
 
 \begin{equation}
 \begin{aligned}
