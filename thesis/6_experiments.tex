@@ -1,12 +1,63 @@
-\section{Experiments}
+\section{Experiments and results}
 
-\begin{enumerate}
-\item Diagonales?
-\item Hacer un subset de \fs{PP} (589824).
+
+Most of the experiments will use the eval training method.
+
+Dimensions:
+
+\begin{itemize}
+\item Feature set
+\item L1-L4 sizes
+\item Training method
+\end{itemize}
+
+Metrics:
+
+\begin{itemize}
+\item Puzzle accuracy
+\item Relative ELO performance
+\item Inference performance (infs/s)
+\end{itemize}
+
+\subsection{Baselines}
+
+P and KP
+Network size?
+Inference time?
+
+\subsection{Axis relevance}
+
+H, V, D1, D2
+Compact
+
+Mirar si sacando informacion en un eje mejora/empeora. La idea es ver si la informacion vertical es mas importante que la horizontal. Ver si incluir diagonales ayuda.
+
+\subsection{Symmetry}
+
+Medir el impacto de agregar simetría al fs. Red mas chica, inf mas rapida, mejor perf?
+
+\fs{Half-Relative(H|V|HV)King-Piece}?
+
+\subsection{Piece movement}
+
+Intentar capturar los patrones que se ven en P, asi se pueden reconocer patrones mas complejos.
+
+\fs{Piece-Move}
+
+Bad perf.
+
+\subsection{Statistical features}
+
+Top P
+
+Hacer un subset de \fs{PP} (589824).
+
 \begin{itemize}
 \item Destilar?
 \item Probar si es lo mismo quedarse con el TOP K de las mas comunes o con las que dice el performance.
 \item Catboost? PCA?
 \end{itemize}
-\item 
-\end{enumerate}
+
+\subsection{Human behavior}
+
+PQR human behaviour. Medir estilo Maia. comparar? no va a ser tan bueno.
