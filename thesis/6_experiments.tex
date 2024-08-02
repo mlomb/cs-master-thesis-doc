@@ -1,25 +1,34 @@
 \section{Experiments and results}
 
-
-Most of the experiments will use the eval training method.
-
-Dimensions:
+With the tools and methodology defined in the previous sections, we can now proceed to the experiments. Each run is determined by its configuration, that can be divided into the following categories:
 
 \begin{itemize}
-\item Feature set
-\item L1-L4 sizes
-\item Training method
+\item \textbf{Feature set} Determinates the encoding of the position. It conditions which patterns the network can learn.
+
+\item \textbf{Network architecture} L1-L4 sizes
+
+\item \textbf{Dataset} blabla
+
+\item \textbf{Training method} Can choose to use either Stockfish evaluations or PQR triplets. This determinates the format of the samples as well as the loss function. Most experiments will train using the Stockfish evaluations.
+
+\item \textbf{Training hyperparameters}: batch size, learning rate
 \end{itemize}
 
-Metrics:
+To assess the performance of a run or to compare a set of runs, the following indicators can be used:
 
 \begin{itemize}
-\item Puzzle accuracy
-\item Relative ELO performance
-\item Inference performance (infs/s)
+\item \textbf{Puzzle accuracy}
+\item \textbf{Relative ELO performance}
+\item \textbf{Inference performance (infs/s)}
+\item \textbf{Training time (not important, one time)}
 \end{itemize}
+
+
+The experiments are all run in the same hardware: Intel 14900K CPU for dataset generation, batching and evaluation, and a single NVIDIA RTX 4090 24GB GPU for training.
 
 \subsection{Baselines}
+
+The objective is to find good baselines to compare the experiments that will follow.
 
 P and KP
 Network size?
@@ -47,6 +56,10 @@ Intentar capturar los patrones que se ven en P, asi se pueden reconocer patrones
 Bad perf.
 
 \subsection{Statistical features}
+
+Define \fs{k-Piece-Piece}
+
+\fs{King-Piece} is a subset of \fs{Piece-Piece}.
 
 Top P
 
