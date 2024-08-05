@@ -3,24 +3,26 @@
 With the tools and methodology defined in the previous sections, we can now proceed to the experiments. Each run is determined by its configuration, that can be divided into the following categories:
 
 \begin{itemize}
-\item \textbf{Feature set} Determinates the encoding of the position. It conditions which patterns the network can learn.
+\item \textbf{Feature set}: Determinates the encoding of the position, and thus the number of inputs of the model. It conditions which patterns the network can learn.
 
-\item \textbf{Network architecture} L1-L4 sizes
+\item \textbf{Network architecture}: The size of each layer in the network. The first layer is the feature transformer, and its size roughly determinates how many patterns the network can learn. The following two layers should be tiny due the NNUE architecture.
 
-\item \textbf{Dataset} blabla
+\item \textbf{Dataset}: blabla
 
-\item \textbf{Training method} Can choose to use either Stockfish evaluations or PQR triplets. This determinates the format of the samples as well as the loss function. Most experiments will train using the Stockfish evaluations.
+\item \textbf{Training method}: Can choose to use either Stockfish evaluations or PQR triplets. This determinates the format of the samples as well as the loss function. Most experiments will train using Stockfish evaluations.
 
-\item \textbf{Training hyperparameters}: batch size, learning rate
+\item \textbf{Training hyperparameters}: The usual machine learning hyperparameters for training, such as batch size, learning rate and scheduler.
 \end{itemize}
 
 To assess the performance of a run or to compare a set of runs, the following indicators can be used:
 
+[hablar de que hay runs particulares que miden otras cosas pero estas son generales]
+
 \begin{itemize}
-\item \textbf{Puzzle accuracy}
-\item \textbf{Relative ELO performance}
-\item \textbf{Inference performance (infs/s)}
-\item \textbf{Training time (not important, one time)}
+\item \textbf{Puzzle accuracy}:
+\item \textbf{Relative ELO performance}:
+\item \textbf{Inference performance (infs/s)}:
+\item \textbf{Training time (not important, one time)}:
 \end{itemize}
 
 
@@ -33,6 +35,8 @@ The objective is to find good baselines to compare the experiments that will fol
 P and KP
 Network size?
 Inference time?
+
+a partir de cierto punto al loss le cuesta bajar pero las otras metricas siguen mejorando, asi que sigo entrenando
 
 \subsection{Axis relevance}
 
