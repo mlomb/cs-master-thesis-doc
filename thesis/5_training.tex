@@ -24,7 +24,7 @@ The main method to train the network will use the latest Stockfish evaluations a
 
 First, we need to generate the training data. It is not known what makes a dataset good, but usually you can use the previous version of an engine to evaluate positions to train the next version. Stockfish uses a combination of datasets generated this way and evaluations from Lc0 that are more expensive to compute but have a higher quality, given the type of engine (it uses MCTS with a deep neural network).
 
-I have chosen to generate the training set using evaluations from Stockfish version 16.1 at depth 9, as recommended by the authors of nnue-pytorch \cite{nnue-pytorch}. For each game, I uniformly sample a position (after 20 half-moves), run Stockfish and store the centipawn evaluation.
+I have chosen to generate the training set using evaluations from Stockfish version 16.1 at depth 10, as recommended by the authors of nnue-pytorch \cite{nnue-pytorch}. For each game, I uniformly sample a position (after 20 half-moves), run Stockfish and store the centipawn evaluation.
 
 \setcounter{secnumdepth}{4}
 \subsubsection{CP-space to WDL-space}
