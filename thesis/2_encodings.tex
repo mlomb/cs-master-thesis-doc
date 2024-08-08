@@ -51,7 +51,7 @@
     \end{tabular}
 }
 
-\newcommand{\fs}[1]{\textsc{#1}}
+\newcommand{\featureset}[1]{\textsc{#1}}
 
 
 \section{Feature set (board encoding)}
@@ -66,9 +66,9 @@ Let's consider some basic sets of features. The following sets encode positional
 \begin{tabular}{cc}
 
 $\begin{aligned}[t]
-\fs{File} &= \{a, b, ..., h\} \\
-\fs{Rank} &= \{1, 2, ..., 8\} \\
-\fs{Square} &= \{a1, a2, ..., h8\}
+\featureset{File} &= \{a, b, ..., h\} \\
+\featureset{Rank} &= \{1, 2, ..., 8\} \\
+\featureset{Square} &= \{a1, a2, ..., h8\}
 \end{aligned}$
 
 &
@@ -91,18 +91,18 @@ And the following encode information about the pieces:
 
 \begin{center}
 $\begin{aligned}[t]
-\fs{Role} &= \text{\{
+\featureset{Role} &= \text{\{
     \sympawn\ Pawn,
     \symknight\ Knight,
     \symbishop\ Bishop,
     \symrook\ Rook,
     \symqueen\ Queen,
     \symking\ King\}}\textsuperscript{1} \\
-\fs{Color} &= \text{\{\white\ White, \black\ Black\}}
+\featureset{Color} &= \text{\{\white\ White, \black\ Black\}}
 \end{aligned}$
 \end{center}
 
-Since each set has to capture some information from the position, it must be stated explicitly. For example, consider the feature set $\fs{File}_{P} \times \fs{Color}_{P}$ where $P$ is \textit{any} piece in the board, meaning that the tuples $(file, color)$ that will be active are the ones where there is at least one piece in $file$ with the color $color$ (disregarding any other kind of information, like the piece's role). Another possible feature set could be $\fs{File}_{P} \times \fs{Role}_{P}$, with a similar interpretation. An illustration of the active features of these two feature sets for the same board is shown in Figure \ref{fig:active_features}.
+Since each set has to capture some information from the position, it must be stated explicitly. For example, consider the feature set $\featureset{File}_{P} \times \featureset{Color}_{P}$ where $P$ is \textit{any} piece in the board, meaning that the tuples $(file, color)$ that will be active are the ones where there is at least one piece in $file$ with the color $color$ (disregarding any other kind of information, like the piece's role). Another possible feature set could be $\featureset{File}_{P} \times \featureset{Role}_{P}$, with a similar interpretation. An illustration of the active features of these two feature sets for the same board is shown in Figure \ref{fig:active_features}.
 
 \begin{figure}[h]
 \centering
@@ -124,7 +124,7 @@ Since each set has to capture some information from the position, it must be sta
 \cline{2-3}
 \multicolumn{1}{c|}{} & \multicolumn{2}{c|}{\centering Feature set} \\
 \cline{2-3}
-\multicolumn{1}{c|}{} & \centering $\fs{File}_{P} \times \fs{Color}_{P}$ & \centering $\fs{File}_{P} \times \fs{Role}_{P}$ & \\
+\multicolumn{1}{c|}{} & \centering $\featureset{File}_{P} \times \featureset{Color}_{P}$ & \centering $\featureset{File}_{P} \times \featureset{Role}_{P}$ & \\
 \cline{1-3}
 Active features &
 (a, \white), (a, \black), (c, \black), (c, \white), (d, \white), (h, \black) &
@@ -134,7 +134,7 @@ Active features &
 
 \end{tabular}
 
-\caption{Active features of the feature sets $\fs{File}_{P} \times \fs{Color}_{P}$ and $\fs{File}_{P} \times \fs{Role}_{P}$ for the same board.}
+\caption{Active features of the feature sets $\featureset{File}_{P} \times \featureset{Color}_{P}$ and $\featureset{File}_{P} \times \featureset{Role}_{P}$ for the same board.}
 \label{fig:active_features}
 \end{figure}
 
@@ -146,8 +146,8 @@ Active features &
 % we want the network to find patterns between the two sets
 % some feature sets can be built merging the features of two or more sets
 
-The sum of two feature sets $\fs{A}$ and $\fs{B}$, denoted by $\fs{A} \oplus \fs{B}$, is a new feature set comprised of the tuples of both sets $\fs{A}$ and $\fs{B}$. These tuples do not interfere with each other, even if they have the same basic elements (e.g. h, 8, \symrook, \black), they \textbf{must} have different interpretations.
-For example, given the feature sets $\fs{File}_{W}$ where $W$ is any white piece in the board and $\fs{File}_{B}$ where $B$ is any black piece in the board, the feature set $\fs{File}_{W} \oplus \fs{File}_{B}$ will have the basic elements $\{a, b, ..., h\}$ for both white and black pieces, but each with a different interpretation.
+The sum of two feature sets $\featureset{A}$ and $\featureset{B}$, denoted by $\featureset{A} \oplus \featureset{B}$, is a new feature set comprised of the tuples of both sets $\featureset{A}$ and $\featureset{B}$. These tuples do not interfere with each other, even if they have the same basic elements (e.g. h, 8, \symrook, \black), they \textbf{must} have different interpretations.
+For example, given the feature sets $\featureset{File}_{W}$ where $W$ is any white piece in the board and $\featureset{File}_{B}$ where $B$ is any black piece in the board, the feature set $\featureset{File}_{W} \oplus \featureset{File}_{B}$ will have the basic elements $\{a, b, ..., h\}$ for both white and black pieces, but each with a different interpretation.
 
 The sum operator is useful when we want to let the network find patterns combining information between two sets of features.
 
@@ -169,44 +169,44 @@ For every position, role and color each piece could be, there is a feature. Ther
 
 In this section, we will define the feature sets that will be used in the experiments. We will start with some of the most basic yet reasonable feature sets, then move to feature sets that are used by engines or were used in the past, and finally some that have not been tried, to the best of our knowledge.
 
-\subsubsection{\mdseries\fs{Piece}}
+\subsubsection{\mdseries\featureset{Piece}}
 
 This feature set is the most natural encoding for a chess position. There is a one-to-one mapping between pieces in the board and features:
 
 \begin{center}
-    $\fs{Piece} = \fs{Square}_{P} \times \fs{Role}_{P} \times \fs{Color}_{P}$ \\
+    $\featureset{Piece} = \featureset{Square}_{P} \times \featureset{Role}_{P} \times \featureset{Color}_{P}$ \\
     for every $P$ piece in the board \\
     ~\\
     $64*6*2=768$ features
 \end{center}
 
-\subsubsection{\mdseries\fs{Compact}}
+\subsubsection{\mdseries\featureset{Compact}}
 
 This is a very compact feature set that still retains all the information of the board, meaning everything can be reconstructed by the neural network:
 
 \begin{center}
-    $\fs{Compact} = (\fs{File}_{P} \times \fs{Role}_{P} \times \fs{Color}_{P}) \oplus (\fs{Rank}_{P} \times \fs{Role}_{P} \times \fs{Color}_{P})$ \\
+    $\featureset{Compact} = (\featureset{File}_{P} \times \featureset{Role}_{P} \times \featureset{Color}_{P}) \oplus (\featureset{Rank}_{P} \times \featureset{Role}_{P} \times \featureset{Color}_{P})$ \\
     for every $P$ piece in the board \\
     ~\\
     $2*(8*6*2)=192$ features
 \end{center}
 
-\subsubsection{\mdseries\fs{King-Piece}}
+\subsubsection{\mdseries\featureset{King-Piece}}
 
 \begin{center}
-    $\fs{King-Piece} = \fs{Square}_{K} \times \fs{Piece}_{P}$ \\
+    $\featureset{King-Piece} = \featureset{Square}_{K} \times \featureset{Piece}_{P}$ \\
     where $K$ is the king to move and $P$ is every \textit{non-king} piece in the board \\
     ~\\
     $64*(64*5*2)=40960$ features
 \end{center}
 
-There are variations to this feature set, such as \fs{HalfKAv2} or notably \fs{HalfKAv2\_hm} that is currently the latest feature set used by Stockfish 16.1. I will not consider them in this work.
+There are variations to this feature set, such as \featureset{HalfKAv2} or notably \featureset{HalfKAv2\_hm} that is currently the latest feature set used by Stockfish 16.1. I will not consider them in this work.
 
 known as "KP" in the literature
 
 if we skip the king, you may be thinking where does it get the information about the other king's side, .... blabla arquitectura Half
 
-\subsubsection{\mdseries\fs{Piece-Move}}
+\subsubsection{\mdseries\featureset{Piece-Move}}
 
 This feature set comes up from seeing the patterns recognized by the Piece feature set in section 5.5.5. When we observe... attack patterns...:
 P..
@@ -216,7 +216,7 @@ from y to?
 With that defined...
 
 \begin{center}
-    $\fs{Piece-Move} = \fs{Piece} \oplus (\fs{Square}_{P} \times \fs{Square}_{move(P)})$ \\
+    $\featureset{Piece-Move} = \featureset{Piece} \oplus (\featureset{Square}_{P} \times \featureset{Square}_{move(P)})$ \\
     for every $P$ piece in the board \\
     ~\\
     $768 + 64*64=4864$ features
@@ -225,7 +225,7 @@ With that defined...
 Not friendly to efficiently update the network. It is almost always better to do a full refresh on eval.
 
 
-\subsubsection{\mdseries\fs{Half-Relative(H$|$V$|$HV)King-Piece}}
+\subsubsection{\mdseries\featureset{Half-Relative(H$|$V$|$HV)King-Piece}}
 
 
 $\langle side\_king\_file - piece\_file + 7, side\_king\_rank - piece\_rank + 7, piece\_type, piece\_color \rangle$ excl. king
@@ -235,7 +235,7 @@ $15*15*5*2=2250$ features (for HV)
 only H or only V have $8*15*5*2=1200$ features
 
 
-\subsubsection{\mdseries\fs{Half-Top(PP)}}
+\subsubsection{\mdseries\featureset{Half-Top(PP)}}
 
 Statistical feature set, blabla, wasted features blabla
 
@@ -250,17 +250,17 @@ Statistical feature set, blabla, wasted features blabla
 \hline
 Feature set & Tuple & \# features \\
 \hline
-\fs{Piece} & $\fs{Square}_{P} \times \fs{Role}_{P} \times \fs{Color}_{P}$ & 768  \\
+\featureset{Piece} & $\featureset{Square}_{P} \times \featureset{Role}_{P} \times \featureset{Color}_{P}$ & 768  \\
 \hline
-\fs{Compact} & \makecell{$(\fs{File}_{P} \times \fs{Role}_{P} \times \fs{Color}_{P}) \oplus$ \\ $(\fs{Rank}_{P} \times \fs{Role}_{P} \times \fs{Color}_{P})$} & 192  \\
+\featureset{Compact} & \makecell{$(\featureset{File}_{P} \times \featureset{Role}_{P} \times \featureset{Color}_{P}) \oplus$ \\ $(\featureset{Rank}_{P} \times \featureset{Role}_{P} \times \featureset{Color}_{P})$} & 192  \\
 \hline
-\fs{King-Piece} & $\fs{Square}_{K} \times \fs{Piece}_{P}$ & 40,960 \\
+\featureset{King-Piece} & $\featureset{Square}_{K} \times \featureset{Piece}_{P}$ & 40,960 \\
 \hline
-\fs{Piece+Moves} & asd & 4864 \\
+\featureset{Piece+Moves} & asd & 4864 \\
 \hline
-\fs{RelativeHV-King-Piece} & asd & 2250  \\
+\featureset{RelativeHV-King-Piece} & asd & 2250  \\
 \hline
-\fs{TopPP} & asd & 64  \\
+\featureset{TopPP} & asd & 64  \\
 \hline
 \end{tabular}
 \caption{Comparison of feature sets}

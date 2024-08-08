@@ -42,6 +42,8 @@ hacer side by side de Piece y KingPiece:
 
 matriz con dos ejes: batch size y L1 size. con colores?
 
+\input{dynamic/baseline_tables.tex}
+
 \subsection{Axis relevance}
 
 H, V, D1, D2
@@ -53,25 +55,25 @@ Mirar si sacando informacion en un eje mejora/empeora. La idea es ver si la info
 
 Medir el impacto de agregar simetría al fs. Red mas chica, inf mas rapida, mejor perf?
 
-\fs{Half-Relative(H|V|HV)King-Piece}?
+\featureset{Half-Relative(H|V|HV)King-Piece}?
 
 \subsection{Piece movement}
 
 Intentar capturar los patrones que se ven en P, asi se pueden reconocer patrones mas complejos.
 
-\fs{Piece-Move}
+\featureset{Piece-Move}
 
 Bad perf.
 
 \subsection{Statistical features}
 
-Define \fs{k-Piece-Piece}
+Define \featureset{k-Piece-Piece}
 
-\fs{King-Piece} is a subset of \fs{Piece-Piece}.
+\featureset{King-Piece} is a subset of \featureset{Piece-Piece}.
 
 Top P
 
-Hacer un subset de \fs{PP} (589824).
+Hacer un subset de \featureset{PP} (589824).
 
 \begin{itemize}
 \item Destilar?
