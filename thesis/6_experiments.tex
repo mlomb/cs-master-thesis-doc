@@ -53,17 +53,18 @@ matriz con dos ejes: batch size y L1 size. con colores?
 \subsection{Axis encoding} % relevance
 
 \newcommand{\axisarrows}[1]{\parbox{0.7cm}{\includegraphics[height=0.7cm]{../assets/arrows/#1.pdf}}}
+\newcommand{\rolecolor}{$\times$ $\featureset{Role}_{P} \times \featureset{Color}_{P}$}
 
-\begin{tabular}{@{} cccccccc @{}} \toprule
-Depiction & Feature set \\
+\begin{tabular}{@{} ccccc @{}} \toprule
+Depiction & Feature set & \multicolumn{2}{c}{\makecell{Definition\\for every piece $P$ in the board}} & \# of features \\
+\toprule
+\axisarrows{HV} & \featureset{HV (Piece)} & $\featureset{File}_{P} \times \featureset{Rank}_{P}$ & \rolecolor & 768 \\
 \midrule
-\axisarrows{HV} & \featureset{Piece}  \\
+\axisarrows{H} $\oplus$ \axisarrows{V} & \featureset{H+V} (\featureset{Compact}) & $(\featureset{File}_{P} \oplus \featureset{Rank}_{P})$ & \rolecolor & 192 \\
 \midrule
-\axisarrows{H} $\oplus$ \axisarrows{V} & \featureset{Piece}  \\
+\axisarrows{D1D2} & \featureset{D1D2} &  $\featureset{Diag1}_{P} \times \featureset{Diag2}_{P}$ & \rolecolor & 2700 \\
 \midrule
-\axisarrows{D1D2} & \featureset{Piece}  \\
-\midrule
-\axisarrows{D1} $\oplus$ \axisarrows{D2} & \featureset{Piece}  \\
+\axisarrows{D1} $\oplus$ \axisarrows{D2} & \featureset{D1+D2} & $(\featureset{Diag1}_{P} \oplus \featureset{Diag2}_{P})$ & \rolecolor & 360 \\
 \midrule
 \axisarrows{HV} $\oplus$ \axisarrows{D1D2} & \featureset{Piece}  \\
 \midrule
