@@ -66,16 +66,19 @@ Depiction & Feature set & \multicolumn{2}{c}{\makecell{Definition\\for every pie
 \midrule
 \axisarrows{D1} $\oplus$ \axisarrows{D2} & \featureset{D1+D2} & $(\featureset{Diag1}_{P} \oplus \featureset{Diag2}_{P})$ & \rolecolor & 360 \\
 \midrule
-\axisarrows{HV} $\oplus$ \axisarrows{D1D2} & \featureset{Piece}  \\
+\axisarrows{HV} $\oplus$ \axisarrows{D1D2} & \featureset{HV+D1D2} & \makecell{$(\featureset{File}_{P} \times \featureset{Rank}_{P}$ $\oplus$ \\ $\featureset{Diag1}_{P} \times \featureset{Diag2}_{P})$} & \rolecolor & 3468 \\
 \midrule
-\axisarrows{H} $\oplus$ \axisarrows{V} $\oplus$ \\ \axisarrows{D1} $\oplus$ \axisarrows{D2} & \featureset{Piece}  \\
+\makecell{\axisarrows{H} $\oplus$ \axisarrows{V} $\oplus$ \\ \axisarrows{D1} $\oplus$ \axisarrows{D2}} & \featureset{H+V+D1+D2} & \makecell{$(\featureset{File}_{P} \oplus \featureset{Rank}_{P}$ $\oplus$ \\ $\featureset{Diag1}_{P} \oplus \featureset{Diag2}_{P})$} & \rolecolor & 552 \\
 \midrule
-\axisarrows{HD1} $\oplus$ \axisarrows{VD2} & \featureset{Piece}  \\
+\axisarrows{HD1} $\oplus$ \axisarrows{VD2} & $\featureset{HD1} \oplus \featureset{VD2}$ & \makecell{$(\featureset{File}_{P} \times \featureset{Diag1}_{P}$ $\oplus$ \\ $\featureset{Rank}_{P} \times \featureset{Diag2}_{P})$} & \rolecolor & 2880 \\
 \midrule
-\axisarrows{VD1} $\oplus$ \axisarrows{HD2} & \featureset{Piece}  \\
-\bottomrule \end{tabular}
+\axisarrows{VD1} $\oplus$ \axisarrows{HD2} & $\featureset{VD1} \oplus \featureset{HD2}$ & \makecell{$(\featureset{Rank}_{P} \times \featureset{Diag1}_{P}$ $\oplus$ \\ $\featureset{File}_{P} \times \featureset{Diag2}_{P})$} & \rolecolor & 2880 \\
+\bottomrule
+\end{tabular}
 
+\vspace{2cm}
 
+z
 Mirar si sacando informacion en un eje mejora/empeora. La idea es ver si la informacion vertical es mas importante que la horizontal. Ver si incluir diagonales ayuda.
 
 \subsection{Symmetry}
