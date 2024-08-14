@@ -50,10 +50,30 @@ matriz con dos ejes: batch size y L1 size. con colores?
 \end{figure}
 
 
-\subsection{Axis relevance}
+\subsection{Axis encoding} % relevance
 
-H, V, D1, D2
-Compact
+\newcommand{\axisarrows}[1]{\parbox{0.7cm}{\includegraphics[height=0.7cm]{../assets/arrows/#1.pdf}}}
+
+\begin{tabular}{@{} cccccccc @{}} \toprule
+Depiction & Feature set \\
+\midrule
+\axisarrows{HV} & \featureset{Piece}  \\
+\midrule
+\axisarrows{H} $\oplus$ \axisarrows{V} & \featureset{Piece}  \\
+\midrule
+\axisarrows{D1D2} & \featureset{Piece}  \\
+\midrule
+\axisarrows{D1} $\oplus$ \axisarrows{D2} & \featureset{Piece}  \\
+\midrule
+\axisarrows{HV} $\oplus$ \axisarrows{D1D2} & \featureset{Piece}  \\
+\midrule
+\axisarrows{H} $\oplus$ \axisarrows{V} $\oplus$ \\ \axisarrows{D1} $\oplus$ \axisarrows{D2} & \featureset{Piece}  \\
+\midrule
+\axisarrows{HD1} $\oplus$ \axisarrows{VD2} & \featureset{Piece}  \\
+\midrule
+\axisarrows{VD1} $\oplus$ \axisarrows{HD2} & \featureset{Piece}  \\
+\bottomrule \end{tabular}
+
 
 Mirar si sacando informacion en un eje mejora/empeora. La idea es ver si la informacion vertical es mas importante que la horizontal. Ver si incluir diagonales ayuda.
 
