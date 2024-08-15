@@ -26,6 +26,8 @@
 \usepackage{float}
 \usepackage{tabularx,booktabs}
 \usepackage{siunitx}
+\usepackage{wrapfig}
+\usepackage{mwe}
 
 % chess typesetting
 \usepackage{skak}
@@ -35,6 +37,9 @@
 \usepackage{csquotes}
 \usepackage[backend=biber]{biblatex}
 \addbibresource{../refs.bib}
+
+\DeclareCaptionFormat{custom}{\textbf{#1#2} #3}
+\captionsetup{format=custom,labelsep=period}
 
 \integrante{Martín Emiliano Lombardo}{}{mlombardo9@gmail.com}
 \titulo{Análisis de feature sets en redes NNUE para motores de ajedrez}
