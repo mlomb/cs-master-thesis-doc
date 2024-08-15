@@ -25,9 +25,9 @@ def gen_appendix_table_runs(df):
 
     table = """
 \\begin{tabular}{@{} cccccccc @{}} \\toprule
-\\multirow{2}{*}{Feature set} & \\multicolumn{2}{c}{Train hyperparams} & \\multicolumn{3}{c@{}}{Network arch} & \\multirow{2}{*}{\\makecell{Train loss\\\\\\textit{min}}} & \\multirow{2}{*}{\\makecell{Runtime\\\\\\textit{hh:mm:ss}}} \\\\
+\\multirow{2}{*}{\\bf Feature set} & \\multicolumn{2}{c}{\\bf Train hyperparams} & \\multicolumn{3}{c@{}}{\\bf Network arch} & \\multirow{2}{*}{\\makecell{\\bf Train loss\\\\\\textit{min}}} & \\multirow{2}{*}{\\makecell{\\bf Runtime\\\\\\textit{hh:mm:ss}}} \\\\
 \\cmidrule(lr){2-3} \\cmidrule(l){4-6}
-& Batch size & Learning rate & L1 (FT) & L2 & L3 \\\\
+& \\bf Batch size & \\bf Learning rate & \\bf L1 (FT) & \\bf L2 & \\bf L3 \\\\
 \\midrule
     """
     # table += "Feature set & Batch size & L1 size & Train loss (min) & Runtime \\\\ \\midrule\n"
