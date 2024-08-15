@@ -50,9 +50,28 @@ matriz con dos ejes: batch size y L1 size. con colores?
 \end{figure}
 
 
+\newpage
 \subsection{Axis encoding} % relevance
 
 \newcommand{\axisarrows}[1]{\parbox{0.7cm}{\includegraphics[height=0.7cm]{../assets/arrows/#1.pdf}}}
+
+In this first experiment, I will explore different positional encodings for the pieces on the board, combining the available axes. The canonical \featureset{Piece} feature set encodes each piece's position using the square it is located. Note that this is the same thing as encoding the position for a piece $P$ as $\featureset{File}_{P} \times \featureset{Rank}_{P}$. So the position of each piece is determined using the vertical (across ranks) and horizonal (across files) axes. There are los of ways to index the board, but I will stick to the most common axes:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{cccc}
+\axisarrows{H} & \axisarrows{V} & \axisarrows{D1} & \axisarrows{D2} \\
+Horizontal & Vertical & Diagonal 1 & Diagonal 2 \\
+(across files) & (across ranks) &  & 
+\end{tabular}
+\end{table}
+
+a proposito se parecen mucho a los movimientos de las piezas...
+
+
+\begin{table}[H]
+\centering
+
 \newcommand{\rolecolor}{$\times$ $\featureset{Role}_{P} \times \featureset{Color}_{P}$}
 
 \begin{tabular}{@{} ccccc @{}} \toprule
@@ -75,6 +94,10 @@ Depiction & Feature set & \multicolumn{2}{c}{\makecell{Definition\\for every pie
 \axisarrows{VD1} $\oplus$ \axisarrows{HD2} & $\featureset{VD1} \oplus \featureset{HD2}$ & \makecell{$(\featureset{Rank}_{P} \times \featureset{Diag1}_{P}$ $\oplus$ \\ $\featureset{File}_{P} \times \featureset{Diag2}_{P})$} & \rolecolor & 2880 \\
 \bottomrule
 \end{tabular}
+
+\caption{Axis encoding feature sets}
+\label{tab:axis_encoding}
+\end{table}
 
 \vspace{2cm}
 
