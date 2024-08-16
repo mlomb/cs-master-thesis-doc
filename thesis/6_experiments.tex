@@ -91,9 +91,9 @@ These axes coincide with the movement pattern of the pieces, which make them a g
 \label{tab:axis_encoding}
 \centering
 
-\newcommand{\rolecolor}{$\times$ $\featureset{Role}_{P} \times \featureset{Color}_{P}$}
+\newcommand{\rolecolor}{$\times$ $\featureset{R}_{P} \times \featureset{C}_{P}$}
 
-\begin{tabular}{ccccc}
+\begin{tabular}{cccccc}
 \toprule
 \bf Depiction & \bf Feature set & \multicolumn{2}{c}{\makecell{\bf Definition\\for every piece $P$ in the board}} & \bf \makecell{\# of\\features} \\
 \toprule
@@ -101,18 +101,25 @@ These axes coincide with the movement pattern of the pieces, which make them a g
 \midrule
 \axisarrows{H} $\oplus$ \axisarrows{V} & \featureset{H+V} (\featureset{Compact}) & $(\featureset{File}_{P} \oplus \featureset{Rank}_{P})$ & \rolecolor & 192 \\
 \midrule
+\axisarrows{HV} $\oplus$ \axisarrows{H} $\oplus$ \axisarrows{V} & \featureset{HV+H+V} & \makecell{$(\featureset{File}_{P} \times \featureset{Rank}_{P}$ $\oplus$ \\ $\featureset{File}_{P} \oplus \featureset{Rank}_{P})$} & \rolecolor & 960 \\
+\midrule
 \axisarrows{D1D2} & \featureset{D1D2} &  $\featureset{Diag1}_{P} \times \featureset{Diag2}_{P}$ & \rolecolor & 2700 \\
 \midrule
 \axisarrows{D1} $\oplus$ \axisarrows{D2} & \featureset{D1+D2} & $(\featureset{Diag1}_{P} \oplus \featureset{Diag2}_{P})$ & \rolecolor & 360 \\
 \midrule
 \axisarrows{HV} $\oplus$ \axisarrows{D1D2} & \featureset{HV+D1D2} & \makecell{$(\featureset{File}_{P} \times \featureset{Rank}_{P}$ $\oplus$ \\ $\featureset{Diag1}_{P} \times \featureset{Diag2}_{P})$} & \rolecolor & 3468 \\
 \midrule
-\makecell{\axisarrows{H} $\oplus$ \axisarrows{V} $\oplus$ \\ \axisarrows{D1} $\oplus$ \axisarrows{D2}} & \featureset{H+V+D1+D2} & \makecell{$(\featureset{File}_{P} \oplus \featureset{Rank}_{P}$ $\oplus$ \\ $\featureset{Diag1}_{P} \oplus \featureset{Diag2}_{P})$} & \rolecolor & 552 \\
+\makecell{\axisarrows{H} $\oplus$ \axisarrows{V} $\oplus$ \\ \axisarrows{D1} $\oplus$ \axisarrows{D2}} & \makecell{\featureset{H+V+}\\\featureset{D1+D2}} & \makecell{$(\featureset{File}_{P} \oplus \featureset{Rank}_{P}$ $\oplus$ \\ $\featureset{Diag1}_{P} \oplus \featureset{Diag2}_{P})$} & \rolecolor & 552 \\
+\midrule
+\makecell{\axisarrows{HV} $\oplus$ \axisarrows{H} $\oplus$ \\ \axisarrows{V} $\oplus$ \axisarrows{D1} $\oplus$ \axisarrows{D2}} & \makecell{\featureset{HV+}\\\featureset{H+V+}\\\featureset{D1+D2}} & \makecell{$(\featureset{File}_{P} \times \featureset{Rank}_{P} \oplus$ \\ $\featureset{File}_{P} \oplus \featureset{Rank}_{P}$ $\oplus$ \\ $\featureset{Diag1}_{P} \oplus \featureset{Diag2}_{P})$} & \rolecolor & 1320 \\
 \midrule
 \axisarrows{HD1} $\oplus$ \axisarrows{VD2} & $\featureset{HD1} \oplus \featureset{VD2}$ & \makecell{$(\featureset{File}_{P} \times \featureset{Diag1}_{P}$ $\oplus$ \\ $\featureset{Rank}_{P} \times \featureset{Diag2}_{P})$} & \rolecolor & 2880 \\
 \midrule
 \axisarrows{VD1} $\oplus$ \axisarrows{HD2} & $\featureset{VD1} \oplus \featureset{HD2}$ & \makecell{$(\featureset{Rank}_{P} \times \featureset{Diag1}_{P}$ $\oplus$ \\ $\featureset{File}_{P} \times \featureset{Diag2}_{P})$} & \rolecolor & 2880 \\
 \bottomrule
+
+\multicolumn{5}{c}{\footnotesize \textbf{Note:} $\featureset{R}_{P} \times \featureset{C}_{P}$ expands to $\featureset{Role}_{P} \times \featureset{Color}_{P}$}
+
 \end{tabular}
 
 \end{table}
