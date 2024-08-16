@@ -54,6 +54,7 @@ matriz con dos ejes: batch size y L1 size. con colores?
 
 \newpage
 \subsection{Axis encoding} % relevance
+\label{sec:axis_encoding}
 
 \newcommand{\axisarrows}[1]{\parbox{0.7cm}{\includegraphics[height=0.7cm]{../assets/arrows/#1.pdf}}}
 
@@ -61,9 +62,9 @@ matriz con dos ejes: batch size y L1 size. con colores?
 
 \begin{figure}[h]
 \centering
-\subfloat[\centering $\white$ White]{{\includegraphics[width=7cm]{../assets/results/white_rook_weights.png} }}%
+\subfloat[\centering $\white$ White]{{\includegraphics[width=7cm]{../assets/results/piece_weights/white_rook_weights.png} }}%
 \qquad
-\subfloat[\centering $\black$ Black]{{\includegraphics[width=7cm]{../assets/results/black_rook_weights.png} }}%
+\subfloat[\centering $\black$ Black]{{\includegraphics[width=7cm]{../assets/results/piece_weights/black_rook_weights.png} }}%
 \caption{Weights of a neuron in the L1 layer, which are connected to features in \featureset{Piece} where the role is $\rook$ Rook. The intensity represents the weight value, and the color represents the sign (although not relevant).}
 \label{fig:rook_weights}
 \end{figure}
