@@ -1,5 +1,5 @@
 # Whoever you are, whatever you're doing, stop reading this file.
-# This is a mess. This file transforms the results of the runs into plots and tables.
+# This is a mess. This file transforms the results of the runs into plots and tables for... LaTeX 💀
 
 import pandas as pd
 import humanize
@@ -7,9 +7,13 @@ import datetime as dt
 import seaborn as sns
 import matplotlib
 import matplotlib.pyplot as plt
+import numpy as np
 
 # use latex for font rendering
-matplotlib.rcParams['text.usetex'] = True
+#matplotlib.rcParams['text.usetex'] = True
+
+LOSS_CMAP = "flare"
+ACC_CMAP = "YlGn"
 
 def fs(feature_set):
     if feature_set == "half-piece":
@@ -47,6 +51,79 @@ def gen_appendix_table_runs(df):
     table += "\\bottomrule \\end{tabular}\n"
     return table
 
+def gen_puzzles_heatmap(df):
+    #value_col = "Puzzles/moveAccuracy (Max)"
+    #sns.heatmap(
+    #    sub_df.pivot(index="batch_size", columns="ft_size", values=value_col),
+    #    annot=True,
+    #    fmt=".4f",
+    #    cmap="flare",
+    #    cbar=False,
+    #    cbar_kws={'label': "pepito"},
+    #    ax=ax,
+    #    vmin=df[value_col].min(),
+    #    vmax=df[value_col].max()
+    #)
+
+    # sort by loss
+    df = df.sort_values(by=["Train/loss.min"], ascending=True)
+
+    puzzles = [x for x in list(df.columns) if ("Puzzles/" in x and not "max" in x.lower() and x != "Puzzles/accuracy") or "loss.min" in x.lower()]
+    df = df.transpose()
+
+    count = 0    
+    for index, row in df.iterrows():
+        if index not in puzzles:
+            continue
+        data = np.array([list(row.values)])
+        if np.isnan(data).all():
+            continue
+        count += 1
+
+    f, axs = plt.subplots(count, 1, gridspec_kw={'hspace': 0}, figsize=(10, 20))
+
+    counter = 0
+    for index, row in df.iterrows():
+        if index not in puzzles:
+            continue
+        ax = axs[counter]
+        isloss = "loss" in index.lower()
+        data = np.array([list(row.values)])
+        if np.isnan(data).all():
+            continue
+        sns.heatmap(
+            data=data,
+            xticklabels=list(df.loc["feature_set"]) if counter == 0 else False,
+            yticklabels=[index.split("/")[1]],
+            annot=True,
+            fmt=".4f",
+            ax=ax,
+            cmap=LOSS_CMAP if isloss else ACC_CMAP,
+            cbar=False,
+            vmin=None if isloss else 0,
+            vmax=None if isloss else 1
+        )
+        counter += 1
+        ax.xaxis.tick_top()
+        ax.xaxis.set_label_position('top')
+        ax.tick_params(axis='y', labelrotation=0)
+        ax.tick_params(axis='x', labelrotation=45)
+
+    #ax.set_title(value_label)
+    ##ax.xaxis.tick_top()
+    ##ax.xaxis.set_label_position('top')
+    #if right_ticks:
+    #    ax.yaxis.tick_right()
+    #    ax.yaxis.set_label_position('right')
+    #
+    ##ax.xaxis.set_ticks_position('none')
+    ##ax.yaxis.set_ticks_position('none')
+    #ax.set_xlabel("L1 size (feature transformer)")
+    #ax.set_ylabel("Batch size")
+    ##ax.set_title(fs(sub_df["feature-set"].iloc[0]))
+    #ax.tick_params(axis='y', labelrotation=0)
+
+
 def gen_baseline_tables():
     df = pd.read_csv('../../assets/results/initial_sweep.csv')
 
@@ -81,11 +158,11 @@ def gen_baseline_tables():
 
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2,2)
 
-    gen_heatmap(ax1, df[df["feature-set"] == "half-piece"], value_col="Train/loss.min", value_label="Train loss $(min)$", cmap="flare")
-    gen_heatmap(ax2, df[df["feature-set"] == "half-king-piece"], value_col="Train/loss.min", value_label="Train loss $(min)$", cmap="flare", right_ticks=True)
+    gen_heatmap(ax1, df[df["feature-set"] == "half-piece"], value_col="Train/loss.min", value_label="Train loss $(min)$", cmap=LOSS_CMAP)
+    gen_heatmap(ax2, df[df["feature-set"] == "half-king-piece"], value_col="Train/loss.min", value_label="Train loss $(min)$", cmap=LOSS_CMAP, right_ticks=True)
 
-    gen_heatmap(ax3, df[df["feature-set"] == "half-piece"], value_col="Puzzles/moveAccuracy (Max)", value_label="Puzzle move accuracy $(max)$", cmap="YlGn")
-    gen_heatmap(ax4, df[df["feature-set"] == "half-king-piece"], value_col="Puzzles/moveAccuracy (Max)", value_label="Puzzle move accuracy $(max)$", cmap="YlGn", right_ticks=True)
+    gen_heatmap(ax3, df[df["feature-set"] == "half-piece"], value_col="Puzzles/moveAccuracy (Max)", value_label="Puzzle move accuracy $(max)$", cmap=ACC_CMAP)
+    gen_heatmap(ax4, df[df["feature-set"] == "half-king-piece"], value_col="Puzzles/moveAccuracy (Max)", value_label="Puzzle move accuracy $(max)$", cmap=ACC_CMAP, right_ticks=True)
 
     add_headers(
         fig,
@@ -149,4 +226,9 @@ def add_headers(
             )
 
 
-gen_baseline_tables()
+
+df = pd.read_csv('../../assets/results/axes_sweep.csv')
+gen_puzzles_heatmap(df[(df["batch_size"] == 4096) & (df["ft_size"] == 2048)])
+plt.tight_layout()
+plt.savefig("./axes_puzzles.pdf", format='pdf')
+plt.close()
