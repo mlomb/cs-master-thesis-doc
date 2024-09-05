@@ -1,20 +1,42 @@
 \section{Engine implementation}
 
-Building chess engines is a very discussed topic in the history of chess and thus very well documented. The Chess Programming Wiki (CPW) \cite{cpw} is the best source of information to reference, which I will base my engine on. I aim to build a single-threaded classic engine implemented in Rust, only making use of the most important optimizations to keep it simple. The engine strength is not that relevant, as it is only a tool to measure the relative performance of the encodings. However, a competent one is required. \\
+Building chess engines is a very discussed topic in the history of chess and thus very well documented. The Chess Programming Wiki (CPW) \cite{cpw} is the best source of information to reference, which I will base my engine on. I aim to build a single-threaded classic engine and only making use of the most prominent optimizations to keep it simple. The engine strength is not that relevant, as it is only a tool to measure the relative performance of the encodings. However, a competent one is required. \\
 
-Classic chess engines are composed of two main components: \textbf{the search} and \textbf{the evaluation}. The search is the process of exploring the tree of possible moves, which is what this chapter is about. The evaluation determines how good the positions are for who plays. As I mentioned in the introduction, classic engines used to use hand-crafted evaluations based on human knowledge like material and pawn structure. In my case, I will replace it entirely with a neural network, explained in the following chapters. \\
+Classic chess engines are composed of two main components: \textbf{the search} and \textbf{the evaluation}. The search is the process of exploring the tree of possible moves, which is what this chapter is about. The evaluation determines how good the positions are for who plays. As I mentioned in the introduction, classic engines used to use hand-crafted evaluations based on human knowledge. In my case, I will replace it entirely with a neural network, explained in the following chapters.
 
+\subsection{Minimax search}
 
+A position $p$ in chess is the state of the board and any other relevant information that may affect the outcome, like castling rights and the 50-move clock. Given a position $p$, we can call $f(p)$ its evaluation, a number that provides an assessment of how good the position is, computed either by a hand-crafted function or a neural network. The value is defined from the perspective of the player to move.
+
+Minimax trees \cite{minimax-survey:1995} 
+
+%Since chess is a zero-sum game, one player's gain is the other's loss. The minimax algorithm is a recursive algorithm that searches 
+%Let's say the player to move is the maximizing player.
+%Since chess is a zero-sum game, one player's gain is the other's loss. Let's say the side to move 
+%A max-min strategy 
+% Minimax is a recursive algorithm that searches the tree of possible moves 
+
+% The engine actually implements the negamax algorithm, which
 %- negamax
-%- iterative deepening
-%- quiescence
-%- transposition table
-%- move ordering (MVV LVA)
 
-%- move generation using a fast library
-%- I/O with UCI protocol
-%- time control
-%- POSITION STACK
+\subsection{Quiescence search}
+
+The search algorithm runs to a fixed depth, which causes a horizon effect. The horizon effect manifests when the search stops at a position where a negative event (such a capture) is inevitable but due the fixed depth, the search results in weaker moves in an effort to avoid the inevitable (prefers branches where the capture has not happened yet).
+
+
+
+fixed depth in iterative deepening
+%- quiescence
+
+\subsection{Optimizations}
+
+A few more minor optimizations were made...
+
+The whole search algorithm is embedded in a loop (it deep)
+
+%- transposition table
+%- iterative deepening
+%- move ordering (MVV LVA)
 
 %- principal variation (mainline)
 %- null move prunning
@@ -22,16 +44,11 @@ Classic chess engines are composed of two main components: \textbf{the search} a
 %- late move reductions
 %- history moves, killer moves
 
-%:)
 
-%The I/O ... \\
-%
+\subsection{Implementation details}
 
-%Asdasd a \\
-
-\subsection{Alpha-beta}
-
-
-
-
-A few more minor optimizations were made...
+implemented in Rust
+%- move generation using a fast library
+%- I/O with UCI protocol
+%- time control
+%- POSITION STACK
