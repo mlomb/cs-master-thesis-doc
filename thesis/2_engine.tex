@@ -1,0 +1,37 @@
+\section{Engine implementation}
+
+Building chess engines is a very discussed topic in the history of chess and thus very well documented. The Chess Programming Wiki (CPW) \cite{cpw} is the best source of information to reference, which I will base my engine on. I aim to build a single-threaded classic engine implemented in Rust, only making use of the most important optimizations to keep it simple. The engine strength is not that relevant, as it is only a tool to measure the relative performance of the encodings. However, a competent one is required. \\
+
+Classic chess engines are composed of two main components: \textbf{the search} and \textbf{the evaluation}. The search is the process of exploring the tree of possible moves, which is what this chapter is about. The evaluation determines how good the positions are for who plays. As I mentioned in the introduction, classic engines used to use hand-crafted evaluations based on human knowledge like material and pawn structure. In my case, I will replace it entirely with a neural network, explained in the following chapters. \\
+
+
+%- negamax
+%- iterative deepening
+%- quiescence
+%- transposition table
+%- move ordering (MVV LVA)
+
+%- move generation using a fast library
+%- I/O with UCI protocol
+%- time control
+%- POSITION STACK
+
+%- principal variation (mainline)
+%- null move prunning
+%- 3 fold repetition
+%- late move reductions
+%- history moves, killer moves
+
+%:)
+
+%The I/O ... \\
+%
+
+%Asdasd a \\
+
+\subsection{Alpha-beta}
+
+
+
+
+A few more minor optimizations were made...

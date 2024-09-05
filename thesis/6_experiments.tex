@@ -128,7 +128,7 @@ These axes coincide with the movement pattern of the pieces, which make them a g
 
 I expect that the feature sets that are sums of single axes ($\featureset{H} \oplus \featureset{V}, \featureset{D1} \oplus \featureset{D2}, \featureset{H} \oplus \featureset{V} \oplus \featureset{D1} \oplus \featureset{D2}$) will perform worse overall, as to capture the exact position of pieces in the board, the network will have to learn to relate two features for every location. This information is already available when there is a product of two dimensions.
 
-\vspace{2cm}
+\vspace{1cm}
 
 \textbf{Results.}
 
@@ -141,6 +141,8 @@ Medir el impacto de agregar simetría al fs. Red mas chica, inf mas rapida, mejo
 probar simetria, eventualmente probar con el mejor feature set de arriba, a ver si mejora poniendo a cada bloque individual simetria
 
 \featureset{Half-Relative(H|V|HV)King-Piece}?
+
+inspired by KP, build features relative to the position of the $\king$ King
 
 \subsection{Piece movement}
 

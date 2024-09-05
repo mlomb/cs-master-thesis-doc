@@ -18,3 +18,11 @@ Este cambio de paradigma, en donde la evaluación de las posiciones se realiza m
 El motor de ajedrez Stockfish, uno de los más fuertes del mundo, ha incorporado redes NNUE mezclado con evaluación clásica en la versión 12\footnote[1]{\href{https://stockfishchess.org/blog/2020/introducing-nnue-evaluation/}{Introducing NNUE evaluation (Stockfish 12)}} (2020). A partir de Stockfish 16.1\footnote[2]{\href{https://stockfishchess.org/blog/2024/stockfish-16-1/}{Removal of handcrafted evaluation (Stockfish 16.1)}} (2024) la evaluación se realiza exclusivamente mediante redes NNUE, eliminando todo el aspecto humano.
 
 \subsection{Chess Engines}
+
+assad
+
+\subsection{Thesis plan}
+
+The aim of this thesis is to explore different kinds of board encodings (feature sets) in chess engines. To do so, I needed a chess engine that supports neural networks with the ability to customize encodings and a way to train them. The initial idea was to use Stockfish with the official Pytorch trainer \cite{nnue-pytorch}. However, I quickly realized that implementing some of the features sets I had in mind may be too complicated  with Stockfish's representation and the unconventional training test (PQR) that I want to do was impossible. This, and given that Stockfish engine and trainer codebases are huge, I felt there was too much magic involved so I turned away. I could have picked up another less complex engine written in Rust (like Marlin) and modify it, but I choose not to.
+
+So, I decided to implement my own engine and training pipeline from scratch.
