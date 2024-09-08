@@ -8,7 +8,7 @@ Classic chess engines are composed of two main components: \textbf{the search} a
 
 A position $p$ in chess is the state of the board and any other relevant information that may affect the outcome, like castling rights and the 50-move clock. Given a position $p$, we can call $f(p)$ its evaluation, a number that provides an assessment of how good the position is, computed either by a hand-crafted function or a neural network. The value is defined from the perspective of the player to move.
 
-Minimax trees \cite{minimax-survey:1995} 
+Minimax trees \cite{minimax-survey:1995} ...
 
 %Since chess is a zero-sum game, one player's gain is the other's loss. The minimax algorithm is a recursive algorithm that searches 
 %Let's say the player to move is the maximizing player.
@@ -16,7 +16,7 @@ Minimax trees \cite{minimax-survey:1995}
 %A max-min strategy 
 % Minimax is a recursive algorithm that searches the tree of possible moves 
 
-% The engine actually implements the negamax algorithm, which
+The engine actually implements the negamax algorithm, which...
 %- negamax
 
 \subsection{Quiescence search}
@@ -47,7 +47,14 @@ The whole search algorithm is embedded in a loop (it deep)
 
 \subsection{Implementation details}
 
-implemented in Rust
+The bot is implemented in the Rust programming language.
+
+The most performance critical part of the engine aside from the evaluation is move generation, that is, given a position, list all available moves and make them.
+Fortunately there is a battle-tested library for it called \textit{shakmaty}. The UCI protocol was also added using a library built on top of it.
+
+Time control is hard-coded to use the increment plus 2\% of the remaining time per move. Experiments run at a fixed time per move, so this is used in the Lichess arena.
+
+
 %- move generation using a fast library
 %- I/O with UCI protocol
 %- time control
