@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # use latex for font rendering
-#matplotlib.rcParams['text.usetex'] = True
+matplotlib.rcParams['text.usetex'] = True
 
 LOSS_CMAP = "flare"
 ACC_CMAP = "YlGn"
@@ -180,6 +180,27 @@ def gen_baseline_tables():
     plt.close()
 
 
+def gen_heatmaps():
+    df = pd.read_csv('../../assets/results/axes_sweep.csv')
+    gen_puzzles_heatmap(df[(df["batch_size"] == 4096) & (df["ft_size"] == 2048)])
+    plt.tight_layout()
+    plt.savefig("./axes_puzzles.pdf", format='pdf')
+    plt.close()
+
+
+def gen_quantization_error():
+    df = pd.read_csv('../../assets/misc/quant_errors.csv')
+    df["err"] = (df["expected_output"] - df["output"])
+    df["err_abs"] = (df["expected_output"] - df["output"]).abs()
+
+    sns.displot(df, x='err', height=3, aspect=1.3, bins=35) # , linewidth=0
+    plt.xlabel('Absolute error of quantized model')
+    plt.ylabel('Count')
+    plt.xlim(-100, 100)
+    #plt.ylim(0, 3000)
+    plt.savefig("./quant_errors.pdf", format='pdf')
+    plt.close()
+
 # https://stackoverflow.com/a/71887460/2840384
 def add_headers(
     fig,
@@ -226,9 +247,6 @@ def add_headers(
             )
 
 
-
-df = pd.read_csv('../../assets/results/axes_sweep.csv')
-gen_puzzles_heatmap(df[(df["batch_size"] == 4096) & (df["ft_size"] == 2048)])
-plt.tight_layout()
-plt.savefig("./axes_puzzles.pdf", format='pdf')
-plt.close()
+# gen_baseline_tables()
+# gen_heatmaps()
+gen_quantization_error()

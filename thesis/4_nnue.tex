@@ -2,7 +2,7 @@
 
 NNUE (\reflectbox{NNUE} Efficiently updatable neural network) is a neural network architecture that allows for very fast subsequent evaluations for minimal input changes. It was invented for Shogi by Yu Nasu in 2018 \cite{nnue:2018}, later adapted to Chess for use in Stockfish in 2019 and may be used in other board games as well. Most of the information described in this chapter can be found in the excellent Stockfish NNUE documentation \cite{nnue-pytorch}. \\
 
-NNUE operates in the following priciples:
+NNUE operates in the following principles:
 
 \begin{itemize}
     \item \textbf{Input sparsity}: The network should have a relatively low amount of non-zero inputs, determined by the chosen feature set. The presented feature sets have between 0.1\% and 2\% of non-zero inputs for a typical position. Having a low amount of non-zero inputs places a low upper bound on the time required to evaluate the network in its entirety, which can happen using some feature sets like \featureset{HalfKP} that triggers a complete refresh when the king is moved.
@@ -218,8 +218,18 @@ no se tiene el mismo problema que en el accumulator layer porque la multiplicaci
 
 . \\
 
+asd
+
 \subsection{Implementation}
 
-The Stockfish repository provides a AVX2 implementation of the previous operations in C++. They have been ported to Rust for this thesis. The implementation was tested using the Pytorch model as reference (output match).
+The Stockfish repository provides an AVX2 implementation of the mathematical operations in C++. They have been carefully ported to Rust for this thesis. The implementation was tested using the Pytorch model as reference (output match).
 
-% Real effect of the factorizer :)
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=12cm]{./dynamic/quant_errors.pdf}
+\caption{Absolute error of the quantized model compared to the float model. N=50000}
+\label{fig:quant_errors}
+\end{figure}
+
+Error
