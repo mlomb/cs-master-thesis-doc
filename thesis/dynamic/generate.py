@@ -127,7 +127,7 @@ def gen_baseline_tables():
     make_l1l2_heatmap(ax=ax1 , value_col="Train/train_loss.min", value_label="Train loss (min)", cmap=LOSS_CMAP)
     make_l1l2_heatmap(ax=ax2, value_col="Train/val_loss.min", value_label="Validation loss (min)", cmap=LOSS_CMAP, right_ticks=True)
 
-    make_l1l2_heatmap(ax=ax3, value_col="Puzzles/moveAccuracy.max", value_label="Puzzle move accuracy (max)", cmap=ACC_CMAP)
+    make_l1l2_heatmap(ax=ax3, value_col="Puzzles/moveAccuracy.max", value_label="Puzzle move accuracy", cmap=ACC_CMAP)
     make_l1l2_heatmap(ax=ax4, value_col="Puzzles/moveAccuracy.max", value_label="ELO difference", cmap=ELO_CMAP, right_ticks=True)
 
     #add_headers(
