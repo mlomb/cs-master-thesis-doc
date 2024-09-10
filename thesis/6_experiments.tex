@@ -1,34 +1,38 @@
 \section{Experiments and results}
 
-With the tools and methodology defined in the previous sections, we can now proceed to the experiments. Each run is determined by its configuration, that can be divided into the following categories:
+With the tools and methodology defined in the previous sections, we can now proceed to the experiments. Experiments will be divided in three sections: motivation, the experiment itself and the results. Each one will lay down the configuration for multiple training runs, to later be compared and analyzed.
+
+A training run is defined by the following configuration:
 
 \begin{itemize}
-\item \textbf{Feature set}: Determinates the encoding of the position, and thus the number of inputs of the model. It conditions which patterns the network can learn.
+\item \textbf{Feature set}: Determinates the encoding of the position, and thus the number of inputs of the model. It conditions which patterns the network can learn. Experimenting with this is the main focus of this thesis.
 
-\item \textbf{Network architecture}: The size of each layer in the network. The first layer is the feature transformer, and its size roughly determinates how many patterns the network can learn. The following two layers should be tiny due the NNUE architecture.
+\item \textbf{Network architecture}: The size of each layer in the network. The first layer (L1) is the feature transformer, and its size roughly determinates how many patterns the network can learn. The following layer (L2) should be tiny due the NNUE architecture.
 
-\item \textbf{Dataset}: blabla
+\item \textbf{Dataset}: The positions to train on. The dataset used is explained in detail in chapter 5. In summary, there are 48.5 billion positions to train on and the dataset remains constant across all runs. About 5 million positions are used for validation.
 
-\item \textbf{Training method}: Can choose to use either Stockfish evaluations or PQR triplets. This determinates the format of the samples as well as the loss function. Most experiments will train using Stockfish evaluations.
+\item \textbf{Training method}: Can choose to use either Stockfish evaluations or PQR triplets. This determinates the format of the samples as well as the loss function. Most experiments will train using Stockfish evaluations. Explained in detail in chapter 5.
 
 \item \textbf{Training hyperparameters}: The usual machine learning hyperparameters for training, such as batch size, learning rate and scheduler.
 \end{itemize}
 
-To assess the performance of a run or to compare a set of runs, the following indicators can be used:
-
-[hablar de que hay runs particulares que miden otras cosas pero estas son generales]
+To assess the performance of a run or to compare a set of runs, the following indicators are used, varying depending on the experiment:
 
 \begin{itemize}
-\item \textbf{Puzzle accuracy}:
-\item \textbf{Relative ELO performance}:
-\item \textbf{Inference performance (infs/s)}:
-\item \textbf{Training time (not important, one time)}:
+\item \textbf{Loss}: The training and validation loss are used to detect overfitting and other possible problems. It can't be used to measure the performance of a model. Bigger models must have much better predictions to outweight the cost of having slower inferences and thus lower node visits. It's a tradeoff.
+
+\item \textbf{Puzzle accuracy}: The percentage of moves correctly predicted by the engine in Lichess puzzles. Each puzzle may contain multiple moves, and the engine has 100ms per move.
+
+\item \textbf{Relative ELO performance}: A tournament is played between different models to determine their relative strength. Ordo is used to compute the ELO of each model based on the results of the tournament. This is the most important metric, as it is the most reliable way to measure an engine's strength.
+
+% \item \textbf{Inference performance (infs/s)}:
+
+\item \textbf{Training duration}: The amount of time it takes to train a model. This is a one time operation and it does not affect the performance of a model. However, it does condition which and how many experiments I can run.
 \end{itemize}
 
+The experiments are all run in the same hardware: Intel 14900K CPU (24 cores, 32 threads) for dataset generation, batching and evaluation, and a single NVIDIA RTX 4090 24GB GPU for training.
 
-The experiments are all run in the same hardware: Intel 14900K CPU for dataset generation, batching and evaluation, and a single NVIDIA RTX 4090 24GB GPU for training.
-
-\subsection{Baselines}
+\subsection{Baseline}
 
 The objective is to find good baselines to compare the experiments that will follow.
 
@@ -44,8 +48,8 @@ matriz con dos ejes: batch size y L1 size. con colores?
 
 \begin{figure}[H]
 \centering
-\makebox[\textwidth]{\includegraphics[width=\textwidth]{./dynamic/output/baselines_comparison.pdf}}
-\caption{ASDASDASD}
+\makebox[\textwidth]{\includegraphics[width=\textwidth]{./dynamic/output/baseline_heatmaps.pdf}}
+\caption{Network architecture sweep results}
 \label{fig:asdasdasd}
 \end{figure}
 

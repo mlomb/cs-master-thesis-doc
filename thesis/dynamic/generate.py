@@ -142,7 +142,7 @@ def gen_baseline_tables():
     #fig.add_artist(line)
 
     plt.tight_layout()
-    plt.savefig("./output/baselines_comparison.pdf", format='pdf')
+    plt.savefig("./output/baseline_heatmaps.pdf", format='pdf')
     plt.close()
 
 
