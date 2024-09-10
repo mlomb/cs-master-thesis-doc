@@ -1,30 +1,30 @@
 \section{Experiments and results}
 
-With the tools and methodology defined in the previous sections, we can now proceed to the experiments. Experiments will be divided in three sections: motivation, the experiment itself and the results. Each one will lay down the configuration for multiple training runs, to later be compared and analyzed.
+Now that the engine, the tools and the methodology are defined, we can proceed to the experiments. Experiments will be divided in three sections: motivation, experiment and results. The motivation will explain why I think the experiment is relevant and present possible hypothesis. The experiment will describe configurations to train different models, how they will be evaluated and what are my expectations. The results will present the data, explain whether my hypothesis was correct or not and give a brief conclusion. \\
 
-A training run is defined by the following configuration:
+Every model's training configuration is defined by the following variables:
 
 \begin{itemize}
 \item \textbf{Feature set}: Determinates the encoding of the position, and thus the number of inputs of the model. It conditions which patterns the network can learn. Experimenting with this is the main focus of this thesis.
 
-\item \textbf{Network architecture}: The size of each layer in the network. The first layer (L1) is the feature transformer, and its size roughly determinates how many patterns the network can learn. The following layer (L2) should be tiny due the NNUE architecture.
+\item \textbf{Network architecture}: The size of each layer in the network. The first layer (L1) is the feature transformer and it is efficiently updated. The following layer (L2) should be tiny due the NNUE architecture. The size of the model (its complexity) roughly determinates how many patterns the network can learn.
 
 \item \textbf{Dataset}: The positions to train on. The dataset used is explained in detail in chapter 5. In summary, there are 48.5 billion positions to train on and the dataset remains constant across all runs. About 5 million positions are used for validation.
 
 % no me gusta la palabra computed...
 \item \textbf{Training method}: Can choose to use either computed evaluations or PQR triplets. This determinates the format of the samples as well as the loss function. All experiments will train using computed evaluations, unless specified. Explained in detail in chapter 5.
 
-\item \textbf{Training hyperparameters}: The usual machine learning hyperparameters for training, such as batch size, learning rate and scheduler.
+\item \textbf{Training hyperparameters}: The usual machine learning hyperparameters for training, such as batch size, learning rate and scheduler. Recall that each epoch is 100 million positions, and the training will usually last for 1024 epochs.
 \end{itemize}
 
-To assess the performance of a run or to compare a set of runs, the following indicators are used, varying depending on the experiment:
+Once training is completed, the models will be evaluated depending on the experiment. To assess the performance a model or to compare a set of models, the following indicators are used:
 
 \begin{itemize}
 \item \textbf{Loss}: The training and validation loss are used to detect overfitting and other possible problems. It can't be used to measure the performance of a model. Bigger models must have much better predictions to outweight the cost of having slower inferences and thus lower node visits. It's a tradeoff.
 
 \item \textbf{Puzzle accuracy}: The percentage of moves correctly predicted by the engine in Lichess puzzles. Each puzzle may contain multiple moves, and the engine has 100ms per move.
 
-\item \textbf{Relative ELO performance}: A tournament is played between different models to determine their relative strength. Ordo is used to compute the ELO of each model based on the results of the tournament. This is the most important metric, as it is the most reliable way to measure an engine's strength.
+\item \textbf{Relative ELO rating}: A tournament is played between different models to determine their relative strength. Ordo is used to compute the ELO of each model based on the results of the tournament. This is the most important metric, as it is the most reliable way to measure an engine's strength.
 
 % \item \textbf{Inference performance (infs/s)}:
 
