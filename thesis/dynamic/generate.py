@@ -12,8 +12,12 @@ import numpy as np
 # use latex for font rendering
 matplotlib.rcParams['text.usetex'] = True
 
+from appendix import make_runs_table
+from heatmap import make_heatmap
+
 LOSS_CMAP = "flare"
 ACC_CMAP = "YlGn"
+ELO_CMAP = "Blues"
 
 def fs(feature_set):
     if feature_set == "half-piece":
@@ -23,33 +27,6 @@ def fs(feature_set):
     else:
         return feature_set
 
-def gen_appendix_table_runs(df):
-    df = df.sort_values(by=["feature_set", "batch_size", "ft_size"], ascending=[False, True, True])
-    last_fs = None
-
-    table = """
-\\begin{tabular}{@{} cccccccc @{}} \\toprule
-\\multirow{2}{*}{\\bf Feature set} & \\multicolumn{2}{c}{\\bf Train hyperparams} & \\multicolumn{3}{c@{}}{\\bf Network arch} & \\multirow{2}{*}{\\makecell{\\bf Train loss\\\\\\textit{min}}} & \\multirow{2}{*}{\\makecell{\\bf Runtime\\\\\\textit{hh:mm:ss}}} \\\\
-\\cmidrule(lr){2-3} \\cmidrule(l){4-6}
-& \\bf Batch size & \\bf Learning rate & \\bf L1 (FT) & \\bf L2 & \\bf L3 \\\\
-\\midrule
-    """
-    # table += "Feature set & Batch size & L1 size & Train loss (min) & Runtime \\\\ \\midrule\n"
-
-    for index, row in df.iterrows():
-        if last_fs is not None and last_fs != row['feature_set']:
-            table += "\\midrule\n"
-        last_fs = row['feature_set']
-
-        min_loss = df[df["feature_set"] == row["feature_set"]]['Train/loss.min'].min()
-        loss = F"{row['Train/loss.min']:.5f}"
-        if row['Train/loss.min'] == min_loss:
-            loss = f"\\textbf{{{loss}}}"
-
-        table += f"{fs(row['feature_set'])} & {row['batch_size']} & {row['learning_rate']} & {row['ft_size']} & {row['l1_size']} & {row['l2_size']} & {loss} & {dt.timedelta(seconds=row['Runtime'])} \\\\\n"
-
-    table += "\\bottomrule \\end{tabular}\n"
-    return table
 
 def gen_puzzles_heatmap(df):
     #value_col = "Puzzles/moveAccuracy (Max)"
@@ -125,63 +102,52 @@ def gen_puzzles_heatmap(df):
 
 
 def gen_baseline_tables():
-    df = pd.read_csv('../../assets/results/initial_sweep.csv')
+    df = pd.read_csv('../../assets/results/sizes-sweep.csv')
+    df = df[df["State"] == "finished"]
 
-    with open('./baseline_appendix.tex', 'w') as f:
-        f.write(gen_appendix_table_runs(df))
-    
-    def gen_heatmap(ax, sub_df, value_col, value_label, cmap, right_ticks=False):
-        sns.heatmap(
-            sub_df.pivot(index="batch_size", columns="ft_size", values=value_col),
-            annot=True,
-            fmt=".4f",
-            cmap=cmap,
-            cbar=False,
-            cbar_kws={'label': value_label},
-            ax=ax,
-            vmin=df[value_col].min(),
-            vmax=df[value_col].max()
-        )
-        ax.set_title(value_label)
-        #ax.xaxis.tick_top()
-        #ax.xaxis.set_label_position('top')
-        if right_ticks:
-            ax.yaxis.tick_right()
-            ax.yaxis.set_label_position('right')
-        
-        #ax.xaxis.set_ticks_position('none')
-        #ax.yaxis.set_ticks_position('none')
-        ax.set_xlabel("L1 size (feature transformer)")
-        ax.set_ylabel("Batch size")
-        #ax.set_title(fs(sub_df["feature-set"].iloc[0]))
-        ax.tick_params(axis='y', labelrotation=0)
+    with open('./output/baseline_appendix.tex', 'w') as f:
+        f.write(make_runs_table(df))
 
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2,2)
 
-    gen_heatmap(ax1, df[df["feature-set"] == "half-piece"], value_col="Train/loss.min", value_label="Train loss $(min)$", cmap=LOSS_CMAP)
-    gen_heatmap(ax2, df[df["feature-set"] == "half-king-piece"], value_col="Train/loss.min", value_label="Train loss $(min)$", cmap=LOSS_CMAP, right_ticks=True)
+    def make_l1l2_heatmap(ax, value_col, value_label, cmap, right_ticks = False):
+        make_heatmap(
+            ax=ax,
+            df=df,
+            x_col="l1_size",
+            y_col="l2_size",
+            value_col=value_col,
+            x_label="L1 size (feature transformer)",
+            y_label="L2 size",
+            value_label=value_label,
+            cmap=cmap,
+            right_ticks=right_ticks
+        )
 
-    gen_heatmap(ax3, df[df["feature-set"] == "half-piece"], value_col="Puzzles/moveAccuracy (Max)", value_label="Puzzle move accuracy $(max)$", cmap=ACC_CMAP)
-    gen_heatmap(ax4, df[df["feature-set"] == "half-king-piece"], value_col="Puzzles/moveAccuracy (Max)", value_label="Puzzle move accuracy $(max)$", cmap=ACC_CMAP, right_ticks=True)
+    make_l1l2_heatmap(ax=ax1 , value_col="Train/train_loss.min", value_label="Train loss (min)", cmap=LOSS_CMAP)
+    make_l1l2_heatmap(ax=ax2, value_col="Train/val_loss.min", value_label="Validation loss (min)", cmap=LOSS_CMAP, right_ticks=True)
 
-    add_headers(
-        fig,
-        col_headers=["\\textsc{Piece}", "\\textsc{King-Piece}"],
-        fontweight="bold",
-        fontsize="16",
-        col_pad=30
-    )
+    make_l1l2_heatmap(ax=ax3, value_col="Puzzles/moveAccuracy.max", value_label="Puzzle move accuracy (max)", cmap=ACC_CMAP)
+    make_l1l2_heatmap(ax=ax4, value_col="Puzzles/moveAccuracy.max", value_label="ELO difference", cmap=ELO_CMAP, right_ticks=True)
 
-    line = plt.Line2D((.5,.5),(0.03, 0.98), color="k", linewidth=1)
-    fig.add_artist(line)
+    #add_headers(
+    #    fig,
+    #    col_headers=["\\textsc{Piece}", "\\textsc{King-Piece}"],
+    #    fontweight="bold",
+    #    fontsize="16",
+    #    col_pad=30
+    #)
+    #
+    #line = plt.Line2D((.5,.5),(0.03, 0.98), color="k", linewidth=1)
+    #fig.add_artist(line)
 
     plt.tight_layout()
-    plt.savefig("./baselines_comparison.pdf", format='pdf')
+    plt.savefig("./output/baselines_comparison.pdf", format='pdf')
     plt.close()
 
 
 def gen_heatmaps():
-    df = pd.read_csv('../../assets/results/axes_sweep.csv')
+    df = pd.read_csv('../../assets/results/sizes-sweep.csv')
     gen_puzzles_heatmap(df[(df["batch_size"] == 4096) & (df["ft_size"] == 2048)])
     plt.tight_layout()
     plt.savefig("./axes_puzzles.pdf", format='pdf')
@@ -247,6 +213,6 @@ def add_headers(
             )
 
 
-# gen_baseline_tables()
+gen_baseline_tables()
 # gen_heatmaps()
-gen_quantization_error()
+#gen_quantization_error()
