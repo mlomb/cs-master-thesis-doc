@@ -68,7 +68,7 @@ def exp_1_baseline():
     # draw heatmaps
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2,2)
 
-    def make_l1l2_heatmap(ax, value_col, value_label, cmap, balance_cmap=False, right_ticks = False):
+    def make_l1l2_heatmap(ax, value_col, value_label, cmap, decimals=4, balance_cmap=False, right_ticks = False):
         make_heatmap(
             ax=ax,
             df=df_sweep,
@@ -78,6 +78,7 @@ def exp_1_baseline():
             x_label="L1 size (feature transformer)",
             y_label="L2 size",
             value_label=value_label,
+            decimals=decimals,
             cmap=cmap,
             right_ticks=right_ticks
         )
@@ -86,7 +87,7 @@ def exp_1_baseline():
     make_l1l2_heatmap(ax=ax2, value_col="Train/val_loss.min", value_label="Validation loss (min)", cmap=LOSS_CMAP, right_ticks=True)
 
     make_l1l2_heatmap(ax=ax3, value_col="Puzzle/accuracy", value_label="Puzzle move accuracy", cmap=ACC_CMAP)
-    make_l1l2_heatmap(ax=ax4, value_col="Perf/rating", value_label="Rating (Elo)", cmap=ELO_CMAP, balance_cmap=True, right_ticks=True)
+    make_l1l2_heatmap(ax=ax4, value_col="Perf/rating", value_label="Rating (Elo)", cmap=ELO_CMAP, balance_cmap=True, right_ticks=True, decimals=1)
 
     plt.tight_layout()
     plt.savefig("./output/baseline_heatmaps.pdf", format='pdf')

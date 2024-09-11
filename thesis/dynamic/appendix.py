@@ -28,7 +28,7 @@ def make_runs_table(df):
 \\multicolumn{2}{c@{}}{\\bf Network} &
 \\multirow{2}{*}{\\makecell{\\bf Val loss\\\\\\textit{min}}} &""" + (
 """\\multirow{2}{*}{\\makecell{\\bf Rating\\\\\\textit{elo (avg=0)}}} &""" if has_rating else "") + (
-"""\\multirow{2}{*}{\\makecell{\\bf Puzzles\\\\\\textit{accuracy}}} &""" if has_puzzles else "") + """
+"""\\multirow{2}{*}{\\makecell{\\bf Puzzles\\\\\\textit{move acc.}}} &""" if has_puzzles else "") + """
 \\multirow{2}{*}{\\makecell{\\bf Runtime\\\\\\textit{hh:mm:ss}}} \\\\
 \\cmidrule(lr){2-4} \\cmidrule(l){5-6}
 & \\bf Batch & \\bf LR & \\bf Gamma & \\bf L1 & \\bf L2 & \\\\

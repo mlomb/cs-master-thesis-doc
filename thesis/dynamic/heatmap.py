@@ -7,6 +7,7 @@ def make_heatmap(
     y_col, y_label,
     value_col, value_label,
     cmap = "flare",
+    decimals=4,
     balance_cmap=False,
     right_ticks=False
 ):
@@ -18,7 +19,7 @@ def make_heatmap(
     sns.heatmap(
         df.pivot(index=y_col, columns=x_col, values=value_col),
         annot=True,
-        fmt=".4f",
+        fmt=f".{decimals}f",
         cmap=cmap,
         cbar=False,
         cbar_kws={'label': value_label},
