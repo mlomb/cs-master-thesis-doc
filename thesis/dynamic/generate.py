@@ -38,7 +38,12 @@ def parse_arch(arch: str):
 
 def exp_1_baseline():
     df_sweep = pd.read_csv('../../assets/results/baseline/sweep.csv')
+    df_puzzles = pd.read_csv('../../assets/results/baseline/puzzles.csv')
+    df_elo = pd.read_csv('../../assets/results/baseline/rating.csv')
     df_val_loss = pd.read_csv('../../assets/results/baseline/val_loss.csv')
+
+    df_sweep = pd.merge(df_sweep, df_puzzles, on="Name", how='left')
+    df_sweep = pd.merge(df_sweep, df_elo, on="Name", how='left')
 
     # write runs appendix
     with open('./output/baseline_appendix.tex', 'w') as f:
@@ -63,7 +68,7 @@ def exp_1_baseline():
     # draw heatmaps
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2,2)
 
-    def make_l1l2_heatmap(ax, value_col, value_label, cmap, right_ticks = False):
+    def make_l1l2_heatmap(ax, value_col, value_label, cmap, balance_cmap=False, right_ticks = False):
         make_heatmap(
             ax=ax,
             df=df_sweep,
@@ -80,8 +85,8 @@ def exp_1_baseline():
     make_l1l2_heatmap(ax=ax1 , value_col="Train/train_loss.min", value_label="Train loss (min)", cmap=LOSS_CMAP)
     make_l1l2_heatmap(ax=ax2, value_col="Train/val_loss.min", value_label="Validation loss (min)", cmap=LOSS_CMAP, right_ticks=True)
 
-    make_l1l2_heatmap(ax=ax3, value_col="Puzzles/moveAccuracy.max", value_label="Puzzle move accuracy", cmap=ACC_CMAP)
-    make_l1l2_heatmap(ax=ax4, value_col="Puzzles/moveAccuracy.max", value_label="ELO difference", cmap=ELO_CMAP, right_ticks=True)
+    make_l1l2_heatmap(ax=ax3, value_col="Puzzle/accuracy", value_label="Puzzle move accuracy", cmap=ACC_CMAP)
+    make_l1l2_heatmap(ax=ax4, value_col="Perf/rating", value_label="Rating (Elo)", cmap=ELO_CMAP, balance_cmap=True, right_ticks=True)
 
     plt.tight_layout()
     plt.savefig("./output/baseline_heatmaps.pdf", format='pdf')

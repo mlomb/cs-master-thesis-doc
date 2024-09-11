@@ -1,23 +1,27 @@
 
-\begin{tabular}{@{} cccccccc @{}} \toprule
-\multirow{2}{*}{\bf Feature set} & \multicolumn{3}{c}{\bf Train hyperparams} & \multicolumn{2}{c@{}}{\bf Network} & \multirow{2}{*}{\makecell{\bf Val loss\\\textit{min}}} & \multirow{2}{*}{\makecell{\bf Runtime\\\textit{hh:mm:ss}}} \\
+\begin{tabular}{@{} cccccccccc @{}} \toprule
+\multirow{2}{*}{\bf Feature set} &
+\multicolumn{3}{c}{\bf Train hyperparams} &
+\multicolumn{2}{c@{}}{\bf Network} &
+\multirow{2}{*}{\makecell{\bf Val loss\\\textit{min}}} &\multirow{2}{*}{\makecell{\bf Rating\\\textit{elo (avg=0)}}} &\multirow{2}{*}{\makecell{\bf Puzzles\\\textit{accuracy}}} &
+\multirow{2}{*}{\makecell{\bf Runtime\\\textit{hh:mm:ss}}} \\
 \cmidrule(lr){2-4} \cmidrule(l){5-6}
 & \bf Batch & \bf LR & \bf Gamma & \bf L1 & \bf L2 & \\
 \midrule
-    \featureset{HV} & 16384 & 5e-04 & 0.99 & 256 & 32 & 0.00351 & 1:53:59 \\
-\featureset{HV} & 16384 & 5e-04 & 0.99 & 256 & 64 & 0.00342 & 1:54:56 \\
-\featureset{HV} & 16384 & 5e-04 & 0.99 & 256 & 128 & 0.00330 & 1:52:29 \\
-\featureset{HV} & 16384 & 5e-04 & 0.99 & 256 & 256 & 0.00319 & 2:29:26 \\
-\featureset{HV} & 16384 & 5e-04 & 0.99 & 512 & 32 & 0.00309 & 1:54:28 \\
-\featureset{HV} & 16384 & 5e-04 & 0.99 & 512 & 64 & 0.00300 & 1:53:44 \\
-\featureset{HV} & 16384 & 5e-04 & 0.99 & 512 & 128 & 0.00290 & 1:51:06 \\
-\featureset{HV} & 16384 & 5e-04 & 0.99 & 512 & 256 & 0.00279 & 1:51:17 \\
-\featureset{HV} & 16384 & 5e-04 & 0.99 & 1024 & 32 & 0.00268 & 2:15:18 \\
-\featureset{HV} & 16384 & 5e-04 & 0.99 & 1024 & 64 & 0.00265 & 2:03:41 \\
-\featureset{HV} & 16384 & 5e-04 & 0.99 & 1024 & 128 & 0.00257 & 2:06:39 \\
-\featureset{HV} & 16384 & 5e-04 & 0.99 & 1024 & 256 & 0.00246 & 2:32:47 \\
-\featureset{HV} & 16384 & 5e-04 & 0.99 & 2048 & 32 & 0.00241 & 3:11:56 \\
-\featureset{HV} & 16384 & 5e-04 & 0.99 & 2048 & 64 & 0.00238 & 3:12:46 \\
-\featureset{HV} & 16384 & 5e-04 & 0.99 & 2048 & 128 & 0.00234 & 3:29:07 \\
-\featureset{HV} & 16384 & 5e-04 & 0.99 & 2048 & 256 & \textbf{0.00221} & 3:27:47 \\
+    \featureset{HV} & 16384 & 5e-04 & 0.99 & 256 & 32 & 0.00351 & 92.1 $\pm$ 15.3 & \textbf{0.9047} & 1:53:59 \\
+\featureset{HV} & 16384 & 5e-04 & 0.99 & 256 & 64 & 0.00342 & 16.9 $\pm$ 13.3 & 0.8976 & 1:54:56 \\
+\featureset{HV} & 16384 & 5e-04 & 0.99 & 256 & 128 & 0.00330 & -54.7 $\pm$ 13.5 & 0.8885 & 1:52:29 \\
+\featureset{HV} & 16384 & 5e-04 & 0.99 & 256 & 256 & 0.00319 & -61.7 $\pm$ 14.8 & 0.8826 & 2:29:26 \\
+\featureset{HV} & 16384 & 5e-04 & 0.99 & 512 & 32 & 0.00309 & 113.8 $\pm$ 13.7 & 0.9027 & 1:54:28 \\
+\featureset{HV} & 16384 & 5e-04 & 0.99 & 512 & 64 & 0.00300 & 57.9 $\pm$ 12.9 & 0.8975 & 1:53:44 \\
+\featureset{HV} & 16384 & 5e-04 & 0.99 & 512 & 128 & 0.00290 & 14.7 $\pm$ 14.5 & 0.8880 & 1:51:06 \\
+\featureset{HV} & 16384 & 5e-04 & 0.99 & 512 & 256 & 0.00279 & -66.4 $\pm$ 13.5 & 0.8790 & 1:51:17 \\
+\featureset{HV} & 16384 & 5e-04 & 0.99 & 1024 & 32 & 0.00268 & \textbf{123.8 $\pm$ 15.1} & 0.9032 & 2:15:18 \\
+\featureset{HV} & 16384 & 5e-04 & 0.99 & 1024 & 64 & 0.00265 & 56.4 $\pm$ 16.6 & 0.8955 & 2:03:41 \\
+\featureset{HV} & 16384 & 5e-04 & 0.99 & 1024 & 128 & 0.00257 & -21.8 $\pm$ 13.3 & 0.8852 & 2:06:39 \\
+\featureset{HV} & 16384 & 5e-04 & 0.99 & 1024 & 256 & 0.00246 & -112.8 $\pm$ 15.7 & 0.8725 & 2:32:47 \\
+\featureset{HV} & 16384 & 5e-04 & 0.99 & 2048 & 32 & 0.00241 & 97.4 $\pm$ 14.2 & 0.8968 & 3:11:56 \\
+\featureset{HV} & 16384 & 5e-04 & 0.99 & 2048 & 64 & 0.00238 & 21.4 $\pm$ 11.0 & 0.8876 & 3:12:46 \\
+\featureset{HV} & 16384 & 5e-04 & 0.99 & 2048 & 128 & 0.00234 & -76.8 $\pm$ 12.6 & 0.8779 & 3:29:07 \\
+\featureset{HV} & 16384 & 5e-04 & 0.99 & 2048 & 256 & \textbf{0.00221} & -200.3 $\pm$ 16.3 & 0.8678 & 3:27:47 \\
 \bottomrule \end{tabular}
