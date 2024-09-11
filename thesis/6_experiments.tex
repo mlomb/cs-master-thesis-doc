@@ -46,8 +46,8 @@ It remains to find a good network architecture. Bigger networks may have lower l
 I expect that there will be a model that performs best and other models that are smaller (need stronger predictions) and bigger (need speed to visit more nodes) perform worse. \\
 
 
-\textbf{Results.} 
-
+\textbf{Results.} The first thing to notice is that training and validation losses behave as expected. If the model is more complex, the loss is lower and the model predicts better. However, when the model is brough up to the engine to evaluate nodes, the performance drops on very big models.
+since the complexity is given by the number of parameters, in this case the dominating factor is the product of L1 and L2, we can see that when we approach higher values of both...
 
 % probar un L1 mas chicoooooo!
 \begin{figure}[H]
