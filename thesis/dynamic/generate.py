@@ -83,11 +83,31 @@ def exp_1_baseline():
             right_ticks=right_ticks
         )
 
-    make_l1l2_heatmap(ax=ax1 , value_col="Train/train_loss.min", value_label="Train loss (min)", cmap=LOSS_CMAP)
+    make_l1l2_heatmap(ax=ax1, value_col="Train/train_loss.min", value_label="Train loss (min)", cmap=LOSS_CMAP)
     make_l1l2_heatmap(ax=ax2, value_col="Train/val_loss.min", value_label="Validation loss (min)", cmap=LOSS_CMAP, right_ticks=True)
 
     make_l1l2_heatmap(ax=ax3, value_col="Puzzle/accuracy", value_label="Puzzle move accuracy", cmap=ACC_CMAP)
-    make_l1l2_heatmap(ax=ax4, value_col="Perf/rating", value_label="Rating (Elo)", cmap=ELO_CMAP, balance_cmap=True, right_ticks=True, decimals=1)
+    #make_l1l2_heatmap(ax=ax4, value_col="Perf/rating", value_label="Rating (Elo)", cmap=ELO_CMAP, balance_cmap=True, right_ticks=True, decimals=1)
+
+    # custom heatmap for ax4
+    df_sweep["rating_text"] = df_sweep.apply(lambda x: f"{x['Perf/rating']:.1f}\n$\\pm${x['Perf/rating_error']:.1f}", axis=1)
+    sns.heatmap(
+        df_sweep.pivot(index="l2_size", columns="l1_size", values="Perf/rating"),
+        annot=df_sweep.pivot(index="l2_size", columns="l1_size", values="rating_text"),
+        fmt=f"",
+        cmap=ELO_CMAP,
+        cbar=False,
+        annot_kws={"size": 10},
+        ax=ax4,
+        vmin=-120,
+        vmax=120,
+    )
+    ax4.set_title("Rating (Elo)")
+    ax4.set_xlabel("L1 size (feature transformer)")
+    ax4.set_ylabel("L2 size")
+    ax4.yaxis.tick_right()
+    ax4.yaxis.set_label_position('right')
+    ax4.tick_params(axis='y', labelrotation=0)
 
     plt.tight_layout()
     plt.savefig("./output/baseline_heatmaps.pdf", format='pdf')
