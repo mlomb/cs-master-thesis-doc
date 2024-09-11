@@ -43,21 +43,29 @@ It remains to find a good network architecture. Bigger networks may have lower l
 
 \textbf{Experiment.}  In this first experiment I will try different sizes of L1 and L2,  to find an acceptable tradeoff for future experiments. The feature set used to train will be \featureset{Piece}, the canonical set with 768 features.
 
-I expect that there will be a model that performs best and other models that are smaller (need stronger predictions) and bigger (need speed to visit more nodes) perform worse. \\
+I expect that there will be a model that performs best and other models that are smaller (need stronger predictions) and bigger (need speed to visit more nodes) perform worse.
 
+Since I will be running a grid search, I will train the models for 256 epochs (25.6 billion positions) instead of my target of 1024 to make this preliminar process faster. \\
 
-\textbf{Results.} The first thing to notice is that training and validation losses behave as expected. If the model is more complex, the loss is lower and the model predicts better. However, when the model is brough up to the engine to evaluate nodes, the performance drops on very big models.
-since the complexity is given by the number of parameters, in this case the dominating factor is the product of L1 and L2, we can see that when we approach higher values of both...
+\textbf{Results.} Looking at the result heatmaps in Figure \ref{fig:baseline_heatmaps}, the first thing to notice is that training and validation losses behave as expected. If the model is more complex, meaning the number of parameters (which is dominated by $768*L1+L1*L2$) is higher, the loss is lower and the model predicts better.
 
-% probar un L1 mas chicoooooo!
-\begin{figure}[H]
+When the models are loaded into the engine and evaluated in a tournament, we can see that when L2 drops, the performance drops dramatically. This is due the fact that the inference time is mostly dominated by L2. This result suggests that it may be a good idea explore even lower values of L2, such as 16 or even 8. However, the SIMD implementation requires L2 to be a multiple of 32 so it needs a refactor to keep be fast. So, instead of fiddling with SIMD I decided to \textbf{keep L2 at 32}.
+
+\begin{figure}[h]
 \centering
 \makebox[\textwidth]{\includegraphics[width=\textwidth]{./dynamic/output/baseline_heatmaps.pdf}}
-\caption{Network architecture sweep results (L1 $\times$ L2)}
-\label{fig:asdasdasd}
+\captionsetup{justification=centering}
+\caption{Network architecture sweep results (L1 $\times$ L2).\\ Ratings computed using $N\approx11000$ games per model. Table in Appendix \ref{appendix:baseline}.}
+\label{fig:baseline_heatmaps}
 \end{figure}
 
-So we can now proceed with more interesting experiments.
+% L1 e' "gratis", asi que no cambia mucho 
+
+If L2 is kept constant, the best L1 is not the smallest nor biggest.
+
+[escribir elección de L1]
+
+So, further experiments will use a L1=512 and L2=32. The values selected here are specific to the current implementation of the engine, since it may change if more optimizations are made (tradeoff is altered). For reference, Stockfish currently uses L1=2560, and employ more tricks to make it even faster. We can now proceed with more interesting experiments.
 
 \newpage
 \subsection{Axis encoding} % relevance
@@ -83,7 +91,7 @@ What if we add a feature which describes \enquote{\textit{there is a $\white$ Wh
 
 More examples of this behaviour can be found in Appendix \ref{appendix:axis_samples}, showcasing diagonal patterns and the $\knight$ Knight movements, although they do not move straight through axes. \\
 
-\textbf{Experiment.} In this first experiment, I will explore combinations of positional encodings for the pieces on the board, using the available axes. The canonical \featureset{Piece} feature set encodes each piece's position using the square it is located. Note that this is the same thing as encoding the position for a piece $P$ as $\featureset{File}_{P} \times \featureset{Rank}_{P}$. So the position of each piece is determined using the vertical (across ranks) and horizonal (across files) axes.
+\textbf{Experiment.} I will explore combinations of positional encodings for the pieces on the board, using the available axes. The canonical \featureset{Piece} feature set encodes each piece's position using the square it is located. Note that this is the same thing as encoding the position for a piece $P$ as $\featureset{File}_{P} \times \featureset{Rank}_{P}$. So the position of each piece is determined using the vertical (across ranks) and horizonal (across files) axes.
 
 I will use the natural axes of a chess board:
 
@@ -96,7 +104,7 @@ Horizontal & Vertical & Diagonal 1 & Diagonal 2 \\
 \end{tabular}
 \end{table}
 
-These axes coincide with the movement pattern of the pieces, which make them good candidates to encode the useful information I seek. In table \ref{tab:axis_encoding} I present the feature sets that I decided to try. The feature sets are named according to the axes they combine.
+These axes coincide with the movement pattern of the pieces, which make them good candidates to encode the features I proposed. In table \ref{tab:axis_encoding} I present the feature sets that I decided to try. The feature sets are named according to the axes they combine.
 
 \begin{table}[H]
 \caption{Axis encoding feature sets\protect\footnotemark}
@@ -138,9 +146,9 @@ These axes coincide with the movement pattern of the pieces, which make them goo
 I expect that the feature sets that are sums of single axes ($\axisarrowsSM{H} \oplus \axisarrowsSM{V}, \axisarrowsSM{D1} \oplus \axisarrowsSM{D2}$ and $\axisarrowsSM{H} \oplus \axisarrowsSM{V} \oplus \axisarrowsSM{D1} \oplus \axisarrowsSM{D2}$) will perform worse overall, since to capture the exact position of pieces in the board, the network will have to learn to relate at least two features for every location. This information is already available when there is a product of two axes (\axisarrowsSM{HV}).
 
 The feature sets that in addition to \axisarrowsSM{HV} include lone axes (\axisarrowsSM{H}, \axisarrowsSM{V}, \axisarrowsSM{D1} and \axisarrowsSM{D2}) should perform better than without, providing that the idea explained in the motivation holds.
-Note that even having twice the features, the penalty on inference performance should be minor due L1 being updated efficiently.
+Note that even having twice the features, the penalty on inference performance should be minor due L1 being updated efficiently. [saco esto? ya se sabe...]
 
-For each of the proposed feature sets, I will train a network and evaluate its performance relative to each other using a tournament. I expect to see them ranked in the reverse order as presented in the table (more axes better). \\
+For each of the proposed feature sets, I will train a network and evaluate its performance relative to each other using a tournament. I expect to see them ranked in the reverse order as presented in the table (more extra axes better). \\
 
 \textbf{Results.} Aca poner los resultados
 
@@ -148,6 +156,8 @@ so........
 
 
 \subsection{Symmetry / Relativity}
+
+\textbf{Motivation.}
 
 BUCKETING
 
