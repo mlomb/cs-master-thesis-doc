@@ -56,9 +56,9 @@
 
 \section{Feature set (board encoding)}
 
-To evaluate chess positions, we will use a neural network with an architecture explained in detail in the next chapter. In this chapter, we will build the one-dimensional input vector for such network, which can be described entirely by a feature set.
+To evaluate chess positions, the engine will use a neural network with an architecture explained in detail in the next chapter. In this chapter, I will show how to build the one-dimensional input vector for such network, which can be described entirely by a feature set.
 
-A feature set is a set built by a cartesian product of smaller sets of features, where each set extracts a different aspect of a position. Each tuple in the feature set corresponds to an element in the input vector, which will be set to $1$ if the aspects captured by the tuple is present in the position, and $0$ otherwise. If a tuple is present in a position, we say that the tuple is \textit{active}.
+A feature set is a set built by a cartesian product of smaller sets of features (often called feature blocks), where each set extracts a different aspect of a position. Each tuple in the feature set corresponds to an element in the input vector, which will be set to $1$ if the aspects captured by the tuple is present in the position, and $0$ otherwise. If a tuple is present in a position, we say that the tuple is \textit{active}.
 
 Let's consider some basic sets of features. The following sets encode positional information about the board:
 
@@ -150,8 +150,6 @@ The sum of two feature sets $\featureset{A}$ and $\featureset{B}$, denoted by $\
 For example, given the feature sets $\featureset{File}_{W}$ where $W$ is any white piece in the board and $\featureset{File}_{B}$ where $B$ is any black piece in the board, the feature set $\featureset{File}_{W} \oplus \featureset{File}_{B}$ will have the basic elements $\{a, b, ..., h\}$ for both white and black pieces, but each with a different interpretation.
 
 The sum operator is useful when we want to let the network find patterns combining information between two sets of features.
-
-
 
 \subsection{Indexing}
 
