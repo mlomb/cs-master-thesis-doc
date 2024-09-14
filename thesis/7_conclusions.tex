@@ -1,20 +1,27 @@
 \section{Final words}
 \subsection{Conclusions}
-\subsection{Future work}
-
-
-% prunning feature sets? quizas no ayuda, solo para training, no se. ver bien
-
-% lo ideal de un feature set son patrones que NO se den en simultáneo? asi podes aprender mas usando menos neuronas
-
-future work: hacer que no sea uniforme el sampling de las posiciones para armar los datasets
-
-future work: triplet loss? skip features
-
-deduplication de posiciones (al computar el score de Stockfish)
 
 maybe implementing a custom engine was not a good idea. bugs and stuff
 
 fs: havent changed much in a long time. thats why it is so hard find anything better
 
 feature engineering slow with this kind of task, iteration times are extremely slow. This is why fishnet exists.
+
+% prunning feature sets? quizas no ayuda, solo para training, no se. ver bien
+
+% lo ideal de un feature set son patrones que NO se den en simultáneo? asi podes aprender mas usando menos neuronas
+
+\subsection{Future work}
+
+Training NNUEs is a daunting task, and there are lots of variables that affect dramatically the performance of the networks. Many decisions were made in this work to reduce the scope of the project, so naturally many variables were left unexplored.
+
+The following are some key points that could be explored in a future work: \\
+
+% deduplication de posiciones (al computar el score de Stockfish)
+\textbf{Dataset:}
+A great deal of effort is put into good training data: the source, the filtering, ........ 
+\\
+
+\textbf{Alternative to PQR:} Instead of the loss function used to train PQR, the triplet loss function could be tried, where the anchor is the P position, the positive is the observed position (Q) and the negative is the random position (R). I don't expect this to improve the that much, but it is worth trying. \\
+
+\textbf{Network architecture:} The architecture of NNUE-like networks has gone through multiple iterations since its inception. This work focused on the first and most basic iteration of it. Maybe it is worth exploring more complex architectures with a fixed feature set rather than a fixed architecture with a variable feature set.
