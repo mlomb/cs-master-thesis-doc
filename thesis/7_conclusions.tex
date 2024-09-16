@@ -3,7 +3,7 @@
 
 maybe implementing a custom engine was not a good idea. bugs and stuff
 
-fs: havent changed much in a long time. thats why it is so hard find anything better
+feature sets: havent changed much in a long time. thats why it is so hard find anything better
 
 feature engineering slow with this kind of task, iteration times are extremely slow. This is why fishnet exists.
 
@@ -25,3 +25,5 @@ A great deal of effort is put into good training data: the source, the filtering
 \textbf{Alternative to PQR:} Instead of the loss function used to train PQR, the triplet loss function could be tried, where the anchor is the P position, the positive is the observed position (Q) and the negative is the random position (R). I don't expect this to improve the that much, but it is worth trying. \\
 
 \textbf{Network architecture:} The architecture of NNUE-like networks has gone through multiple iterations since its inception. This work focused on the first and most basic iteration of it. Maybe it is worth exploring more complex architectures with a fixed feature set rather than a fixed architecture with a variable feature set.
+
+Almost certainly try lower values of L2, which may bring better results.

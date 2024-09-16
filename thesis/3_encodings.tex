@@ -102,9 +102,11 @@ $\begin{aligned}[t]
 \end{aligned}$
 \end{center}
 
-Since each set has to capture some information from the position, it must be stated explicitly. For example, consider the feature set $\featureset{File}_{P} \times \featureset{Color}_{P}$ where $P$ is \textit{any} piece in the board, meaning that the tuples $(file, color)$ that will be active are the ones where there is at least one piece in $file$ with the color $color$ (disregarding any other kind of information, like the piece's role). Another possible feature set could be $\featureset{File}_{P} \times \featureset{Role}_{P}$, with a similar interpretation. An illustration of the active features of these two feature sets for the same board is shown in Figure \ref{fig:active_features}.
+Since each set has to capture some information from the position, it must be stated explicitly. For example, consider the feature set $\featureset{File}_{P} \times \featureset{Color}_{P}$ where $P$ is \textit{any} piece in the board, meaning that the tuples $(file, color)$ that will be active are the ones where there is at least one piece in $file$ with the color $color$ (disregarding any other kind of information, like the piece's role). Another possible feature set could be $\featureset{File}_{P} \times \featureset{Role}_{P}$, with a similar interpretation. Note that $\featureset{Square}_Q = \featureset{File}_Q \times \featureset{Rank}_Q$ $\forall Q$.
 
-\begin{figure}[h]
+An illustration of the active features of these two feature sets for the same board is shown in Figure \ref{fig:active_features}.
+
+\begin{figure}[H]
 \centering
 
 \begin{tabular}{cc}
@@ -146,49 +148,46 @@ Active features &
 % we want the network to find patterns between the two sets
 % some feature sets can be built merging the features of two or more sets
 
-The sum of two feature sets $\featureset{A}$ and $\featureset{B}$, denoted by $\featureset{A} \oplus \featureset{B}$, is a new feature set comprised of the tuples of both sets $\featureset{A}$ and $\featureset{B}$. These tuples do not interfere with each other, even if they have the same basic elements (e.g. h, 8, \symrook, \black), they \textbf{must} have different interpretations.
-For example, given the feature sets $\featureset{File}_{W}$ where $W$ is any white piece in the board and $\featureset{File}_{B}$ where $B$ is any black piece in the board, the feature set $\featureset{File}_{W} \oplus \featureset{File}_{B}$ will have the basic elements $\{a, b, ..., h\}$ for both white and black pieces, but each with a different interpretation.
+The sum (or concatenation) of two feature sets $\featureset{A}$ and $\featureset{B}$, denoted by $\featureset{A} \oplus \featureset{B}$, is a new feature set comprised of the tuples of both sets $\featureset{A}$ and $\featureset{B}$. These tuples do not interfere with each other, even if they have the same basic elements (e.g. h, 8, \symrook, \black), they \textbf{must} have different interpretations.
+For example, given the feature sets $\featureset{File}_{W}$ where $W$ is any white piece in the board and $\featureset{File}_{B}$ where $B$ is any black piece in the board, the feature set $\featureset{File}_{W} \oplus \featureset{File}_{B}$ will have the basic elements $\{a, b, ..., h\}$ for both white and black pieces, but each with a different interpretation. Note that the notation presented in this work is not standard.
 
 The sum operator is useful when we want to let the network find patterns combining information between two sets of features.
 
 \subsection{Indexing}
 
-The input to the network is a one-dimensional vector, so we need a way to map the tuples in a feature set to the elements in the input vector. The correct index for a tuple is computed using the order of the sets in the cartesian product and the size of each set, like strides in a multi-dimensional array. For this to work, each element in a set $S$ must correspond to a number between $0$ and $|S| - 1$. For example, the feature set $A \times B \times C$ has $|A| \times |B| \times |C|$ elements, and the tuple $(a, b, c)$ is mapped to the element indexed at $a \times |B| \times |C| + b \times |C| + c$.
-
-The same striding logic applies to feature sets built with the sum operator, recursively. [example?]
-
-\subsection{Dead features}
-
-[arreglar, lo movi]
-For every position, role and color each piece could be, there is a feature. There are 16 tuples in the set that will never be active: (a8..h8, \sympawn, \white) and (a1..h1, \sympawn, \black) that correspond to the white pawns in the last rank and the black pawns in the first rank. This is because pawns promote to another piece when they reach the opponent side of the board. Effectively, these will be dead neurons in the network, but this way we can keep the indexing straightforward. Most feature sets will have dead features, and the same logic applies.
-
+The input to the network is a one-dimensional vector, so we need a way to map the tuples in a feature set to the elements in the input vector. The correct index for a tuple is computed using the order of the sets in the cartesian product and the size of each set, like strides in a multi-dimensional array. For this to work, each element in a set $S$ must correspond to a number between $0$ and $|S| - 1$. For example, the feature set $A \times B \times C$ has $|A| \times |B| \times |C|$ elements, and the tuple $(a, b, c)$ is mapped to the element indexed at $a \times |B| \times |C| + b \times |C| + c$. The same striding logic applies to feature sets built with the sum operator, recursively.
 
 \subsection{Feature sets}
 
-In this section, we will define the feature sets that will be used in the experiments. We will start with some of the most basic yet reasonable feature sets, then move to feature sets that are used by engines or were used in the past, and finally some that have not been tried, to the best of our knowledge.
+In this section, I will define two of the most important feature sets known and used extensively in existing engines.
 
-\subsubsection{\mdseries\featureset{Piece}}
+\subsubsection{\mdseries\featureset{All}}
 
-This feature set is the most natural encoding for a chess position. There is a one-to-one mapping between pieces in the board and features:
+This feature set is the most natural encoding for a chess position. It is called \enquote{All} because it captures all the pieces. There is a one-to-one mapping between pieces in the board and features:
 
 \begin{center}
-    $\featureset{Piece} = \featureset{Square}_{P} \times \featureset{Role}_{P} \times \featureset{Color}_{P}$ \\
+    $\featureset{All} = \featureset{Square}_{P} \times \featureset{Role}_{P} \times \featureset{Color}_{P}$ \\
     for every $P$ piece in the board \\
-    ~\\
-    $64*6*2=768$ features
 \end{center}
 
-\subsubsection{\mdseries\featureset{King-Piece}}
+The features are very simple to compute, and it has $64*6*2=$\textbf{ 768 features}, which makes it very small and efficient.
+
+\subsubsection{\mdseries\featureset{King-All}}
+
+Another feature set built on top of $\featureset{All}$ is the \featureset{King-All} feature set or called \enquote{KA} for short. For each possible position of the king of the side to move, it captures all the pieces in the board ($\featureset{All}$):
 
 \begin{center}
-    $\featureset{King-Piece} = \featureset{Square}_{K} \times \featureset{Piece}_{P}$ \\
-    where $K$ is the king to move and $P$ is every \textit{non-king} piece in the board \\
-    ~\\
-    $64*(64*5*2)=40960$ features
+    $\featureset{King-All} = \featureset{Square}_{K} \times \featureset{All}_{P}$ \\
+    where $K$ is the king of the side to move and\\
+    $P$ is every piece in the board \\
 \end{center}
 
-There are variations to this feature set, such as \featureset{HalfKAv2} or notably \featureset{HalfKAv2\_hm} that is currently the latest feature set used by Stockfish 16.1. I will not consider them in this work.
+This encoding allows the network to better understand the position of the pieces in relation to the king, which is very tied to the evaluation of the position.
 
-known as "KP" in the literature
+The number of features is $64*768=$ \textbf{49152 features}. There is a variation of this feature set called \enquote{KP} which is the same but it does not consider the enemy king, reducing the amount of features to 40960. There are other variations, such as \featureset{KAv2} or notably \featureset{KAv2\_hm} that is currently the latest feature set used by Stockfish 16.1.
 
-if we skip the king, you may be thinking where does it get the information about the other king's side, .... blabla arquitectura Half
+The features in this set are easy to compute like in $\featureset{All}$, but since the number of features is much larger, it is a lot harder to train and use in practice. I will restrain this work to smaller feature sets that are easier to manage.
+
+\subsection{Dead features}
+
+Consider the $\featureset{All}$ feature set. For every position, role and color each piece could be, there is a feature. There are 16 tuples in the set that will never be active: (a8..h8, \sympawn, \white) and (a1..h1, \sympawn, \black) that correspond to the white pawns in the last rank and the black pawns in the first rank. This is because pawns promote to another piece when they reach the opponent side of the board, so no pawns will ever be found there. Effectively, these will be dead neurons in the network, but this way we can keep the indexing straightforward. Most feature sets will have dead features, and the same logic applies.
