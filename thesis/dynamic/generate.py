@@ -117,14 +117,14 @@ def exp_1_baseline():
 def quantization_error():
     df = pd.read_csv('../../assets/results/quant_errors.csv')
     df["err"] = (df["expected_output"] - df["output"])
-    df["err_abs"] = (df["expected_output"] - df["output"]).abs()
 
     sns.displot(df, x='err', height=3, aspect=1.3, bins=35) # , linewidth=0
-    plt.xlabel('Absolute error of quantized model')
+    plt.xlabel('Error of quantized model')
     plt.ylabel('Count')
     plt.xlim(-100, 100)
     #plt.ylim(0, 3000)
-    plt.savefig("./quant_errors.pdf", format='pdf')
+    plt.savefig("./output/quant_errors.pdf", format='pdf')
     plt.close()
 
 exp_1_baseline()
+quantization_error()

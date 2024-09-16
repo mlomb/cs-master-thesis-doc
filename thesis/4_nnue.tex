@@ -5,7 +5,7 @@ NNUE (\reflectbox{NNUE} Efficiently updatable neural network) is a neural networ
 NNUE operates in the following principles:
 
 \begin{itemize}
-    \item \textbf{Input sparsity}: The network should have a relatively low amount of non-zero inputs, determined by the chosen feature set. The presented feature sets have between 0.1\% and 2\% of non-zero inputs for a typical position. Having a low amount of non-zero inputs places a low upper bound on the time required to evaluate the network in its entirety, which can happen using some feature sets like \featureset{HalfKP} that triggers a complete refresh when the king is moved.
+    \item \textbf{Input sparsity}: The network should have a relatively low amount of non-zero inputs, determined by the chosen feature set. The presented feature sets have between 0.1\% and 2\% of non-zero inputs for a typical position. Having a low amount of non-zero inputs places a low upper bound on the time required to evaluate the network in its entirety, which can happen using some feature sets like \featureset{King-All} that triggers a complete refresh when the king is moved.
     \item \textbf{Efficient updates}: From one evaluation to the next, the number of inputs changes should be minimal. This allows for the most expensive part of the network to be efficiently updated, instead of recomputed from scratch.
     \item \textbf{Simple architecture}: The network should be composed of a few and simple operators, that can be efficiently implemented with low-precision arithmetic in integer domain using CPU hardware. [no accelerators, aggresive quantization techniques]
 \end{itemize}
@@ -14,7 +14,7 @@ NNUE operates in the following principles:
 
 \subsection{Layers}
 
-For this thesis, I have chosen to use the standard NNUE architecture, which consist of multiple linear (fully connected) layers and clipped ReLU activations. In the literature, there are other architectures that make use of polling layers, sigmoid activations and others, but since this work is about experimenting with feature sets and training methods, I have chosen to stick with the standard architecture.
+For this thesis, I have chosen to use a very simple NNUE architecture, which consist of two linear (fully connected) layers and clipped ReLU activations. In the literature, there are other architectures that make use of polling layers, sigmoid activations and others, but since this work is about experimenting with feature sets, I have chosen to stick with something simple.
 
 \paragraph[short]{Linear layer} A linear layer is a matrix multiplication followed by a bias addition. It takes \textbf{in\_features} input values and produces \textbf{out\_features} output values. The operation is $\bm{y} = \bm{W} \bm{x} + \bm{b}$, where:
 
@@ -84,16 +84,81 @@ NNUEs are designed to work with this kind of search, since every time the algori
 \label{fig:updates_tree}
 \end{figure}
 
-To take advantage of this during search, instead of computing all the features active in a position and then evaluate the network in its entirety, we can \textbf{accumulate} the output of the first linear layer and update it with when the position changes. Linear layers can be computed adding the corresponding columns of the weight matrix into the output, so when a feature becomes active or inactive, we can add or subtract the corresponding column to the output. When the evaluation is needed, only the following layers (usually small) have to be computed. \\
+To take advantage of this during search, instead of computing all the features active in a position and then evaluate the network in its entirety, we can \textbf{accumulate} the output of the first linear layer and update it with when the position changes. Linear layers can be computed adding the corresponding columns of the weight matrix into the output, so when a feature becomes active or inactive, we can add or subtract the corresponding column to the output. When the evaluation is needed, only the layer (usually small) has to be computed. \\
 
 Recall that the way I defined feature sets, they always encode the position from white's point of view. This means that its not possible to use the same \textbf{accumulator} for both players. So when running the search, we have to keep two accumulators, one for white and one for black, where the black board is flipped and has the colors swapped to match the point of view.
-[mencionar que tambien realmente es porque queremos codificar el que mueve y se va swapeando]
 
-[agregar grafico de black → white board → encode, para mostrar como se flipea / swapea. arriba el white → encode; poner los features activos quizas?]
+% [agregar grafico de black → white board → encode, para mostrar como se flipea / swapea. arriba el white → encode; poner los features activos quizas?]
+
+%\begin{figure}[h]
+%\centering
+%
+%\begin{tabular}{ccccc}
+%
+%\raisebox{-7ex}{\chessboard[
+%    setfen=2Qb4/5pk1/p5p1/1pp3Pp/3qPp1P/P7/1PP1B3/1K6 w - - 1 29,
+%    tinyboard,
+%]}
+%
+%&
+%
+%&
+%
+%
+%&
+%
+%$\xrightarrow{\text{encode}}$
+%
+%&
+%
+%Features
+%
+%\\
+%
+%\raisebox{-7ex}{\chessboard[
+%    setfen=2Qb4/5pk1/p5p1/1pp3Pp/3qPp1P/P7/1PP1B3/1K6 b - - 1 29,
+%    tinyboard,
+%]}
+%
+%&
+%
+%$\xrightarrow{\text{flip vertically}}$
+%
+%&
+%
+%\raisebox{-7ex}{\chessboard[
+%    setfen=2Qb4/5pk1/p5p1/1pp3Pp/3qPp1P/P7/1PP1B3/1K6 b - - 1 29,
+%    tinyboard,
+%]}
+%
+%&
+%
+%$\xrightarrow{\text{swap colors}}$
+%
+%&
+%
+%\raisebox{-7ex}{\chessboard[
+%    setfen=2qB4/5PK1/P5P1/1PP3pP/3QpP1p/p7/1pp1b3/1k6 w - - 1 29,
+%    tinyboard,
+%]}
+%
+%
+%\end{tabular}
+%\end{figure}
+
+
+During search, the first layer is replaced by two accumualtors to take advantage of this. Figure \ref{fig:incr_update} depicts how the output of both accumulators is concatenated depending on which player is moving, to later be passed through the rest of the network which are computed as usual. 
+
+\begin{figure}[H]
+\centering
+\makebox[\textwidth]{\includegraphics[width=\textwidth]{../assets/nnue/incremental_update.pdf}}
+\caption{Concatenation of the first layer's output after a move is made. Inspired in a CPW figure.}
+\label{fig:incr_update}
+\end{figure}
 
 \subsection{Network}
 
-The network will be composed of four linear layers $L_1$ through $L_4$, each but the last one followed by a clipped ReLU activation $C_1$ through $C_3$. The network has two inputs: it takes the encoding (feature set) of a position from each player's point of view. Each encoding is passed through the same $L_1$ layer (same weights) and then the output is concatenated before passing it through the rest of the network. [hablar de que no es la unica alternativa?] The first layer can be seen as a feature transformer, and it must share weights to allow for efficient updates. The network can be described as follows: \\
+The network will be composed of two linear layers $L_1$ through $L_3$, each but the last one followed by a clipped ReLU activation $C_1$ and $C_2$. The network has two inputs: it takes the encoding (feature set) of a position from each player's point of view. Each encoding is passed through the same $L_1$ layer (same weights) and then the output is concatenated before passing it through the rest of the network. [hablar de que no es la unica alternativa?] The first layer can be seen as a feature transformer, and it must share weights to allow for efficient updates. The network can be described as follows: \\
 
 $\bm{N}$: number of features in the feature set
 
@@ -106,11 +171,7 @@ $\bm{N}$: number of features in the feature set
 \itemsep-0.2em
 \item $C_2$: Clipped ReLU of $\bm{O}$
 \itemsep0.2em
-\item $L_3$: Linear from $\bm{O}$ to $\bm{P}$ ($\bm{W_3}$ weight, $\bm{b_3}$ bias)
-\itemsep-0.2em
-\item $C_3$: Clipped ReLU of $\bm{P}$
-\itemsep0.2em
-\item $L_4$: Linear from $\bm{P}$ to $\bm{1}$ ($\bm{W_4}$ weight, $\bm{b_4}$ bias)
+\item $L_3$: Linear from $\bm{P}$ to $\bm{1}$ ($\bm{W_3}$ weight, $\bm{b_3}$ bias)
 \end{enumerate}
 
 
@@ -118,33 +179,26 @@ The size of each layer is not fixed since it is a hyperparameter I will experime
 
 \begin{figure}[H]
 \centering
-\makebox[\textwidth]{\includegraphics[width=12cm]{../assets/nnue/network.pdf}}
-\caption{Neural network architecture with $\bm{N}=768$, $\bm{M}=256$, $\bm{O}=\bm{P}=32$. Not to scale.}
+\makebox[\textwidth]{\includegraphics[width=10cm]{../assets/nnue/network.pdf}}
+\caption{Neural network architecture with $\bm{N}=768$, $\bm{M}=256$, $\bm{O}=32$. Not to scale.}
 \label{fig:network}
-\end{figure}
-
-During search, the first layer $L_1$ is replaced by two accumualtors to take advantage of efficient updates, as explained in the previous section. Figure \ref{fig:incr_update} depicts how the output of both accumulators is concatenated depending on which player is moving, to later be passed through the rest of the network which are computed as usual. 
-
-\begin{figure}[H]
-\centering
-\makebox[\textwidth]{\includegraphics[width=\textwidth]{../assets/nnue/incremental_update.pdf}}
-\caption{Concatenation of the first layer's output after a move is made.}
-\label{fig:incr_update}
 \end{figure}
 
 \subsection{Quantization}
 
 % https://github.com/official-stockfish/nnue-pytorch/blob/master/docs/nnue.md#quantization
 
-Quantization is the process of converting the operations and parameters of a network to a lower precision. It is a step performed after all training has been done, which do happen in float domain. Floating point operations are too slow to achieve maximum performance, as it sacrifices too much speed. Quantizing the network to integer domain will inevitable introduce some error, but it far outweights the performance gain. In general, the deeper the network, the more error is accumulated, but since NNUEs are very shallow by design, the error is negligible.
+Quantization is the process of converting the operations and parameters of a network to a lower precision. It is a step performed after all training has been done, which do happen in float domain. Floating point operations are too slow to achieve acceptable performance, as it sacrifices too much speed. This was necessary to implement to have a working engine.
 
-The objective is to take advantage of modern CPUs that allow doing low-precision integer arithmetic in parallel with 8, 16, 32 or even 64 8-bit integer values at a time. To achieve this, the best is to use the smallest integer type possible everywhere, to process more values at once.
+Quantizing the network to integer domain will inevitable introduce some error, but it far outweights the performance gain. In general, the deeper the network, the more error is accumulated, but since NNUEs are very shallow by design, the error is negligible. At the end of the chapter I do an analysis of the error introduced by quantization.
+
+Since the objective is to take advantage of modern CPUs that allow doing low-precision integer arithmetic in parallel with 8, 16, 32 or even 64 8-bit integer values at a time, we want to use the smallest integer type possible everywhere, to process more values at once.
 
 \subsubsection{Stockfish quantization scheme}
 
 \def\int#1{\texttt{int#1}}
 
-In this thesis, I will use the same quantization scheme used in the engine Stockfish \cite{nnue-pytorch}. It uses \int{8} $[-128, 127]$ for inputs and weights, and \int{16} $[-32768, 32767]$ where \int{8} is not possible.
+In this thesis, I will use the same quantization scheme used in the engine Stockfish \cite{nnue-pytorch}, due its simplicity and it has been battle tested. It uses \int{8} $[-128, 127]$ for inputs and weights, and \int{16} $[-32768, 32767]$ where \int{8} is not possible.
 To convert the float values to integer, we need to multiply the weights and biases by some constant to translate them to a different range of values. Each layer is different, so I'll go through each one.
 
 %\begin{figure}[H]
@@ -154,14 +208,12 @@ To convert the float values to integer, we need to multiply the weights and bias
 %\label{fig:quantization}
 %\end{figure}
 
-\paragraph[short]{ClippedReLU} The output of the activation in float domain is in the range $[0, 1]$ and we want to use \int{8} in the quantized version, so we can clamp in the range [0, 127] instead. The input data type may change depending on the previous layer: if it comes from the accumulator, it will be \int{32}, and if it comes from a linear layer, it will be \int{16}.
-
-ACTIVATION RANGE SCALING = 127
+\paragraph[short]{ClippedReLU} The output of the activation in float domain is in the range $[0, 1]$ and we want to use \int{8} in the quantized version, so we can multiply by $s_a=127$ and clamp in the range [0, 127]. The input data type may change depending on the previous layer: if it comes from the accumulator, it will be \int{32}, and if it comes from a linear layer, it will be \int{16}.
 
 % \paragraph[short]{Input} Since we are using accumualtors, there is not a real input to the model.
 % Inputs are quantized to 8 bits, so the range of values is $-128..127$. Since the inputs are hot encoded, the float values are 0.0 or 1.0, so the quantized values are either 0 or 127.
 
-\paragraph[short]{Accumulator} The purpose of this layer is to accumulate rows of the first layer's weight matrix. Later linear layers expect the input in \int{8}, 
+\paragraph[short]{Accumulator (L1)} [ARREGLAR] The purpose of this layer is to accumulate rows of the first layer's weight matrix. Later linear layers expect the input in \int{8}, 
 
 
 . Since the output of this layer will be the input for the next linear layer and it has the ClippedReLU activation, the output will also be in 8 bits.
@@ -174,7 +226,7 @@ we can't accumulate using 8 bits since it would overflow.
 
 COLUMN MAJOR
 
-\paragraph[short]{Linear layer}
+\paragraph[short]{Linear layer (L2 and L3)} [ARREGLAR]
 The input to this layer will be scaled to the activation range because it takes the output of the previous ClippedReLU activation. We want the output to also be scaled to the activation rango so it can be passed to the next. The activation range scaling is $s_a=127$, as explained before.
 
 To convert the weights to \int{8}, we must scale them by some factor $s_W=64$ (value used in Stockfish). The value $s_W$ depends on how much precision we want to keep, but if it is too large the weights will be limited in magnitude. The range of the weights in floating point is then determined by $\pm \frac{s_a}{s_W}=\frac{127}{64}=1.984375$, and to make sure weights don't overflow, it is necessary to clip them to this range during training. The value $s_W$ also determinates the minimum representable weight step, which is $\frac{1}{s_W}=\frac{1}{64}=0.015625$.
@@ -222,14 +274,18 @@ asd
 
 \subsection{Implementation}
 
-The Stockfish repository provides an AVX2 implementation of the mathematical operations in C++. They have been carefully ported to Rust for this thesis. The implementation was tested using the Pytorch model as reference (output match).
+The Stockfish repository provides an AVX2 implementation of the mathematical operations in C++. They have been carefully ported to Rust for this thesis. The implementation was thoroughly tested using the Pytorch model as reference (output match).
 
+\subsubsection{Quantization error}
+
+To make sure the quantization is working as expected, I measured the error introduced by running a trained model in thousands of positions. The error is computed as the difference between the output of the quantized model (in Rust) and the float model (in Pytorch).
 
 \begin{figure}[H]
 \centering
 \includegraphics[width=12cm]{./dynamic/output/quant_errors.pdf}
-\caption{Absolute error of the quantized model compared to the float model. N=50000}
+\caption{Error of the quantized model compared to the float model. N=50000}
 \label{fig:quant_errors}
 \end{figure}
 
-Error
+In Figure \ref{fig:quant_errors} we can see that the error is centered around zero and most of the errors are within 50 units, which is acceptable given that the model output values between -10000 and 10000.
+
