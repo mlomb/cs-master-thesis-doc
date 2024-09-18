@@ -147,7 +147,7 @@ Recall that the way I defined feature sets, they always encode the position from
 %\end{figure}
 
 
-During search, the first layer is replaced by two accumualtors to take advantage of this. Figure \ref{fig:incr_update} depicts how the output of both accumulators is concatenated depending on which player is moving, to later be passed through the rest of the network which are computed as usual. 
+During search, the first layer is replaced by two accumualtors to take advantage of this. Figure \ref{fig:incr_update} depicts how the output of both accumulators is concatenated depending on which player is moving, to later be passed through the rest of the network which is computed as usual. 
 
 \begin{figure}[H]
 \centering
@@ -158,7 +158,7 @@ During search, the first layer is replaced by two accumualtors to take advantage
 
 \subsection{Network}
 
-The network will be composed of two linear layers $L_1$ through $L_3$, each but the last one followed by a clipped ReLU activation $C_1$ and $C_2$. The network has two inputs: it takes the encoding (feature set) of a position from each player's point of view. Each encoding is passed through the same $L_1$ layer (same weights) and then the output is concatenated before passing it through the rest of the network. [hablar de que no es la unica alternativa?] The first layer can be seen as a feature transformer, and it must share weights to allow for efficient updates. The network can be described as follows: \\
+The network will be composed of three linear layers $L_1$ through $L_3$, each but the last one followed by a clipped ReLU activation $C_1$ and $C_2$. The network has two inputs: it takes the encoding (feature set) of a position from each player's point of view. Each encoding is passed through the same $L_1$ layer (same weights) and then the output is concatenated before passing it through the rest of the network. [hablar de que no es la unica alternativa?] The first layer can be seen as a feature transformer, and it must share weights to allow for efficient updates. The network can be described as follows: \\
 
 $\bm{N}$: number of features in the feature set
 
@@ -196,6 +196,8 @@ Since the objective is to take advantage of modern CPUs that allow doing low-pre
 
 \subsubsection{Stockfish quantization scheme}
 
+[Quizas hay que explicar mas esta parte, es compleja]
+
 \def\int#1{\texttt{int#1}}
 
 In this thesis, I will use the same quantization scheme used in the engine Stockfish \cite{nnue-pytorch}, due its simplicity and it has been battle tested. It uses \int{8} $[-128, 127]$ for inputs and weights, and \int{16} $[-32768, 32767]$ where \int{8} is not possible.
@@ -208,28 +210,22 @@ To convert the float values to integer, we need to multiply the weights and bias
 %\label{fig:quantization}
 %\end{figure}
 
+\paragraph[short]{Input} In float domain inputs are either $0.0$ or $1.0$, and since they are quantized to \int{8} we must scale them by $s_a=127$ (activation scale), so inputs are either $0$ or $127$. During inference, the input values are not computed since the first layer is an accumulator. However it is important to note that the rows being accumulated are scaled by $s_a=127$.
+
 \paragraph[short]{ClippedReLU} The output of the activation in float domain is in the range $[0, 1]$ and we want to use \int{8} in the quantized version, so we can multiply by $s_a=127$ and clamp in the range [0, 127]. The input data type may change depending on the previous layer: if it comes from the accumulator, it will be \int{32}, and if it comes from a linear layer, it will be \int{16}.
 
 % \paragraph[short]{Input} Since we are using accumualtors, there is not a real input to the model.
 % Inputs are quantized to 8 bits, so the range of values is $-128..127$. Since the inputs are hot encoded, the float values are 0.0 or 1.0, so the quantized values are either 0 or 127.
 
-\paragraph[short]{Accumulator (L1)} [ARREGLAR] The purpose of this layer is to accumulate rows of the first layer's weight matrix. Later linear layers expect the input in \int{8}, 
+\paragraph[short]{Accumulator (L1)}
 
 
-. Since the output of this layer will be the input for the next linear layer and it has the ClippedReLU activation, the output will also be in 8 bits.
-But since we are accumulating 8 bits values and
 
+The purpose of this layer is to accumulate rows of the first layer's weight matrix, which is stored in \int{16}. The values are stored in column-major order so a single row is contiguous in memory. Since we are accumulating potentially hundreds of values which are stored in \int{16} and scaled by $s_a=127$, we must accumulate in \int{32} to avoid overflows. The output of this layer will be the input for the ClippedReLU activation.
 
-and to output a clipped value of 8 bits for the next layer.
+\paragraph[short]{Linear layer (L2 and L3)} The input to this layer will be scaled to the activation range because it takes the output of the previous ClippedReLU activation. We want the output to also be scaled to the activation rango so it can be passed to the next. The activation range scaling is $s_a=127$, as explained before.
 
-we can't accumulate using 8 bits since it would overflow.
-
-COLUMN MAJOR
-
-\paragraph[short]{Linear layer (L2 and L3)} [ARREGLAR]
-The input to this layer will be scaled to the activation range because it takes the output of the previous ClippedReLU activation. We want the output to also be scaled to the activation rango so it can be passed to the next. The activation range scaling is $s_a=127$, as explained before.
-
-To convert the weights to \int{8}, we must scale them by some factor $s_W=64$ (value used in Stockfish). The value $s_W$ depends on how much precision we want to keep, but if it is too large the weights will be limited in magnitude. The range of the weights in floating point is then determined by $\pm \frac{s_a}{s_W}=\frac{127}{64}=1.984375$, and to make sure weights don't overflow, it is necessary to clip them to this range during training. The value $s_W$ also determinates the minimum representable weight step, which is $\frac{1}{s_W}=\frac{1}{64}=0.015625$.
+To convert the weights to \int{8}, we must scale them by some factor $s_W=64$ (value used in Stockfish, efficient in SIMD because is just a shift). The value $s_W$ depends on how much precision we want to keep, but if it is too large the weights will be limited in magnitude. The range of the weights in floating point is then determined by $\pm \frac{s_a}{s_W}=\frac{127}{64}=1.984375$, and to make sure weights don't overflow, it is necessary to clip them to this range during training. The value $s_W$ also determinates the minimum representable weight step, which is $\frac{1}{s_W}=\frac{1}{64}=0.015625$.
 
 The linear layer operation with the scaling factors applied looks like:
 
@@ -246,7 +242,7 @@ s_a \bm{y} &= \frac{(s_W \bm{W}) (s_a \bm{x}) + s_a s_W \bm{b}}{s_W} \\
 
 From that equation we can extract that, to obtain the result we want, which is the output of the layer scaled to the activation range ($s_a \bm{y}$), we must divide the result of the operation by $s_W$ (2). Also that the bias must be scaled by $(s_a s_W)$. \\
 
-The last linear layer is a bit different since there is no activation afterwards, so we don't want the output to be scaled to the activation range $(s_a)$. To be consistent with the Stockfish engine, the output values should be in the range $[-10000,10000]$.
+The last linear layer (L3) is a bit different since there is no activation afterwards, so we don't want the output to be scaled to the activation range $(s_a)$. To be consistent with the Stockfish engine, the output values should be in the range $[-10000,10000]$.
 
 
 
@@ -256,7 +252,14 @@ $s_o=9600$
 
 \begin{equation}
 \begin{aligned}
-s_o ((s_a \bm{x}) (s_W \bm{w}) + s_a s_W \bm{b}) = s_a s_W s_o \bm{y}
+s_a s_W s_o \bm{y} = s_o ((s_a \bm{x}) (s_W \bm{W}) + s_a s_W \bm{b})
+\end{aligned}
+\end{equation}
+
+
+\begin{equation}
+\begin{aligned}
+\bm{y} = \frac{s_o ((s_a \bm{x}) (s_W \bm{W}) + s_a s_W \bm{b})}{s_a s_W s_o}
 \end{aligned}
 \end{equation}
 
@@ -287,5 +290,6 @@ To make sure the quantization is working as expected, I measured the error intro
 \label{fig:quant_errors}
 \end{figure}
 
+[rever porque esta corrido]
 In Figure \ref{fig:quant_errors} we can see that the error is centered around zero and most of the errors are within 50 units, which is acceptable given that the model output values between -10000 and 10000.
 
