@@ -28,6 +28,7 @@
 \usepackage{siunitx}
 \usepackage{wrapfig}
 \usepackage{mwe}
+\usepackage{listings}
 
 % chess typesetting
 \usepackage{skak}
@@ -54,7 +55,11 @@
 
 \maketitle
 
+\pagenumbering{gobble}
+\include{0_abstract}
 \include{0_thanks}
+\pagenumbering{arabic}
+\setcounter{page}{1}
 
 \tableofcontents
 \newpage

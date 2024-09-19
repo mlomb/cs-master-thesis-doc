@@ -223,9 +223,9 @@ To convert the float values to integer, we need to multiply the weights and bias
 
 The purpose of this layer is to accumulate rows of the first layer's weight matrix, which is stored in \int{16}. The values are stored in column-major order so a single row is contiguous in memory. Since we are accumulating potentially hundreds of values which are stored in \int{16} and scaled by $s_a=127$, we must accumulate in \int{32} to avoid overflows. The output of this layer will be the input for the ClippedReLU activation.
 
-\paragraph[short]{Linear layer (L2 and L3)} The input to this layer will be scaled to the activation range because it takes the output of the previous ClippedReLU activation. We want the output to also be scaled to the activation rango so it can be passed to the next. The activation range scaling is $s_a=127$, as explained before.
+\paragraph[short]{Linear layer (L2 and L3)} The input to this layer will be scaled to the activation range because it takes the output of the previous ClippedReLU activation: $s_a \bm{x}$ We want the output to also be scaled to the activation range so it can be passed to the next: $s_a \bm{y}$.
 
-To convert the weights to \int{8}, we must scale them by some factor $s_W=64$ (value used in Stockfish, efficient in SIMD because is just a shift). The value $s_W$ depends on how much precision we want to keep, but if it is too large the weights will be limited in magnitude. The range of the weights in floating point is then determined by $\pm \frac{s_a}{s_W}=\frac{127}{64}=1.984375$, and to make sure weights don't overflow, it is necessary to clip them to this range during training. The value $s_W$ also determinates the minimum representable weight step, which is $\frac{1}{s_W}=\frac{1}{64}=0.015625$.
+To convert the weights to \int{8}, we must scale them by some factor $s_W=64$ (value used in Stockfish, efficient in SIMD because is just a shift): $s_W \bm{W}$. The value $s_W$ depends on how much precision we want to keep, but if it is too large the weights will be limited in magnitude. The range of the weights in floating point is then determined by $\pm \frac{s_a}{s_W}=\frac{127}{64}=1.984375$, and to make sure weights don't overflow, it is necessary to clip them to this range during training. The value $s_W$ also determinates the minimum representable weight step, which is $\frac{1}{s_W}=\frac{1}{64}=0.015625$.
 
 The linear layer operation with the scaling factors applied looks like:
 
@@ -242,38 +242,17 @@ s_a \bm{y} &= \frac{(s_W \bm{W}) (s_a \bm{x}) + s_a s_W \bm{b}}{s_W} \\
 
 From that equation we can extract that, to obtain the result we want, which is the output of the layer scaled to the activation range ($s_a \bm{y}$), we must divide the result of the operation by $s_W$ (2). Also that the bias must be scaled by $(s_a s_W)$. \\
 
-The last linear layer (L3) is a bit different since there is no activation afterwards, so we don't want the output to be scaled to the activation range $(s_a)$. To be consistent with the Stockfish engine, the output values should be in the range $[-10000,10000]$.
-
-
-
-% The scaling factor for the output of the last layer is $s_o=9600$.
-
-$s_o=9600$
+The last linear layer (L3) is a bit different since there is no activation afterwards, so we don't want any scalings at all:
 
 \begin{equation}
 \begin{aligned}
-s_a s_W s_o \bm{y} = s_o ((s_a \bm{x}) (s_W \bm{W}) + s_a s_W \bm{b})
+\bm{y} = \frac{(s_W \bm{W}) (s_a \bm{x}) + s_a s_W \bm{b}}{s_a s_W}
 \end{aligned}
 \end{equation}
 
+[seguir escribiendo y arreglar cosas arriba]
 
-\begin{equation}
-\begin{aligned}
-\bm{y} = \frac{s_o ((s_a \bm{x}) (s_W \bm{W}) + s_a s_W \bm{b})}{s_a s_W s_o}
-\end{aligned}
-\end{equation}
-
-
-
-
-
-
-
-no se tiene el mismo problema que en el accumulator layer porque la multiplicacion en SIMD se hace en 32 bits (osea sin hacer overflow), para despues aplicar clippedrelu a eso.
-
-. \\
-
-asd
+% no se tiene el mismo problema que en el accumulator layer porque la multiplicacion en SIMD se hace en 32 bits (osea sin hacer overflow), para despues aplicar clippedrelu a eso.
 
 \subsection{Implementation}
 
@@ -291,5 +270,5 @@ To make sure the quantization is working as expected, I measured the error intro
 \end{figure}
 
 [rever porque esta corrido]
-In Figure \ref{fig:quant_errors} we can see that the error is centered around zero and most of the errors are within 50 units, which is acceptable given that the model output values between -10000 and 10000.
+In Figure \ref{fig:quant_errors} we can see that the error is centered around zero and most of the errors are within 50 units, which is acceptable given that the model output values much higher.
 

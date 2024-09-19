@@ -41,3 +41,52 @@ Runtime may be affected by other processes running on the machine, since it was 
 
 \caption{Weights of different neurons in the L1 layer, which are connected to features in \featureset{Piece} with different roles. The intensity represents the weight value, and the color represents the sign. The number is the feature index, specifically \featureset{VH} instead of \featureset{HV} (both are \featureset{Piece}), because it was prior to the first experiment. Refer to section \ref{sec:axis_encoding}.}
 \end{figure}
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\newpage
+\subsection{\texttt{emitPlainEntry} code}
+\label{appendix:emitPlainEntry}
+
+\lstset{
+  %backgroundcolor=\color{gray!10},  
+  basicstyle=\ttfamily,
+  columns=fullflexible,
+  breakatwhitespace=false,      
+  breaklines=true,                
+  captionpos=b,                    
+  commentstyle=\color{green}, 
+  extendedchars=true,              
+  frame=single,                   
+  keepspaces=true,             
+  keywordstyle=\color{blue},      
+  language=c++,                 
+  numbers=none,                
+  numbersep=5pt,                   
+  numberstyle=\tiny\color{blue},
+  rulecolor=\color{white},        
+  showspaces=false,               
+  showtabs=false,                 
+  stepnumber=5,                  
+  stringstyle=\color{red!60!blue},
+  tabsize=3,                      
+  title=\lstname                
+}
+\begin{lstlisting}
+void emitPlainEntry(std::string& buffer, const TrainingDataEntry& plain)
+{
+    buffer += plain.pos.fen();
+    buffer += ',';
+    buffer += std::to_string(plain.score);
+    buffer += ',';
+    buffer += chess::uci::moveToUci(plain.pos, plain.move);
+    buffer += '\n';
+}
+\end{lstlisting}
+
