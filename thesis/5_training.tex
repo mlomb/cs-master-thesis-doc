@@ -67,17 +67,15 @@ The evaluations from Stockfish are in centipawns, which is not the exact number 
 
 decir que no usamos el outcome de la partida para el score
 
-\[
-L_\varepsilon(y,f(x,w))=
-\max\{0, |y-f(x,w)|-\varepsilon\}
-\]
-
 
 \subsubsection{Loss function}
 
+% q = (output / out_scaling).sigmoid()
+% p = (target / in_scaling).sigmoid()
+% loss = torch.pow(torch.abs(p - q), 2.6).mean()
+
 \[
-L_\varepsilon(y,f(x,w))=
-\max\{0, |y-f(x,w)|-\varepsilon\}
+L(y,f(x,\bm{W}))= \left| \sigma\left(\frac{y}{\text{scale}_{\text{in}}}\right) - \sigma\left(\frac{f(x,\bm{W})}{\text{scale}_{\text{out}}}\right) \right| ^{2.6}
 \]
 
 
@@ -95,11 +93,30 @@ With infinite compute, $f$ would be the result of running minimax to the end of 
 
 \subsubsection{Loss function}
 
+% p = output[:,0] / out_scaling
+% q = output[:,1] / out_scaling
+% r = output[:,2] / out_scaling
+% a = -torch.log(torch.sigmoid(q - r)).mean()
+% b = -torch.log(torch.sigmoid((p + q))).mean()
+% c = -torch.log(torch.sigmoid((-q - p))).mean()
+% loss = a + b + c
+
+\begin{align*}
+L(x_p, x_q, x_r, \bm{W})=
+& -\log\left(\sigma(q - r)\right) \\
+& -\log\left(\sigma(p + q)\right) \\
+& -\log\left(\sigma(-q - p)\right)
+\end{align*}
 
 \[
-L_\varepsilon(y,f(x,w))=
-\max\{0, |y-f(x,w)|-\varepsilon\}
+\text{where }
+p = \frac{f(x_p, \bm{W})}{\text{scale}_{\text{out}}},\text{ }
+q = \frac{f(x_q, \bm{W})}{\text{scale}_{\text{out}}},\text{ }
+r = \frac{f(x_r, \bm{W})}{\text{scale}_{\text{out}}}
 \]
+
+
+
 
 
 \subsection{Setup}
