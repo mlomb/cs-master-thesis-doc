@@ -41,7 +41,9 @@ The file was too big to be practical and it would wear off my SSD, so I made a t
 
 As you can see, the new format is compatible with the last one, so only one reader was implemented. After compacting the data, the file went down to a manageable 522GB.
 
-Each training method will generate a new derived dataset based on this samples, to later train the network.
+There are many positions in the dataset that are known to not be good for training. Remember that the engine is doing quiescent search, so it does a smaller search looking for quiet positions to evaluate. This means that positions where the best move is a capture, or there is a check are filtered out when building the training batch.
+
+Each training method will generate a new derived dataset based on this samples.
 
 % Lichess is a free online site to play chess, and thankfully it provides a CC0 database \cite{lichessdb} with all the games ever played on the site. It consists of serveral compressed PGN files\footnote{Portable Game Notation: a textual format to store chess games (moves and metadata)} splitted by month since 2013, that add up to $1.71$TB compressed. The whole database contains over 5.5 billion games, that equates to around 200 billion positions. In practice, that many positions are too much to handle so I'll use only a fraction of them and take only one sample per game to increase the diversity of positions.
 
@@ -52,23 +54,21 @@ Each training method will generate a new derived dataset based on this samples, 
 
 \subsection{Method 1: Score target}
 
-The main method to train the network will use the latest Stockfish evaluations as target. The objective is to train the network to predict the evaluation of a position as Stockfish would do.
-
-First, we need to generate the training data. It is not known what makes a dataset good, but usually you can use the previous version of an engine to evaluate positions to train the next version. Stockfish uses a combination of datasets generated this way and evaluations from Lc0 that are more expensive to compute but have a higher quality, given the type of engine (it uses MCTS with a deep neural network).
-
-I have chosen to generate the training set using evaluations from Stockfish version 16.1 at depth 10, as recommended by the authors of nnue-pytorch \cite{nnue-pytorch}. For each game, I uniformly sample a position (after 20 half-moves), run Stockfish and store the centipawn evaluation.
+The main method to train the network will use the scores provided in the dataset as target. I expect the networks to learn to predict the evaluation of a position as Stockfish would do.
 
 \setcounter{secnumdepth}{4}
-\subsubsection{CP-space to WDL-space}
+\subsubsection{Score-space to WDL-space}
+
+Scores are values ranging from -10000 to 10000. [hablar de que score vs performance ajusta a una sigmoid]
+[hablar de que se necesita una escala]
+
 % I guess it is to steer the old network to the new one while making 
-
-The evaluations from Stockfish are in centipawns, which is not the exact number the network has to use as target.
-
-
-decir que no usamos el outcome de la partida para el score
-
+% The evaluations from Stockfish are in centipawns, which is not the exact number the network has to use as target.
+% decir que no usamos el outcome de la partida para el score
 
 \subsubsection{Loss function}
+
+The loss function is a mean square errror with a power of 2.6 (the value used by the Stockfish's official trainer) given by
 
 % q = (output / out_scaling).sigmoid()
 % p = (target / in_scaling).sigmoid()
@@ -79,19 +79,37 @@ L(y,f(x,\bm{W}))= \left| \sigma\left(\frac{y}{\text{scale}_{\text{in}}}\right) -
 \]
 
 
-\subsection{Method 2: PQR triplets}
-
-This is an additional technique I wanted to try, described in \cite{dlchess:2014}. Remember that we are trying to obtain a function $f$ (the model) to give an evaluation of a position. The method is based in the assumption that players make optimal or near-optimal moves most of the time, even if they are amateurs.
+where\dots
 
 \begin{enumerate}
-\item For two position in succession $p \rightarrow q$  observed in the game, we will have $f(p) \neq f(q)$.
+\itemsep0em
+\item $y$ is the target score.
+\item $f$ is the model.
+\item $\bm{W}$ are the parameters of the model.
+\item $x$ is the input (encoded feature set).
+\item $\sigma$ is the sigmoid function.
+\item $\text{scale}_{\text{in}}$, $\text{scale}_{\text{out}}$ are the scaling factors of the scores.
+\end{enumerate}
+
+\subsection{Method 2: PQR triplets}
+
+This is an additional technique I wanted to try, described in \cite{dlchess:2014}. The method is based in the assumption that moves in the dataset are optimal. In the blog they used human moves from the Lichess database, so they rely in that humans make optimal or near-optimal moves most of the time, even if they are amateurs. In my case I will use Stockfish moves, which are extremely good. This method does not use the scores provided, it will have to learn them from scratch. Of course this is way harder to train but I'm curious to see how far the following idea can go.
+
+Remember that we are trying to obtain a function $f$ (the model) to give an evaluation of a position. The idea is based on the following two principles:
+
+\begin{enumerate}
+\item For two position in succession $p \rightarrow q$ observed in the game, we will have $f(p)=-f(q)$.
 \item Going from $p$, not to $q$, but to a \textit{random} position $p \rightarrow r$, we must have $f(r) > f(q)$ because the random move is better for the next player and worse for the player that made the move.
 \end{enumerate}
 
-With infinite compute, $f$ would be the result of running minimax to the end of the game, since minimax always finds optimal moves.
+If this reasonable assumptions hold, a loss function that expresses the equality and inequality can be built.
 
+% Consider an optimal $f$, that outputs $-1,0,1$ depending on who wins.
+% With infinite compute, $f$ would be the result of running minimax to the end of the game, since minimax always finds optimal moves.
 
 \subsubsection{Loss function}
+
+The loss function is the log likelihood of the inequalities: $f(r) > f(q)$, $f(p) > - f(q)$ and $f(p) < -f(q)$. The last two are a way to express the equality $f(p)=-f(q)$. The loss function is given by
 
 % p = output[:,0] / out_scaling
 % q = output[:,1] / out_scaling
@@ -105,55 +123,45 @@ With infinite compute, $f$ would be the result of running minimax to the end of 
 L(x_p, x_q, x_r, \bm{W})=
 & -\log\left(\sigma(q - r)\right) \\
 & -\log\left(\sigma(p + q)\right) \\
-& -\log\left(\sigma(-q - p)\right)
+& -\log\left(\sigma(-(p + q))\right)
 \end{align*}
 
-\[
-\text{where }
+where\dots
+
+\begin{enumerate}
+\itemsep0em
+\item $
 p = \frac{f(x_p, \bm{W})}{\text{scale}_{\text{out}}},\text{ }
 q = \frac{f(x_q, \bm{W})}{\text{scale}_{\text{out}}},\text{ }
 r = \frac{f(x_r, \bm{W})}{\text{scale}_{\text{out}}}
-\]
+$
+\item $f$ is the model.
+\item $\bm{W}$ are the parameters of the model.
+\item $x_i$ is the input (encoded feature set) for the $i \in \{p,q,r\}$ position.
+\item $\sigma$ is the sigmoid function.
+\item $\text{scale}_{\text{out}}$ are the scaling factors of the scores.
+\end{enumerate}
 
+It is important to note that quantization is happening in this method too, so the output of the model must be scaled appropriately.
 
-
-
+[siento que falta explicar algo aca]
 
 \subsection{Setup}
 
-% filtering
-% filtrar de ante mano no rinde (pierde compresion)
+[a esta seccion le falta banda]
 
 % multithreading
 % decir que en "All" tengo 450 it/s (7.3M pos/sec)
 
-The project is written in two languages: Rust and Python. The Rust part is used to process PGN files, generate training data and provide final training batches for Python to consume. The Python part defines the Pytorch model, runs the training loop, quantizes the model and runs the evaluations.
+[multithreaded, perf]
 
-The training process is separated in two steps:
-
-\begin{enumerate}
-\item Generate the training data from the Lichess database (the source dataset), for \textbf{a specific method}.
-\item Train the network using the generated training data and \textbf{a specific feature set}.
-\end{enumerate}
-
-Doing it this way allows to generate the training data once per method and train the network with different feature sets. Since generating the training data is the most time-consuming part of the process and I was iterating lots of different feature sets, it is ideal to have it separated. I could have an intermediate step, to generate the raw batch data from the method and feature set, but it is a waste in terms of practicallity and disk space. \\
-
-As depicted in Figure \ref{fig:database_to_train_data}, the first step takes PGN files from the Lichess database and a training method (in this case \textcolor{orange}{\textit{eval}}, which stands for Stockfish evaluations) and builds a traning dataset from it. In this case, each sample is a FEN position (in \textcolor{red}{red}) and the centipawn evaluation (in \textcolor{blue}{blue}). \\
-
-\begin{figure}[h]
-\centering
-\makebox[\textwidth]{\includegraphics[width=\textwidth]{../assets/training/database_to_train_data.pdf}}
-\caption{Diagram of the first step of the training process}
-\label{fig:database_to_train_data}
-\end{figure}
+The project is written in two languages: Rust and Python. The Rust part is used to process dataset files, generate statistics and provide final training batches for Python to consume. The Python part defines the Pytorch model, runs the training loop, quantizes the model and runs the evaluations.
 
 
-Once the first step is done, the training can begin. The training process is started by running a Python script (\texttt{scrips/train.py}) and it requires to define the model architecture (number of neurons and hidden layers), general training parameters (learning rate, batch size, epochs, checkpoints, etc) and the feature set to use, which in turn determines the size of the batches. For example, if PQR is used, the size of a sample is 3 times the size of the feature set, and if it is eval, it is the size of the feature set plus 1 for the centipawn evaluation (the target).
+The training process is started by running a Python script (\texttt{scrips/train.py}) and it requires to define the model architecture (number of neurons on each layer), general training parameters (learning rate, batch size, epochs, checkpoints, etc) and the feature set to use, which in turn determines the size of the batches. For example, if PQR is used, the size of a sample is 3 times the size of the feature set times two (because it is siamese), and if it is eval (short for score \textbf{eval}uations), it is the size of the feature set times two plus 1 for the target score.
 
-The training data obtained in the previous step has to be converted to an actual tensor of floats to be consumed by Pytorch. This is done by a Rust subprocess running the subcommand \texttt{samples-service} that read the training data files and generates training batches for the specified feature set in a shared memory buffer. The Python script copies the data from the buffer at the start of each iteration, allowing Rust to generate the next batch (in the CPU) while Pytorch is training the current one (in the GPU). To coordinate the memory access between the two processes, a single byte is sent using standard I/O.
+The training data has to be converted to an actual tensor of floats to be consumed by Pytorch. This is done by a Rust subprocess running the subcommand \texttt{samples-service} that read the training data files and generates training batches for the specified feature set in a shared memory buffer. The Python script copies the data from the buffer at the start of each iteration, allowing Rust to generate the next batch (in the CPU) while Pytorch is training the current one (in the GPU). To coordinate the memory access between the two processes, a single byte is sent using standard I/O.
 
 Given that the input vector is multiple-hot encoded, the data written by the Rust process are not float values. Instead, they are 64-bit integers acting as a bitset. Before passing the vector to the model, it is expanded into floats. This means 64 floats can be packed into a single 64-bit integer, meaning a \textbf{96.875\%} reduction in memory usage (from 256 to 8 bytes). The speedup obtained by this optimization was substantial. The compression can be further improved using sparse tensors, but it is not implemented in this work. \\
 
 [wandb? evaluation?]
-
-
