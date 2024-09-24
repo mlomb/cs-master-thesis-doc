@@ -1,0 +1,24 @@
+
+\begin{tabular}{@{} ccccccccc @{}} \toprule
+\multirow{2}{*}{\bf Feature set} &
+\multicolumn{3}{c}{\bf Train hyperparams} &
+\multicolumn{2}{c@{}}{\bf Network} &
+\multirow{2}{*}{\makecell{\bf Val loss\\\textit{min}}} &\multirow{2}{*}{\makecell{\bf Rating\\\textit{elo (avg=0)}}} &
+\multirow{2}{*}{\makecell{\bf Runtime\\\textit{hh:mm:ss}}} \\
+\cmidrule(lr){2-4} \cmidrule(l){5-6}
+& \bf Batch & \bf LR & \bf Gamma & \bf L1 & \bf L2 & \\
+\midrule
+    \featureset{HV} & 16384 & 5e-04 & 0.99 & 512 & 32 & 0.00307 & \textbf{0.0 $\pm$ 0.0} & 1:49:12 \\
+\midrule
+\featureset{hv+h+v} & 16384 & 5e-04 & 0.99 & 512 & 32 & \textbf{0.00297} & -8.6 $\pm$ 4.3 & 1:04:14 \\
+\midrule
+\featureset{hv+d1+d2} & 16384 & 5e-04 & 0.99 & 512 & 32 & 0.00299 & -23.8 $\pm$ 3.7 & 1:16:19 \\
+\midrule
+\featureset{hv+h+v+d1+d2} & 16384 & 5e-04 & 0.99 & 512 & 32 & 0.00297 & -65.2 $\pm$ 4.2 & 1:50:18 \\
+\midrule
+\featureset{h+v+d1+d2} & 16384 & 5e-04 & 0.99 & 512 & 32 & 0.00378 & -184.7 $\pm$ 5.3 & 2:35:16 \\
+\midrule
+\featureset{h+v} & 16384 & 5e-04 & 0.99 & 512 & 32 & 0.00574 & -372.0 $\pm$ 4.4 & 1:46:38 \\
+\midrule
+\featureset{d1+d2} & 16384 & 5e-04 & 0.99 & 512 & 32 & 0.00660 & -428.7 $\pm$ 5.4 & 1:52:39 \\
+\bottomrule \end{tabular}

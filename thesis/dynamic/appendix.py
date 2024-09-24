@@ -6,13 +6,17 @@ def fs(feature_set):
     elif feature_set == "half-king-piece":
         return "\\featureset{King-Piece}"
     else:
-        return feature_set
+        return "\\featureset{" + feature_set + "}"
 
 
-def make_runs_table(df):
+def make_runs_table(df, sort_by_elo=False):
     """Don't look at this function :)"""
 
     df = df.sort_values(by=["feature_set", "batch_size", "l1_size", "l2_size"], ascending=[False, True, True, True])
+
+    if sort_by_elo:
+        df = df.sort_values(by=["Perf/rating"], ascending=False)
+
     last_fs = None
 
     has_rating = "Perf/rating" in df.columns
@@ -43,14 +47,15 @@ def make_runs_table(df):
 
         min_loss = df['Train/val_loss.min'].min()
         loss = F"{row['Train/val_loss.min']:.5f}"
-        if row['Train/val_loss.min'] == min_loss:
+        # print(int(row['Train/val_loss.min'] * 1_00000) ,"<=", int(min_loss * 1_00000))
+        if int(row['Train/val_loss.min'] * 1_00000) <= int(min_loss * 1_00000):
             loss = f"\\textbf{{{loss}}}"
 
         table += f"{fs(row['feature_set'])} & {row['batch_size']} & {row['learning_rate']:.0e} & {row['gamma']} & {row['l1_size']} & {row['l2_size']} & {loss}"
         
         if has_rating:
             max_rating = df['Perf/rating'].max()
-            if row['Perf/rating'] == max_rating:
+            if row['Perf/rating'] >= max_rating:
                 table += f" & \\textbf{{{row['Perf/rating']:.1f} $\\pm$ {row['Perf/rating_error']:.1f}}}"
             else:
                 table += f" & {row['Perf/rating']:.1f} $\\pm$ {row['Perf/rating_error']:.1f}"
@@ -62,7 +67,10 @@ def make_runs_table(df):
             else:
                 table += f" & {row['Puzzle/accuracy']:.4f}"
 
-        table += f" & {dt.timedelta(seconds=row['Runtime'])} \\\\\n"
+        runtime = row['Runtime']
+        runtime = (int(runtime) / row['epochs']) * 256 # rescale to 256 epochs
+
+        table += f" & {dt.timedelta(seconds=int(runtime))} \\\\\n"
 
     table += "\\bottomrule \\end{tabular}\n"
 

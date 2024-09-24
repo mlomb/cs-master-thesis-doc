@@ -36,6 +36,25 @@ def parse_arch(arch: str):
     }
 
 
+def quantization_error():
+    df = pd.read_csv('../../assets/results/quant_errors.csv')
+    df["err"] = (df["expected_output"] - df["output"])
+    df["rel_err"] = (df["err"] / df["expected_output"]).abs()
+
+    sns.displot(df, x='err', height=3, aspect=1.3, bins=20) # , linewidth=0
+    plt.xlabel('Error of quantized model')
+    plt.ylabel('Count')
+
+    # draw quantile 0.5 line
+    plt.axvline(x=df["err"].mean(), color='r', linestyle='dotted')
+    plt.text(df["err"].mean(), 11500, 'mean', color='r', ha='left', va='top', rotation=90)
+    print(f"Quantization error: min: {df["output"].min()} max: {df["output"].max()} mean: {df["output"].mean()}")
+
+    #plt.ylim(0, 3000)
+    plt.savefig("./output/quant_errors.pdf", format='pdf')
+    plt.close()
+
+
 def exp_1_baseline():
     df_sweep = pd.read_csv('../../assets/results/baseline/sweep.csv')
     df_puzzles = pd.read_csv('../../assets/results/baseline/puzzles.csv')
@@ -113,24 +132,15 @@ def exp_1_baseline():
     plt.savefig("./output/baseline_heatmaps.pdf", format='pdf')
     plt.close()
 
+def exp_2_axes():
+    df_sweep = pd.read_csv('../../assets/results/axes/sweep.csv')
+    df_elo = pd.read_csv('../../assets/results/axes/rating.csv')
+    df_sweep = pd.merge(df_sweep, df_elo, on="Name", how='left')
 
-def quantization_error():
-    df = pd.read_csv('../../assets/results/quant_errors.csv')
-    df["err"] = (df["expected_output"] - df["output"])
-    df["rel_err"] = (df["err"] / df["expected_output"]).abs()
+    # write runs appendix
+    with open('./output/axes_appendix.tex', 'w') as f:
+        f.write(make_runs_table(df_sweep, sort_by_elo=True))
 
-    sns.displot(df, x='err', height=3, aspect=1.3, bins=20) # , linewidth=0
-    plt.xlabel('Error of quantized model')
-    plt.ylabel('Count')
-
-    # draw quantile 0.5 line
-    plt.axvline(x=df["err"].mean(), color='r', linestyle='dotted')
-    plt.text(df["err"].mean(), 11500, 'mean', color='r', ha='left', va='top', rotation=90)
-    print(f"Quantization error: min: {df["output"].min()} max: {df["output"].max()} mean: {df["output"].mean()}")
-
-    #plt.ylim(0, 3000)
-    plt.savefig("./output/quant_errors.pdf", format='pdf')
-    plt.close()
-
-exp_1_baseline()
 quantization_error()
+exp_1_baseline()
+exp_2_axes()
