@@ -54,7 +54,7 @@ These axes coincide with the movement pattern of the pieces, which make them goo
 \midrule
 % ------------------------------------
 \midrule
-\depiction{HV} & \featureset{HV (Piece)} & $\featureset{File}_{P} \times \featureset{Rank}_{P}$ & \rolecolor & 768 \\
+\depiction{HV} & \featureset{HV (All)} & $\featureset{File}_{P} \times \featureset{Rank}_{P}$ & \rolecolor & 768 \\
 \midrule
 \depiction{HV} $\oplus$ \depiction{H} $\oplus$ \depiction{V} & $\featureset{HV} \oplus \featureset{H} \oplus \featureset{V}$ & \makecell{$(\featureset{File}_{P} \times \featureset{Rank}_{P}$ $\oplus$ \\ $\featureset{File}_{P} \oplus \featureset{Rank}_{P})$} & \rolecolor & 960 \\
 \midrule
@@ -75,7 +75,6 @@ These axes coincide with the movement pattern of the pieces, which make them goo
 I expect that the feature sets that are sums of single axes ($\depictionSM{H} \oplus \depictionSM{V}, \depictionSM{D1} \oplus \depictionSM{D2}$ and $\depictionSM{H} \oplus \depictionSM{V} \oplus \depictionSM{D1} \oplus \depictionSM{D2}$) will perform worse overall, since to capture the exact position of pieces in the board, the network will have to learn to relate at least two features for every location. This information is already available when there is a product of two axes (\depictionSM{HV}).
 
 The feature sets that in addition to \depictionSM{HV} include lone axes (\depictionSM{H}, \depictionSM{V}, \depictionSM{D1} and \depictionSM{D2}) should perform better than without, providing that the idea explained in the motivation holds.
-Note that even having twice the features, the penalty on inference performance should be minor due L1 being updated efficiently. [saco esto? ya se sabe...]
 
 For each of the proposed feature sets, I will train a network and evaluate its performance relative to each other using a tournament. I expect to see them ranked in the reverse order as presented in the table (more extra axes better). \\
 
@@ -83,19 +82,35 @@ For each of the proposed feature sets, I will train a network and evaluate its p
 
 \begin{table}[H]
 \caption{Results}
-\label{tab:axis_encoding}
+\label{tab:axis_results}
 \centering
 
 \begin{tabular}{cccccc}
 \toprule
-\bf Feature set & \multicolumn{2}{c}{\makecell{\bf Definition\\for every piece $P$ in the board}} & \bf \makecell{\# of\\features} \\
+\bf Feature set & \multicolumn{2}{c}{\makecell{\bf Val. loss\\\textit{min}}} & \makecell{\bf Rating\\\textit{elo (rel. to \featureset{All})}} & \makecell{\bf Puzzles\\\textit{move acc.}} \\
 \toprule
-\depiction{H} $\oplus$ \depiction{V} & $\featureset{H} \oplus \featureset{V}$ & $(\featureset{File}_{P} \oplus \featureset{Rank}_{P})$ & rolecolor & 192 \\
+\depiction{H} $\oplus$ \depiction{V} &\\
 \midrule
-adasd & asdasd & asdasd & asdasd \\
+\depiction{D1} $\oplus$ \depiction{D2} &\\
+\midrule
+\makecell{\depiction{H} $\oplus$ \depiction{V} $\oplus$ \\ \depiction{D1} $\oplus$ \depiction{D2}} &\\
+\midrule
+% ------------------------------------
+\midrule
+\depiction{HV} & \\
+\midrule
+\depiction{HV} $\oplus$ \depiction{H} $\oplus$ \depiction{V} &\\
+\midrule
+\depiction{HV} $\oplus$ \depiction{D1} $\oplus$ \depiction{D2} &\\
+\midrule
+\makecell{\depiction{HV} $\oplus$ \depiction{H} $\oplus$ \depiction{V} \\ \hspace{0.7cm} $\oplus$ \depiction{D1} $\oplus$ \depiction{D2}} &\\
+\bottomrule
+
 \bottomrule
 
 \end{tabular}
 \end{table}
 
 The next experiment will focus on adding more specific features, instead of more broad ones.
+
+% VOLVER A CORRER LOS EXPS POR EL MINIMO LOSS
