@@ -1,8 +1,101 @@
 \subsection{Pairwise axes}
 
-\textbf{Motivation.} Imagine that in a file there are three pieces: an enemy rook, a pawn and the king. There are many possible configurations for these pieces on the file. Of course that the influence in score is very related with the position of pieces everywhere else, but I believe that to understand a single file, the distance between the pieces are less important than the order between them: $\sympawn\symking\symrook, \sympawn\symrook\symking, \symking\sympawn\symrook, \symking\symrook\sympawn, \symrook\sympawn\symking, \symrook\symking\sympawn$.
+\textbf{Motivation.} Imagine that in a file there are three pieces: an enemy $\symrook$ Rook, a $\sympawn$ Pawn and a $\symknight$ Knight. There are many possible configurations for these pieces on the file. The influence in the evaluation by this pieces is very related with the position of pieces everywhere else, however I want to see if to understand a single file, the actual position of the pieces is less important than the the order between them: $\sympawn\symknight\symrook, \sympawn\symrook\symknight, \symknight\sympawn\symrook, \symknight\symrook\sympawn, \symrook\sympawn\symknight, \symrook\symknight\sympawn$. In other words, it is more important whether the $\symrook$ Rook can capture the $\symknight$ Knight or the $\sympawn$ Pawn. [CAMBIAR UN POCO, HABLAR DE QUE LE QUIERO DAR ESTA INFO A LA RED]
 
+I propose to make a feature for each possible pair of adjacent role and color over an axis. Lets consider the \textit{a} file in the vertical axis, following the example before:
 
+\storechessboardstyle{smallvert}{
+    tinyboard,
+    maxfield=a8,
+    showmover=false,
+    hmargin=false,
+    hlabel=false,
+    boardfontsize=15pt,
+}
+
+\newcommand{\raiseby}{-11.5ex}
+
+\begin{figure}[H]
+\centering
+
+\begin{tabular}{ccc}
+
+\raisebox{\raiseby}{\chessboard[
+    style=smallvert,
+    addblack={Ra7},
+    addwhite={na3,pa4},
+]}
+\raisebox{\raiseby}{\chessboard[
+    style=smallvert,
+    addblack={Ra8},
+    addwhite={na2,pa3},
+]}
+\raisebox{\raiseby}{\chessboard[
+    style=smallvert,
+    addblack={Ra6},
+    addwhite={na3,pa4},
+]}
+\raisebox{\raiseby}{\chessboard[
+    style=smallvert,
+    addblack={Ra5},
+    addwhite={na1,pa3},
+]}
+\raisebox{\raiseby}{\chessboard[
+    style=smallvert,
+    addblack={Ra6},
+    addwhite={na2,pa3},
+]}
+
+$\hdots$
+
+&
+$ \rightarrow$
+&
+
+\raisebox{-9.5ex}{\chessboard[
+    blackfieldcolor=white,
+    blackfieldmaskcolor=white,
+    maxfield=a8,
+    style=smallvert,
+    vlabel=false,
+    border=false,
+    trim=false,
+    opacity=0.6,
+    addblack={Ra6},
+    addwhite={na2,pa4},
+    %
+    color=red,
+    shortenend=1.88ex,shortenstart=1.88ex, % espacio
+    padding=-1ex,
+    markstyle=leftborder,
+    linewidth=0.4ex,
+    markregion=a4-a6,
+    linewidth=1.6ex,
+    pgfstyle=circle,
+    markfields={a4,a6},
+    %
+    color=blue,
+    shortenend=1.88ex,shortenstart=1.88ex, % espacio
+    padding=-1ex,
+    markstyle=leftborder,
+    linewidth=0.4ex,
+    markregion=a2-a4,
+    linewidth=1.6ex,
+    pgfstyle=circle,
+    markfields={a2,a4},
+    %
+]}
+
+\\
+
+\makecell{Different configurations,\\similar situation} &  & \makecell{The same two features\\(blue pair and red pair)}
+
+\end{tabular}
+\end{figure}
+
+There are many configurations for the three pieces and the idea is to encode all of these as two features: the pair of pieces ($\symrook$$\black$, $\sympawn$$\white$) and the pair of pieces ($\symrook$$\black$, $\symknight$$\white$). \\
+
+\textbf{Experiment.}
 
 Pepito \depiction{PH} asdo \depiction{PV} asd\depiction{PD1} asd\depiction{PD2} asd
 
@@ -12,6 +105,7 @@ Pepito \depiction{PH} asdo \depiction{PV} asd\depiction{PD1} asd\depiction{PD2} 
 HV + PH
 HV + PV
 HV + PH + PV
+H + V + PH + PV
 
 
 \begin{figure}[H]
@@ -265,8 +359,21 @@ HV + PH + PV
 \end{figure}
 
 
-el cosito de los pares \\
 
-los resultados no son buenos...
+\begin{table}[H]
+\caption{Pairwise feature blocks}
+\label{tab:pairwise_sets}
+\centering
 
-I did not bother implementing diagonal pairs: \depiction{PD1} and \depiction{PD2}.
+\begin{tabular}{cccccc}
+\toprule
+\bf Depiction & \bf Name & \multicolumn{2}{c}{\makecell{\bf Definition\\for every piece $P$ in the board}} & \bf \makecell{\# of\\features} \\
+\toprule
+\depiction{PH} & PH &  \\
+
+\end{tabular}
+\end{table}
+
+\textbf{Results.} blablabla
+
+I did not bother implementing diagonal pairs (\depiction{PD1} and \depiction{PD2}) due the adverse result of the other axes.
