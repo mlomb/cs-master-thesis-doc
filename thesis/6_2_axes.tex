@@ -54,10 +54,10 @@ In table \ref{tab:axes_blocks} I present the feature blocks. Each block will enc
 \end{table}
 
 
-With this blocks, I built different feature sets: one group of feature sets is just combinations of all these blocks alone, and another group which is the same as the first but alongside the \featureset{All} feature set. The second group is the aim of the experiment, it has the classic \featureset{All} feature set but includes the axis blocks to see if the network can benefit from them. The first group, which it does not include \featureset{All} is to know whether the network can work with those features alone.
+With this blocks, I built different feature sets (listed in table \ref{tab:axis_encoding}): one group of feature sets is just combinations of all these blocks alone, and another group which is the same as the first but alongside the \featureset{All} feature set. The second group is the aim of the experiment, it has the classic \featureset{All} feature set but includes the axis blocks to see if the network can benefit from them. The first group, which does not include \featureset{All} is to know how far the network can go only with these blocks.
 
 \begin{table}[H]
-\caption{Axis encoding feature sets\protect\footnotemark}
+\caption{Axis encodings feature sets}
 \label{tab:axis_encoding}
 \centering
 
@@ -85,16 +85,16 @@ With this blocks, I built different feature sets: one group of feature sets is j
 \end{tabular}
 \end{table}
 
-I expect that the feature sets that are sums of single axes ($\depictionSM{H} \oplus \depictionSM{V}, \depictionSM{D1} \oplus \depictionSM{D2}$ and $\depictionSM{H} \oplus \depictionSM{V} \oplus \depictionSM{D1} \oplus \depictionSM{D2}$) will perform worse overall, since to capture the exact position of pieces in the board, the network will have to learn to relate at least two features for every location. This information is already available when there is a product of two axes (\depictionSM{HV}).
+I expect that the feature sets that are sums of single axes ($\depictionSM{H} \oplus \depictionSM{V}, \depictionSM{D1} \oplus \depictionSM{D2}$ and $\depictionSM{H} \oplus \depictionSM{V} \oplus \depictionSM{D1} \oplus \depictionSM{D2}$) will perform worse overall, since to capture the exact position of pieces in the board, the network will have to learn to relate at least two features for every location. This information is already available when \featureset{All} is present.
 
 The feature sets that in addition to \featureset{All} include lone axes (\depictionSM{H}, \depictionSM{V}, \depictionSM{D1} and \depictionSM{D2}) should perform better than without, providing that the idea explained in the motivation holds.
 
 For each of the proposed feature sets, I will train a network and evaluate its performance relative to each other using a tournament. I expect to see them ranked in the reverse order as presented in the table (more extra axes better). \\
 
-\textbf{Results.} Aca poner los resultados
+\textbf{Results.} The results in table \ref{tab:axis_results} show that the hypothesis does not hold. [EXPLICAR]
 
 \begin{table}[H]
-\caption{Results}
+\caption{Axis encodings results}
 \label{tab:axis_results}
 \centering
 
@@ -111,15 +111,13 @@ For each of the proposed feature sets, I will train a network and evaluate its p
 \midrule
 % ------------------------------------
 \midrule
-\depiction{HV} & \\
+\featureset{All} & \\
 \midrule
-\depiction{HV} $\oplus$ \depiction{H} $\oplus$ \depiction{V} &\\
+\featureset{All} $\oplus$ \depiction{H} $\oplus$ \depiction{V} &\\
 \midrule
-\depiction{HV} $\oplus$ \depiction{D1} $\oplus$ \depiction{D2} &\\
+\featureset{All} $\oplus$ \depiction{D1} $\oplus$ \depiction{D2} &\\
 \midrule
-\makecell{\depiction{HV} $\oplus$ \depiction{H} $\oplus$ \depiction{V} \\ \hspace{0.7cm} $\oplus$ \depiction{D1} $\oplus$ \depiction{D2}} &\\
-\bottomrule
-
+\makecell{\featureset{All} $\oplus$ \depiction{H} $\oplus$ \depiction{V} \\ \hspace{0.75cm} $\oplus$ \depiction{D1} $\oplus$ \depiction{D2}} &\\
 \bottomrule
 
 \end{tabular}

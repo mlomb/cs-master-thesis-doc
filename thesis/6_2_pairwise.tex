@@ -1,8 +1,8 @@
 \subsection{Pairwise axes}
 
-\textbf{Motivation.} Imagine that in a file there are three pieces: an enemy $\symrook$ Rook, a $\sympawn$ Pawn and a $\symknight$ Knight. There are many possible configurations for these pieces on the file. The influence in the evaluation by this pieces is very related with the position of pieces everywhere else, however I want to see if to understand a single file, the actual position of the pieces is less important than the the order between them: $\sympawn\symknight\symrook, \sympawn\symrook\symknight, \symknight\sympawn\symrook, \symknight\symrook\sympawn, \symrook\sympawn\symknight, \symrook\symknight\sympawn$. In other words, it is more important whether the $\symrook$ Rook can capture the $\symknight$ Knight or the $\sympawn$ Pawn. [CAMBIAR UN POCO, HABLAR DE QUE LE QUIERO DAR ESTA INFO A LA RED]
+\textbf{Motivation.} Imagine that in a file there are three pieces: an enemy $\symrook$ Rook, a $\sympawn$ Pawn and a $\symknight$ Knight. There are many possible configurations for these pieces on the file. The influence in the evaluation by those pieces is very related with the position of pieces everywhere else, however I want to see if to understand a single file, the actual position of the pieces is less important than the the order between them: $\sympawn\symknight\symrook, \sympawn\symrook\symknight, \symknight\sympawn\symrook, \symknight\symrook\sympawn, \symrook\sympawn\symknight, \symrook\symknight\sympawn$. In other words, it is more important whether the $\symrook$ Rook can capture the $\symknight$ Knight or the $\sympawn$ Pawn. [CAMBIAR UN POCO, HABLAR DE QUE LE QUIERO DAR ESTA INFO A LA RED]
 
-I propose to make a feature for each possible pair of adjacent role and color over an axis. Lets consider the \textit{a} file in the vertical axis, following the example before:
+I propose to make a feature for each possible pair of adjacent role and color over an axis. Lets consider the \textit{a} file (vertical axis), following the example before:
 
 \storechessboardstyle{smallvert}{
     tinyboard,
@@ -93,24 +93,35 @@ $ \rightarrow$
 \end{tabular}
 \end{figure}
 
-There are many configurations for the three pieces and the idea is to collapse all of these into two features: the pair of pieces ($\symrook$$\black$, $\sympawn$$\white$) and the pair of pieces ($\symrook$$\black$, $\symknight$$\white$). \\
+There are many configurations for the three pieces and the idea is to collapse all of these into two features: the pair of pieces ($\symrook$$\black$, $\sympawn$$\white$) and the pair of pieces ($\sympawn$$\white$, $\symknight$$\white$). This way, the network can learn that the $\symrook$ Rook can capture the $\sympawn$ Pawn, and that the $\symknight$ Knight is protected behind the $\sympawn$ Pawn. The network can learn this situation using two features instead of learning it for every possible configuration.
 
-\textbf{Experiment.}
+In contrast to the previous experiment where the features were more general (\textit{\enquote{there is a $\white$ White $\rook$ Rook in the 4th rank}}) the proposed feature here are more specific: \textit{\enquote{there is a $\black$ Black $\rook$ Rook next to a $\white$ White $\sympawn$ Pawn in the \enquote{a} file}}.
 
-Pepito \depiction{PH} asdo \depiction{PV} asd\depiction{PD1} asd\depiction{PD2} asd
+I expect that the network is able to take advantage of the specific features, enough to conteract the loss in performance due to the increase in the number of features and more complex updates. \\
 
-[explicar...]
+\textbf{Experiment.} I developed two feature blocks: for the horizonal and vertical axes. The blocks are defined in table \ref{tab:pairwise_sets}:
 
-3 runs
-HV + PH
-HV + PV
-HV + PH + PV
-H + V + PH + PV
+\begin{table}[H]
+\caption{Pairwise feature blocks}
+\label{tab:pairwise_sets}
+\centering
 
+\begin{tabular}{ccccc}
+\toprule
+\bf Depiction & \bf Block name & \bf Definition & \bf \makecell{Number of\\features} \\
+\toprule
+\depiction{PH} & PH & asd & 1152 \\
+\toprule
+\depiction{PV} & PV & \makecell{$\featureset{File}_{P} \times (\featureset{Role}_{P} \times \featureset{Color}_{P}) \times (\featureset{Role}_{Q} \times \featureset{Color}_{Q})$ \\for every $P$, $Q$ adjacent pieces in the same file,\\such that $rank(P) < rank(Q)$} & 1152 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+The following figure shows what pairs of pieces (features) are considered for the horizonal and vertical axes in a complete board:
 
 \begin{figure}[H]
 \centering
-
 \begin{tabular}{cc}
 
 \raisebox{-7ex}{\chessboard[
@@ -358,21 +369,17 @@ H + V + PH + PV
 \end{tabular}
 \end{figure}
 
+Pepito \depiction{PH} asdo \depiction{PV} asd\depiction{PD1} asd\depiction{PD2} asd
+
+[explicar...]
+
+3 runs
+HV + PH
+HV + PV
+HV + PH + PV
+H + V + PH + PV
 
 
-\begin{table}[H]
-\caption{Pairwise feature blocks}
-\label{tab:pairwise_sets}
-\centering
-
-\begin{tabular}{cccccc}
-\toprule
-\bf Depiction & \bf Name & \multicolumn{2}{c}{\makecell{\bf Definition\\for every piece $P$ in the board}} & \bf \makecell{\# of\\features} \\
-\toprule
-\depiction{PH} & PH &  \\
-
-\end{tabular}
-\end{table}
 
 \textbf{Results.} blablabla
 
