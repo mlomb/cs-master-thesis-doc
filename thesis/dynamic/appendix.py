@@ -1,12 +1,15 @@
 import datetime as dt
 
-def fs(feature_set):
-    if feature_set == "hv":
-        return "\\featureset{HV}"
-    elif feature_set == "half-king-piece":
-        return "\\featureset{King-Piece}"
-    else:
-        return "\\featureset{" + feature_set + "}"
+def fs_part(fs: str):
+    fs = fs.upper()
+    if fs == "HV":
+        fs = "All"
+    return "\\featureset{" + fs + "}"
+
+def fs(feature_set: str):
+    # split by +
+    parts = feature_set.split("+")
+    return " + ".join([fs_part(part) for part in parts])
 
 
 def make_runs_table(df, sort_by_elo=False):

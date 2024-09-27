@@ -1,6 +1,6 @@
 \subsection{Pairwise axes}
 
-\textbf{Motivation.} Imagine that in a file there are three pieces: an enemy $\symrook$ Rook, a $\sympawn$ Pawn and a $\symknight$ Knight. There are many possible configurations for these pieces on the file. The influence in the evaluation by those pieces is very related with the position of pieces everywhere else, however I want to see if to understand a single file, the actual position of the pieces is less important than the the order between them: $\sympawn\symknight\symrook, \sympawn\symrook\symknight, \symknight\sympawn\symrook, \symknight\symrook\sympawn, \symrook\sympawn\symknight, \symrook\symknight\sympawn$. In other words, it is more important whether the $\symrook$ Rook can capture the $\symknight$ Knight or the $\sympawn$ Pawn. [CAMBIAR UN POCO, HABLAR DE QUE LE QUIERO DAR ESTA INFO A LA RED]
+\textbf{Motivation.} Imagine that in a file there are three pieces: an enemy $\symrook$ Rook, a $\sympawn$ Pawn and a $\symknight$ Knight. There are many possible configurations for these pieces on the file. The influence in the evaluation by those pieces is very related with the position of pieces everywhere else, however I want to see if to understand a single file, the actual position of the pieces is less important than the relative order between them: $\sympawn\symknight\symrook, \sympawn\symrook\symknight, \symknight\sympawn\symrook, \symknight\symrook\sympawn, \symrook\sympawn\symknight, \symrook\symknight\sympawn$. In other words, provide the network features based on the order of the pieces instead of the actual position. This way, I believe that the network can pick up whether pieces are pinned, avaialble for attacks, or protected by other pieces.
 
 I propose to make a feature for each possible pair of adjacent role and color over an axis. Lets consider the \textit{a} file (vertical axis), following the example before:
 
@@ -95,11 +95,9 @@ $ \rightarrow$
 
 There are many configurations for the three pieces and the idea is to collapse all of these into two features: the pair of pieces ($\symrook$$\black$, $\sympawn$$\white$) and the pair of pieces ($\sympawn$$\white$, $\symknight$$\white$). This way, the network can learn that the $\symrook$ Rook can capture the $\sympawn$ Pawn, and that the $\symknight$ Knight is protected behind the $\sympawn$ Pawn. The network can learn this situation using two features instead of learning it for every possible configuration.
 
-In contrast to the previous experiment where the features were more general (\textit{\enquote{there is a $\white$ White $\rook$ Rook in the 4th rank}}) the proposed feature here are more specific: \textit{\enquote{there is a $\black$ Black $\rook$ Rook next to a $\white$ White $\sympawn$ Pawn in the \enquote{a} file}}.
+In contrast to the previous experiment where the features were more general (\textit{\enquote{there is a $\white$ White $\rook$ Rook in the 4th rank}}) the proposed feature here are more specific: \textit{\enquote{there is a $\black$ Black $\rook$ Rook next to a $\white$ White $\sympawn$ Pawn in the \enquote{a} file}}. \\
 
-I expect that the network is able to take advantage of the specific features, enough to conteract the loss in performance due to the increase in the number of features and more complex updates. \\
-
-\textbf{Experiment.} I developed two feature blocks: for the horizonal and vertical axes. The blocks are defined in table \ref{tab:pairwise_sets}:
+\textbf{Experiment.} I developed two feature blocks: for the horizonal and vertical axis. The blocks are defined in table \ref{tab:pairwise_sets}:
 
 \begin{table}[H]
 \caption{Pairwise feature blocks}
@@ -108,15 +106,16 @@ I expect that the network is able to take advantage of the specific features, en
 
 \begin{tabular}{ccccc}
 \toprule
-\bf Depiction & \bf Block name & \bf Definition & \bf \makecell{Number of\\features} \\
+\bf Depiction & \bf \makecell{Block\\name} & \bf Definition & \bf \makecell{Number of\\features} \\
 \toprule
-\depiction{PH} & PH & asd & 1152 \\
+\depiction{PH} & PH & \makecell{$\featureset{Rank}_{P} \times (\featureset{Role}_{P} \times \featureset{Color}_{P}) \times (\featureset{Role}_{Q} \times \featureset{Color}_{Q})$ \\for every $P$, $Q$ adjacent pieces in the same rank,\\such that $file(P) < file(Q)$} & 1152 \\
 \toprule
 \depiction{PV} & PV & \makecell{$\featureset{File}_{P} \times (\featureset{Role}_{P} \times \featureset{Color}_{P}) \times (\featureset{Role}_{Q} \times \featureset{Color}_{Q})$ \\for every $P$, $Q$ adjacent pieces in the same file,\\such that $rank(P) < rank(Q)$} & 1152 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
+Note that it is important to consider the order of the pieces in the pair, so that features are not mirrored (we want to differentiate between both). In code this is taking care of just by iterating over the pieces in the same order and building the pair in the same order.
 
 The following figure shows what pairs of pieces (features) are considered for the horizonal and vertical axes in a complete board:
 
@@ -369,17 +368,17 @@ The following figure shows what pairs of pieces (features) are considered for th
 \end{tabular}
 \end{figure}
 
-Pepito \depiction{PH} asdo \depiction{PV} asd\depiction{PD1} asd\depiction{PD2} asd
+LISTAR LOS FEATURE SETS QUE USE:
 
-[explicar...]
+\begin{itemize}
+\item HV + PH
+\item HV + PV
+\item HV + PH + PV
+\item H + V + PH + PV
+\end{itemize}
 
-3 runs
-HV + PH
-HV + PV
-HV + PH + PV
-H + V + PH + PV
 
-
+I expect that the network is able to take advantage of the specific features, enough to conteract the loss in performance due to the big increase in the number of features and more complex updates. \\
 
 \textbf{Results.} blablabla
 

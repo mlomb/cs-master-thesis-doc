@@ -8,17 +8,17 @@
 \cmidrule(lr){2-4} \cmidrule(l){5-6}
 & \bf Batch & \bf LR & \bf Gamma & \bf L1 & \bf L2 & \\
 \midrule
-    \featureset{HV} & 16384 & 5e-04 & 0.99 & 512 & 32 & 0.00307 & \textbf{0.0 $\pm$ 0.0} & 1:49:12 \\
+    \featureset{All} & 16384 & 5e-04 & 0.99 & 512 & 32 & 0.00316 & \textbf{0.0 $\pm$ 0.0} & 1:50:55 \\
 \midrule
-\featureset{hv+h+v} & 16384 & 5e-04 & 0.99 & 512 & 32 & \textbf{0.00297} & -8.6 $\pm$ 4.3 & 1:04:14 \\
+\featureset{All} + \featureset{H} + \featureset{V} & 16384 & 5e-04 & 0.99 & 512 & 32 & 0.00308 & -4.6 $\pm$ 5.0 & 2:13:23 \\
 \midrule
-\featureset{hv+d1+d2} & 16384 & 5e-04 & 0.99 & 512 & 32 & 0.00299 & -23.8 $\pm$ 3.7 & 1:16:19 \\
+\featureset{All} + \featureset{D1} + \featureset{D2} & 16384 & 5e-04 & 0.99 & 512 & 32 & 0.00309 & -33.3 $\pm$ 5.0 & 2:26:23 \\
 \midrule
-\featureset{hv+h+v+d1+d2} & 16384 & 5e-04 & 0.99 & 512 & 32 & 0.00297 & -65.2 $\pm$ 4.2 & 1:50:18 \\
+\featureset{All} + \featureset{H} + \featureset{V} + \featureset{D1} + \featureset{D2} & 16384 & 5e-04 & 0.99 & 512 & 32 & \textbf{0.00307} & -57.7 $\pm$ 4.8 & 2:50:04 \\
 \midrule
-\featureset{h+v+d1+d2} & 16384 & 5e-04 & 0.99 & 512 & 32 & 0.00378 & -184.7 $\pm$ 5.3 & 2:35:16 \\
+\featureset{H} + \featureset{V} + \featureset{D1} + \featureset{D2} & 16384 & 5e-04 & 0.99 & 512 & 32 & 0.00389 & -172.5 $\pm$ 4.8 & 2:27:34 \\
 \midrule
-\featureset{h+v} & 16384 & 5e-04 & 0.99 & 512 & 32 & 0.00574 & -372.0 $\pm$ 4.4 & 1:46:38 \\
+\featureset{H} + \featureset{V} & 16384 & 5e-04 & 0.99 & 512 & 32 & 0.00581 & -368.1 $\pm$ 5.7 & 1:51:13 \\
 \midrule
-\featureset{d1+d2} & 16384 & 5e-04 & 0.99 & 512 & 32 & 0.00660 & -428.7 $\pm$ 5.4 & 1:52:39 \\
+\featureset{D1} + \featureset{D2} & 16384 & 5e-04 & 0.99 & 512 & 32 & 0.00670 & -474.5 $\pm$ 6.4 & 1:58:50 \\
 \bottomrule \end{tabular}
