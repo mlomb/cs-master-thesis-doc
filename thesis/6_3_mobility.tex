@@ -1,12 +1,12 @@
 
 \subsection{Mobility}
 
-\textbf{Motivation.} Mobility in chess is a measure of the available moves a player can make in a given position. The idea is that if a player has more available moves, the position is stronger. In \cite{slater:1950} it was shown that there is a strong correlation between a player's mobility and the number of games won. This metric has been used extensively in hand crafted evaluations, and I propose to include this information as features for the neural network.
+\textbf{Motivation.} Mobility in chess is a measure of the available moves a player can make in a given position. The idea is that if a player has more available moves, the position is stronger. In \cite{slater:1950} it was shown that there is a strong correlation between a player's mobility and the number of games won. This metric has been used extensively in hand crafted evaluations, and I propose to include this information as features for the neural network. \\
 
-There are a couple of ways to go about encoding mobility:
+\textbf{Experiment.} There are two ways to go about encoding mobility:
 
 \begin{itemize}
-\item \textbf{Bitsets (per piece type):} the amount of features changed each turn may negate any gains.
+\item \textbf{Bitsets (per piece type):} Provide the exact squares each piece type can move to. Excluding the king, these are $64 * 5 * 2 = 640$ features. The problem with this approach is not the amount of features, but the number of updates to the accumulator per move is very high, which slows down the search.
 
 \begin{figure}[h]
 \centering
@@ -67,5 +67,9 @@ Board &
 \end{figure}
 
 
-\item \textbf{Counts (per piece type):}
+\item \textbf{Counts (per piece type):} Use the number of available moves per piece type as features. This means having a feature for each possible count value, doubling the potential amount of row updates. Further development could bucket this values based on their distribution to reduce some of this updates.
 \end{itemize}
+
+asdasdasd \\
+
+\textbf{Results.} asdadasdasd
