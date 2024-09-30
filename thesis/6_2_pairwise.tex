@@ -368,18 +368,41 @@ The following figure shows what pairs of pieces (features) are considered for th
 \end{tabular}
 \end{figure}
 
-LISTAR LOS FEATURE SETS QUE USE:
+Since the blocks need at least to pieces to generate a feature, if there is only one piece over an axis, there are no features. So, this blocks can't be used alone, they need to be combined with other features that provide that information. The most obvious choice is to combine them with the \featureset{All} block.
 
-\begin{itemize}
-\item HV + PH
-\item HV + PV
-\item HV + PH + PV
-\item H + V + PH + PV
-\end{itemize}
+The feature sets to be evaluated are \featureset{All} $\oplus$ \featureset{PH} (1920 features), \featureset{All} $\oplus$ \featureset{PV} (1920 features) and \featureset{All} $\oplus$ \featureset{PH} $\oplus$ \featureset{PV} (3072 features). Like before, a network will be trained for each feature set and a tournament will be played to determinate the relative elo to the \featureset{All} baseline.
+
+I expect that the networks are able to take advantage of the specific features, enough to conteract the loss in performance due to the big increase in the number of features and more complex updates. \\
+
+\textbf{Results.} The results shown in table \ref{tab:pairwise_results}.
 
 
-I expect that the network is able to take advantage of the specific features, enough to conteract the loss in performance due to the big increase in the number of features and more complex updates. \\
+\begin{table}[H]
+\caption{Pairwise encodings results}
+\label{tab:pairwise_results}
+\centering
 
-\textbf{Results.} blablabla
+% # PLAYER                                                :  RATING  ERROR   POINTS  PLAYED   (%)  CFS(%)
+% 1 256-eval_16384_(hv[768]→512)x2→32→1.nn          :     0.0   ----  12557.0   24038    52      57
+% 2 256-eval_16384_(hv+ph[1920]→512)x2→32→1.nn      :    -0.5    5.1  12535.5   24038    52     100
+% 3 256-eval_16384_(hv+pv[1920]→512)x2→32→1.nn      :   -14.1    4.5  11917.0   24037    50     100
+% 4 256-eval_16384_(hv+ph+pv[3072]→512)x2→32→1.nn   :   -32.8    4.7  11066.5   24039    46     ---
+
+\begin{tabular}{ccccc}
+\toprule
+\bf Feature set  & \bf \makecell{Number\\of features} & \makecell{\bf Val. loss\\\textit{min}} & \makecell{\bf Rating\\\textit{elo (rel. to \featureset{All})}} \\
+\toprule
+\featureset{All} (reference) & 768 & 0.00316 & \textbf{0.0} \\
+\midrule
+\featureset{All} $\oplus$ \depiction{PH} & 1920 & 0.00296 & -0.5 $\pm$ 5.1 \\
+\midrule
+\featureset{All} $\oplus$ \depiction{PV} & 1920 & 0.00303 & -14.1 $\pm$ 4.5 \\
+\midrule
+\featureset{All} $\oplus$ \depiction{PH} $\oplus$ \depiction{PV} & 3072 & 0.00287 & -32.8 $\pm$ 4.7 \\
+\bottomrule
+
+\end{tabular}
+\end{table}
+
 
 I did not bother implementing diagonal pairs (\depiction{PD1} and \depiction{PD2}) due the adverse result of the other axes.
