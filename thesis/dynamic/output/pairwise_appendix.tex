@@ -1,0 +1,18 @@
+
+\begin{tabular}{@{} ccccccccc @{}} \toprule
+\multirow{2}{*}{\bf Feature set} &
+\multicolumn{3}{c}{\bf Train hyperparams} &
+\multicolumn{2}{c@{}}{\bf Network} &
+\multirow{2}{*}{\makecell{\bf Val. loss\\\textit{min}}} &\multirow{2}{*}{\makecell{\bf Rating\\\textit{elo (rel. to \featureset{All})}}} &
+\multirow{2}{*}{\makecell{\bf Runtime\\\textit{hh:mm:ss}}} \\
+\cmidrule(lr){2-4} \cmidrule(l){5-6}
+& \bf Batch & \bf LR & \bf Gamma & \bf L1 & \bf L2 & \\
+\midrule
+    \featureset{All} + \featureset{PH} & 16384 & 5e-04 & 0.99 & 512 & 32 & 0.00296 & \textbf{-0.5 $\pm$ 5.1} & 2:26:00 \\
+\midrule
+\featureset{All} + \featureset{PV} & 16384 & 5e-04 & 0.99 & 512 & 32 & 0.00303 & -14.1 $\pm$ 4.5 & 2:20:57 \\
+\midrule
+\featureset{All} + \featureset{PH} + \featureset{PV} & 16384 & 5e-04 & 0.99 & 512 & 32 & \textbf{0.00287} & -32.8 $\pm$ 4.7 & 3:32:35 \\
+\midrule
+\featureset{H} + \featureset{V} + \featureset{PH} + \featureset{PV} & 16384 & 5e-04 & 0.99 & 512 & 32 & 0.00421 & nan $\pm$ nan & 2:52:24 \\
+\bottomrule \end{tabular}

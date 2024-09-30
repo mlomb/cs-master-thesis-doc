@@ -12,7 +12,7 @@ def fs(feature_set: str):
     return " + ".join([fs_part(part) for part in parts])
 
 
-def make_runs_table(df, sort_by_elo=False):
+def make_runs_table(df, sort_by_elo=False, avg_exp="avg=0"):
     """Don't look at this function :)"""
 
     df = df.sort_values(by=["feature_set", "batch_size", "l1_size", "l2_size"], ascending=[False, True, True, True])
@@ -34,7 +34,7 @@ def make_runs_table(df, sort_by_elo=False):
 \\multicolumn{3}{c}{\\bf Train hyperparams} &
 \\multicolumn{2}{c@{}}{\\bf Network} &
 \\multirow{2}{*}{\\makecell{\\bf Val. loss\\\\\\textit{min}}} &""" + (
-"""\\multirow{2}{*}{\\makecell{\\bf Rating\\\\\\textit{elo (avg=0)}}} &""" if has_rating else "") + (
+"""\\multirow{2}{*}{\\makecell{\\bf Rating\\\\\\textit{elo (""" + avg_exp + """)}}} &""" if has_rating else "") + (
 """\\multirow{2}{*}{\\makecell{\\bf Puzzles\\\\\\textit{move acc.}}} &""" if has_puzzles else "") + """
 \\multirow{2}{*}{\\makecell{\\bf Runtime\\\\\\textit{hh:mm:ss}}} \\\\
 \\cmidrule(lr){2-4} \\cmidrule(l){5-6}

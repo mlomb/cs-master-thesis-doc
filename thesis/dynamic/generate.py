@@ -139,8 +139,19 @@ def exp_2_axes():
 
     # write runs appendix
     with open('./output/axes_appendix.tex', 'w') as f:
-        f.write(make_runs_table(df_sweep, sort_by_elo=True))
+        f.write(make_runs_table(df_sweep, sort_by_elo=True, avg_exp="rel. to \\featureset{All}"))
+
+def exp_3_baseline():
+    df_sweep = pd.read_csv('../../assets/results/pairwise/sweep.csv')
+    df_elo = pd.read_csv('../../assets/results/pairwise/rating.csv')
+    df_sweep = pd.merge(df_sweep, df_elo, on="Name", how='left')
+
+    # write runs appendix
+    with open('./output/pairwise_appendix.tex', 'w') as f:
+        f.write(make_runs_table(df_sweep, sort_by_elo=True, avg_exp="rel. to \\featureset{All}"))
+
 
 quantization_error()
 exp_1_baseline()
 exp_2_axes()
+exp_3_baseline()
