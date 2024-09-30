@@ -368,7 +368,7 @@ The following figure shows what pairs of pieces (features) are considered for th
 \end{tabular}
 \end{figure}
 
-Since the blocks need at least to pieces to generate a feature, if there is only one piece over an axis, there are no features. So, this blocks can't be used alone, they need to be combined with other features that provide that information. The most obvious choice is to combine them with the \featureset{All} block.
+Since the blocks need at least two pieces to generate a feature, if there is only one piece over an axis, there are no active features. So, this blocks can't be used alone, they need to be combined with other features that provide that information. The most obvious choice is to combine them with the \featureset{All} block.
 
 The feature sets to be evaluated are \featureset{All} $\oplus$ \featureset{PH} (1920 features), \featureset{All} $\oplus$ \featureset{PV} (1920 features) and \featureset{All} $\oplus$ \featureset{PH} $\oplus$ \featureset{PV} (3072 features). Like before, a network will be trained for each feature set and a tournament will be played to determinate the relative elo to the \featureset{All} baseline.
 
