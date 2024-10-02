@@ -106,7 +106,7 @@ Each approach was implemented as a block:
 \toprule
 MB & \makecell{$\featureset{Square}_{P} \times (\featureset{Role}_{Q} \times \featureset{Color}_{Q})$ \\for every square $P$ and piece $Q$\\ such that $Q$ can move to $P$} & 768 \\
 \toprule
-MC & \makecell{$\{0..8, 8+\}_R$ $\oplus$ $\hdots$\\where R is each role and $N_R$ the maximum mobility value} & 103 \\
+MC & \makecell{$\{0..N\}_R$ $\oplus$ $\hdots$\\where R is the sum of mobility of each piece of role R} & 103 \\
 \bottomrule
 \end{tabular}
 \end{table}
