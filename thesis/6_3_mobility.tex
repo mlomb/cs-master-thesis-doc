@@ -6,7 +6,7 @@
 \textbf{Experiment.} There are two ways to go about encoding mobility:
 
 \begin{itemize}
-\item \textbf{Bitsets (per piece type):} Provide the exact squares each piece type can move to. Excluding the king, these are $64 * 5 * 2 = 640$ features. The problem with this approach is not the amount of features, but the number of updates to the accumulator per move is very high, which slows down the search.
+\item \textbf{Bitsets (per piece type):} Provide the exact squares each piece type can move to. The number of features would be $64 * 6 * 2 = 768$. The problem with this approach is not the amount of features, but the number of updates to the accumulator per move is very high, which slows down the search.
 
 \begin{figure}[h]
 \centering
@@ -67,18 +67,51 @@ Board &
 \end{figure}
 
 
-\item \textbf{Counts (per piece type):} Use the number of available moves per piece type as features. This means having a feature for each possible count value, (just) doubling the potential amount of row updates. Further development could bucket this values based on their distribution to reduce some of the updates.
+\item \textbf{Counts (per piece type):} Use the number of available moves per piece type as features. This means having a feature for each possible count value, with a lot less of row updates. To find which values to include as features I computed the total mobility for each piece role in 2 billion boards, shown in figure \ref{fig:mobility}. From the data we can extract the range of values to use as features:
+
+\begin{table}
+\centering
+\begin{tabular}{c|c|c}
+\toprule
+\textbf{Piece role} & \textbf{Min} & \textbf{Max} \\
+\midrule
+\sympawn\ Pawn & 0 & 8+ \\
+\symknight\ Knight & 0 & 15+ \\
+\symbishop\ Bishop & 0 & 16+ \\
+\symrook\ Rook & 0 & 25+ \\
+\symqueen\ Queen & 0 & 25+ \\
+\symking\ King & 0 & 8 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{figure}[H]
 \centering
 \makebox[\textwidth]{\includegraphics[width=\textwidth]{./dynamic/output/mobility.pdf}}
-\caption{Total mobility values for each piece on the board. Computed using 2 billion boards. The value 0 for the Knight, Bishop, Rook and Queen has been excluded from the plot, as it is very common.}
+\caption{Total mobility values for each piece on the board. Computed using 2 billion boards. The value 0 for the \symknight\ Knight, \symbishop\ Bishop, \symrook\ Rook and \symqueen\ Queen has been excluded from the plot, as it is very common.}
+\label{fig:mobility}
 \end{figure}
-
 \end{itemize}
 
-asdasdasd \\
+Each approach was implemented as a block:
 
-\textbf{Experiment.} asdasd
+\begin{table}[H]
+\caption{Mobility feature blocks}
+\label{tab:mobility_blocks}
+\centering
+
+\begin{tabular}{ccc}
+\toprule
+\bf Block name & \bf Definition & \bf Number of features \\ 
+\toprule
+MB & \makecell{$\featureset{Square}_{P} \times (\featureset{Role}_{Q} \times \featureset{Color}_{Q})$ \\for every square $P$ and piece $Q$\\ such that $Q$ can move to $P$} & 768 \\
+\toprule
+MC & \makecell{$\{0..8, 8+\}_R$ $\oplus$ $\hdots$\\where R is each role and $N_R$ the maximum mobility value} & 103 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+asdasdasd \\
 
 \textbf{Results.} asdadasdasd
