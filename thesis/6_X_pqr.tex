@@ -1,17 +1,15 @@
 \subsection{PQR}
 
-\textbf{Motivation.} During the initial research for a thesis subject, I came across \cite{dlchess:2014} which seemed an interesting approach to train a neural network to evaluate positions. Since it was released in 2014, it predates the NNUE era and the training data was suboptimal (Lichess with human moves). So I decided to try to replicate the idea using modern datasets and better moves. The \enquote{PQR} method itself was explained in detail in the previous chapter. \\
+\textbf{Motivation.} During the initial research for a thesis subject, I came across \cite{dlchess:2014} which seemed an interesting approach to train a neural network to evaluate positions. Since it was released in 2014, it predates the NNUE era and the training data was suboptimal (Lichess with human moves). So I decided to try to replicate the idea using modern datasets, better moves and a proper engine. The \enquote{PQR} method itself was explained in detail in the previous chapter. \\
 
-\textbf{Experiment.} I will train the canonical \featureset{All} feature set with this method in two ways: from scratch and from a checkpoint trained with the evaluations method.
+\textbf{Experiment.} I will train the canonical \featureset{All} feature set with this method in two ways:
 
-? why...
+\begin{itemize}
+\item \textbf{Train from scratch.} The network is initialized with random weights and trained with the PQR method. This is what the original authors did, and I do not expect to reach the performance of models trained with the evaluations method. Using precomputed evaluations as a target is a lot simpler for the model, since it only has to learn to mimic the scores.
 
+\item \textbf{Train from a checkpoint.} A strong checkpoint trained with the other method is used to initialize the network. This way, the network does not have to learn too much at once and may enable it to improve the existing parameters. I believe that two scenarios are likely to happen: the model improves very slowly, or it completely forgets what it have learned before and ends up like a model trained from scratch. The best scenario is that the model improves slowly, proving that it can be used to further optimize existing models.
+\end{itemize}
 
-\textbf{Results.}
+asdasdasd \\
 
-PQR. no va a ser tan bueno pero fun shit
-
-La idea es separarlo en dos:
-
-- probar entrenando de cero
-- probar entrenando desde un checkpoint ya entrenado con la otra tecnica
+\textbf{Results.} aqui pondria los resultados... si los tuviera!
