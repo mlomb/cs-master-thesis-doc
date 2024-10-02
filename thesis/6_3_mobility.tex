@@ -106,10 +106,12 @@ Each approach was implemented as a block:
 \toprule
 MB & \makecell{$\featureset{Square}_{P} \times (\featureset{Role}_{Q} \times \featureset{Color}_{Q})$ \\for every square $P$ and piece $Q$\\ such that $Q$ can move to $P$} & 768 \\
 \toprule
-MC & \makecell{$\{0..N\}_R$ $\oplus$ $\hdots$\\where R is the sum of mobility of each piece of role R} & 103 \\
+MC & \makecell{$M(R)_{R,C} \times (\featureset{Role}_{R} \times \featureset{Color}_{C})$\\for every role $R$ and color $C$\\where $M(R)=\{0\hdots\}$ are the mobility values for the role R} & 206 \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+decir los fs
 
 
 asdasdasd \\
