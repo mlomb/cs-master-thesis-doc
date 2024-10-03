@@ -7,9 +7,9 @@
 % https://crimsonpublishers.com/cojra/pdf/COJRA.000563.pdf
 % https://arxiv.org/pdf/2209.11902.pdf
 
-The development of chess engines is and has been a topic of study in the chess and computer communities for decades. IBM DeepBlue \cite{deepblue:2002} was the first chess machine to reach superhuman level by consistently beating the world champion ---Garry Kasparov--- in 1997. Since then, engines have evolved in strength and complexity.
+The development of chess engines was and continues to be a topic of study in the chess and computer communities for decades. IBM DeepBlue \cite{deepblue:2002} was the first chess machine to reach superhuman level by consistently beating the world champion ---Garry Kasparov--- in 1997. Since then, engines have evolved in strength and complexity.
 
-Chess can be modeled as a tree, where each node is a particular board configuration and the edges are legal chess moves for that position. With this model, engines can use tree search algorithms to explore the tree and determine the best move. Since the 1950s and to this date, engines have used tree search algorithms like Minimax \cite{minimax-survey:1995} and Monte Carlo Tree Search \cite{mcts-survey:2012} (MCTS) or some of its variants \cite{tree-search-methods:2014,mcts-modifications:2022} to accomplish this.
+Chess can be modeled as a tree, where each node is a particular board configuration and the edges are legal chess moves for that position. With this model, engines can use tree search algorithms to explore the tree and determine the best move. Since the 1950s and to this date, engines have used algorithms like Minimax \cite{minimax-survey:1995} and Monte Carlo Tree Search \cite{mcts-survey:2012} (MCTS) or some of its variants \cite{tree-search-methods:2014,mcts-modifications:2022} to accomplish this.
 
 Since the number of possible moves in chess is vast, it is not feasible to explore the entire tree, so every tree search algorithm relies on having an evaluation function: a function that takes the state of the game and returns a single real number. This number is used to encompass information about the whole subtree of that position so it can be propagated up the tree, depending on the algorithm. Until a few years ago, highly complex and handcrafted evaluation functions were used that were based on human knowledge about the game.
 
