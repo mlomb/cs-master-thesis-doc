@@ -58,7 +58,7 @@
 
 To evaluate chess positions, the engine will use a neural network with an architecture explained in detail in the next chapter. In this chapter, I will show how to build the one-dimensional input vector for such network, which can be described entirely by a feature set.
 
-A feature set is a set built by a cartesian product of smaller sets of features (often called feature blocks), where each set extracts a different aspect of a position. Each tuple in the feature set corresponds to an element in the input vector, which will be set to $1$ if the aspects captured by the tuple is present in the position, and $0$ otherwise. If a tuple is present in a position, we say that the tuple is \textit{active}.
+[esta mal la primera oracion] A feature set is a set built by a cartesian product of smaller sets of features (often called feature blocks), where each set extracts a different aspect of a position. Each tuple in the feature set corresponds to an element in the input vector, which will be set to $1$ if the aspects captured by the tuple is present in the position, and $0$ otherwise. If a tuple is present in a position, we say that the tuple is \textit{active}.
 
 Let's consider some basic sets of features. The following sets encode positional information about the board:
 
@@ -170,6 +170,8 @@ This feature set is the most natural encoding for a chess position. It is called
     for every $P$ piece in the board \\
 \end{center}
 
+[dar un ejemplo concreto que quizas no queda claro]
+
 The features are very simple to compute, and it has $64*6*2=$\textbf{ 768 features}, which makes it very small and efficient.
 
 \subsubsection{\mdseries\featureset{King-All}}
@@ -182,7 +184,7 @@ Another feature set built on top of $\featureset{All}$ is the \featureset{King-A
     $P$ is every piece in the board \\
 \end{center}
 
-This encoding allows the network to better understand the position of the pieces in relation to the king, which is very tied to the evaluation of the position.
+This encoding allows the network to understand better the position of the pieces in relation to the king, which is very tied to the evaluation of the position.
 
 The number of features is $64*768=$ \textbf{49152 features}. There is a variation of this feature set called \enquote{KP} which is the same but it does not consider the enemy king, reducing the amount of features to 40960. There are other variations, such as \featureset{KAv2} or notably \featureset{KAv2\_hm} that is currently the latest feature set used by Stockfish 16.1.
 
