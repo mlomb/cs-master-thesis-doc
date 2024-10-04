@@ -35,27 +35,34 @@ Since most of the positions the network will be evaluating are quiet due the qui
 
 \subsection{Optimizations}
 
-Many optimizations were made to the engine to make it reach a decent depth in a reasonable time. There are no novel improvements, most are well-known techniques that have been used in engines for decades and can be found in the Chess Programming Wiki \cite{cpw}.
+Many optimizations were made to the engine to make it reach a decent depth in a reasonable time, which makes the engine stronger. There are no novel improvements, most are well-known techniques that have been used in engines for decades and can be found in the Chess Programming Wiki \cite{cpw}.
 
 The most prominent optimizations implemented are:
 
 \begin{itemize}
 \item \textbf{Alpha-beta pruning}: a way to eliminate big portions of the search tree by using the branch-and-bound technique. It allows to prune branches that are guaranteed to be worse than the best move found so far. This means that it doesn't affect the result of the search, it only makes it faster.
-\item \textbf{Move ordering}:.
-\item \textbf{Transposition table}:.
+
+Each node in the search tree has two values associated with it: $\alpha$ and $\beta$. $\alpha$ is the best value found so far that the maximizing player can guarantee up to that node. $\beta$ is the best value found so far that the minimizing player can guarantee up to that node. Note that $\alpha \le \beta$ and the maximizing player tries to \enquote{push} $\alpha$ up and the minimizing player tries to \enquote{pull} $\beta$ down.
+
+When a node is visited, the algorithm checks if $\alpha \ge \beta$. If this is the case, the branch can be pruned because the minimizing player can guarantee a value of $\beta$, which is worse than the best value found so far.
+
+\item \textbf{Move ordering}: the order in which the moves are evaluated can have a big impact on the effectiveness of the alpha-beta pruning. There are a couple of ways to improve move ordering:
+\begin{itemize}
+\item \textbf{MVV/LVA} The most valuable victim, least valuable attacker is a simple heuristic that orders the moves by the value of the captured piece minus the value of the attacking piece. This way the most valuable captures are evaluated first, which are more likely to cause a cutoff.
 \end{itemize}
 
-Many other smaller optimizations were made and can be found in the documented code.
+\item \textbf{Transposition table}: During search, a position may be visited many times with different sequences of moves. This is called a transposition. The transposition table is a large hash table storing information about positions that have already been visited. This way, if a position is visited again, the engine can use the stored information to avoid re-evaluating it.
 
-%- transposition table
-%- move ordering (MVV LVA)
+Even if the depth of the stored evaluation is lower than the current depth (insufficient to draw conclusions at the current depth), it can still be used to improve the move ordering.
+
+\end{itemize}
+
+Many other optimizations were made and can be found in the documented code.
 
 %- principal variation (mainline)
 %- null move prunning
-%- 3 fold repetition
 %- late move reductions
 %- history moves, killer moves
-
 
 \subsection{Implementation details}
 
@@ -73,3 +80,4 @@ Time control is hard-coded to use the increment plus 2\% of the remaining time p
 %- I/O with UCI protocol
 %- time control
 %- POSITION STACK
+%- 3 fold repetition
