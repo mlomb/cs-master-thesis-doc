@@ -1,6 +1,6 @@
 \section{Engine implementation}
 
-Building chess engines is a very discussed topic in the history of chess and thus very well documented. The Chess Programming Wiki (CPW) \cite{cpw} is the best source of information to reference, which I will base my engine on. I aim to build a single-threaded classic engine and only make use of the most prominent optimizations to keep it simple. The engine strength is not that relevant, as it is only a tool to measure the relative performance of the encodings. However, a competent one is required.
+Building chess engines is a very discussed topic in the history of chess and thus very well documented. The Chess Programming Wiki (CPW) \cite{cpw} is the best source of information to reference, which I will base my engine on. I aim to build a single-threaded classic engine and only make use of the most prominent optimizations to keep it simple. The engine strength is not that relevant, as it is only a tool to measure the relative performance of board encodings. However, a competent one is required.
 
 Note that implementing the engine is not the main focus of this work, so some simplifications have been made to this chapter to keep it brief and simple. \\
 
@@ -46,7 +46,7 @@ Each node in the search tree has two values associated with it: $\alpha$ and $\b
 
 When a node is visited, the algorithm checks if $\alpha \ge \beta$. If this is the case, the branch can be pruned because the minimizing player can guarantee a value of $\beta$, which is worse than the best value found so far.
 
-\item \textbf{Move ordering}: the order in which the moves are evaluated can have a big impact on the effectiveness of the alpha-beta pruning. There are a couple of ways to improve move ordering:
+\item \textbf{Move ordering}: the order in which the moves are evaluated can have a big impact on the effectiveness of the alpha-beta pruning. There are a couple of ways to improve move ordering, the most important being:
 \begin{itemize}
 \item \textbf{MVV/LVA} The most valuable victim, least valuable attacker is a simple heuristic that orders the moves by the value of the captured piece minus the value of the attacking piece. This way the most valuable captures are evaluated first, which are more likely to cause a cutoff.
 \end{itemize}
@@ -66,18 +66,18 @@ Many other optimizations were made and can be found in the documented code.
 
 \subsection{Implementation details}
 
-[reword esto]
+%- Rust
+%- I/O with UCI protocol
+%- move generation using a fast library
+%- POSITION STACK
+%- time control
 
-The bot is implemented in the Rust programming language.
+The engine is implemented in the Rust programming language. It uses the standard UCI protocol to communicate via standard input/output.
 
 The most performance critical part of the engine aside from the evaluation is move generation, that is, given a position, list all available moves and make them.
-Fortunately there is a battle-tested library for it called \textit{shakmaty}. The UCI protocol was also added using a library built on top of it.
+Fortunately there is a battle-tested library for it called \textit{shakmaty}. The library provides a copy-make interface instead of a make-unmake one, so I have to rely on a stack of positions when doing recursion.
 
 Time control is hard-coded to use the increment plus 2\% of the remaining time per move. Experiments run at a fixed time per move, so this is used in the Lichess arena.
 
+By default the engine uses 128 MB of memory for the transposition table. This value will be used throughout the experiments and in the arena.
 
-%- move generation using a fast library
-%- I/O with UCI protocol
-%- time control
-%- POSITION STACK
-%- 3 fold repetition
