@@ -54,11 +54,11 @@
 \newcommand{\featureset}[1]{\textsc{#1}}
 
 
-\section{Feature set (board encoding)}
+\section{Feature sets (board encodings)}
 
 To evaluate chess positions, the engine will use a neural network with an architecture explained in detail in the next chapter. In this chapter, I will show how to build the one-dimensional input vector for such network, which can be described entirely by a feature set.
 
-[esta mal la primera oracion] A feature set is a set built by a cartesian product of smaller sets of features (often called feature blocks), where each set extracts a different aspect of a position. Each tuple in the feature set corresponds to an element in the input vector, which will be set to $1$ if the aspects captured by the tuple is present in the position, and $0$ otherwise. If a tuple is present in a position, we say that the tuple is \textit{active}.
+A feature set (or feature block) is comprised of elements which represent some information about a chess position. A feature set is usually built by a cartesian product of smaller sets of features, to represent more complex patterns. Each element corresponds to a value in the input vector, which will be set to $1$ if the pattern captured by the element is present in the position (we say that the element is \textit{active}), and $0$ otherwise.
 
 Let's consider some basic sets of features. The following sets encode positional information about the board:
 
@@ -102,9 +102,9 @@ $\begin{aligned}[t]
 \end{aligned}$
 \end{center}
 
-Since each set has to capture some information from the position, it must be stated explicitly. For example, consider the feature set $\featureset{File}_{P} \times \featureset{Color}_{P}$ where $P$ is \textit{any} piece in the board, meaning that the tuples $(file, color)$ that will be active are the ones where there is at least one piece in $file$ with the color $color$ (disregarding any other kind of information, like the piece's role). Another possible feature set could be $\featureset{File}_{P} \times \featureset{Role}_{P}$, with a similar interpretation. Note that $\featureset{Square}_Q = \featureset{File}_Q \times \featureset{Rank}_Q$ $\forall Q$.
+\footnotetext[1]{The color of the pieces have no meaning in the definition. They are present for illustrative purposes.}
 
-An illustration of the active features of these two feature sets for the same board is shown in Figure \ref{fig:active_features}.
+Since each set has to capture some pattern from the position, it must be stated explicitly. For example, consider the feature set $\featureset{File}_{P} \times \featureset{Color}_{P}$ where $P$ is \textit{any} piece in the board, meaning that the tuples $(file, color)$ that will be active are the ones where there is at least one piece in $file$ with the color $color$ (disregarding any other kind of information, like the piece's role). Another possible feature set could be $\featureset{File}_{P} \times \featureset{Role}_{P}$, with a similar interpretation. Note that $\featureset{Square}_Q = \featureset{File}_Q \times \featureset{Rank}_Q$ $\forall Q$. An illustration of the active features of these two feature sets for the same board is shown in Figure \ref{fig:active_features}.
 
 \begin{figure}[H]
 \centering
@@ -140,7 +140,6 @@ Active features &
 \label{fig:active_features}
 \end{figure}
 
-\footnotetext[1]{The color of the pieces have no meaning in the definition. They are present for illustrative purposes.}
 
 \subsection{Sum $\oplus$}
 
@@ -148,14 +147,14 @@ Active features &
 % we want the network to find patterns between the two sets
 % some feature sets can be built merging the features of two or more sets
 
-The sum (or concatenation) of two feature sets $\featureset{A}$ and $\featureset{B}$, denoted by $\featureset{A} \oplus \featureset{B}$, is a new feature set comprised of the tuples of both sets $\featureset{A}$ and $\featureset{B}$. These tuples do not interfere with each other, even if they have the same basic elements (e.g. h, 8, \symrook, \black), they \textbf{must} have different interpretations.
+The sum (or concatenation) of two feature sets (often called blocks) $\featureset{A}$ and $\featureset{B}$, denoted by $\featureset{A} \oplus \featureset{B}$, is a new feature set comprised of the elements of both sets $\featureset{A}$ and $\featureset{B}$. These elements do not interfere with each other, even if they share basic elements (e.g. h, 8, \symrook, \black), they \textbf{must} have different interpretations.
 For example, given the feature sets $\featureset{File}_{W}$ where $W$ is any white piece in the board and $\featureset{File}_{B}$ where $B$ is any black piece in the board, the feature set $\featureset{File}_{W} \oplus \featureset{File}_{B}$ will have the basic elements $\{a, b, ..., h\}$ for both white and black pieces, but each with a different interpretation. Note that the notation presented in this work is not standard.
 
 The sum operator is useful when we want to let the network find patterns combining information between two sets of features.
 
 \subsection{Indexing}
 
-The input to the network is a one-dimensional vector, so we need a way to map the tuples in a feature set to the elements in the input vector. The correct index for a tuple is computed using the order of the sets in the cartesian product and the size of each set, like strides in a multi-dimensional array. For this to work, each element in a set $S$ must correspond to a number between $0$ and $|S| - 1$. For example, the feature set $A \times B \times C$ has $|A| \times |B| \times |C|$ elements, and the tuple $(a, b, c)$ is mapped to the element indexed at $a \times |B| \times |C| + b \times |C| + c$. The same striding logic applies to feature sets built with the sum operator, recursively.
+The input to the network is a one-dimensional vector, so we need a way to map the tuples (elements are trivial) in a feature set to elements in the input vector. The correct index for a tuple is computed using the order of the sets in the cartesian product and the size of each set, like strides in a multi-dimensional array. For this to work, each element in a set $S$ must correspond to a number between $0$ and $|S| - 1$. For example, the feature set $A \times B \times C$ has $|A| \times |B| \times |C|$ elements, and the tuple $(a, b, c)$ is mapped to the element indexed at $a \times |B| \times |C| + b \times |C| + c$. The same striding logic applies to feature sets built with the sum operator, recursively.
 
 \subsection{Feature sets}
 
@@ -170,13 +169,11 @@ This feature set is the most natural encoding for a chess position. It is called
     for every $P$ piece in the board \\
 \end{center}
 
-[dar un ejemplo concreto que quizas no queda claro]
-
-The features are very simple to compute, and it has $64*6*2=$\textbf{ 768 features}, which makes it very small and efficient.
+Tuples in this set are \textit{active} if there is a piece in the board that matches the role, color and position of the tuple. For example, the tuple $(e4, \sympawn, \white)$ is active if there is a white pawn in the square e4. This way, for every possible piece, in every possible position, there is a feature. The set has $64*6*2=$\textbf{ 768 features}, which makes it very small and it is very easy to compute which features are active.
 
 \subsubsection{\mdseries\featureset{King-All}}
 
-Another feature set built on top of $\featureset{All}$ is the \featureset{King-All} feature set or called \enquote{KA} for short. For each possible position of the king of the side to move, it captures all the pieces in the board ($\featureset{All}$):
+Another feature set built on top of $\featureset{All}$ is the \featureset{King-All} feature set, or \enquote{KA} for short. For each possible position of the king of the side to move, it captures all the pieces in the board ($\featureset{All}$):
 
 \begin{center}
     $\featureset{King-All} = \featureset{Square}_{K} \times \featureset{All}_{P}$ \\
