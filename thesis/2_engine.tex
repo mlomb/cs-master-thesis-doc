@@ -1,29 +1,27 @@
 \section{Engine implementation}
 
-Building chess engines is a very discussed topic in the history of chess and thus very well documented. The Chess Programming Wiki (CPW) \cite{cpw} is the best source of information to reference, which I will base my engine on. I aim to build a single-threaded classic engine and only make use of the most prominent optimizations to keep it simple. The engine strength is not that relevant, as it is only a tool to measure the relative performance of board encodings. However, a competent one is required.
-
-Note that implementing the engine is not the main focus of this work, so some simplifications have been made to this chapter to keep it brief and simple. \\
+Building chess engines is a very discussed topic in the history of chess and thus very well documented. The Chess Programming Wiki (CPW) \cite{cpw} is a well known source of information to reference, which I will base my engine on. I aim to build a single-threaded classic engine and only make use of the most prominent optimizations to keep it simple. The engine strength is not that relevant, as it is only a tool to measure the relative performance of board encodings. However, a competent one is required. \\
 
 Classic chess engines are composed of two main components: \textbf{the search} and \textbf{the evaluation}. The search is the process of exploring the tree of possible moves, which is what this chapter is about. The evaluation determines how good the positions are for who plays. As I mentioned in the introduction, classic engines used to use hand-crafted evaluations based on human knowledge. In my case, I will replace it entirely with a neural network, explained in the following chapters.
 
 \subsection{Minimax search}
 
-A position $p$ in chess is the state of the board with any other relevant information, like castling rights and the 50-move clock. Given a position $p$, we can call $f(p)$ its evaluation, a number that provides an assessment of how good the position is, computed either by a hand-crafted function or a neural network.
+A position $p$ in chess is the state of the board with any other relevant information, like castling rights, en passant and the 50-move clock. Given a position $p$, we can call $f(p)$ its evaluation, a number that provides an assessment of how good the position is, computed either by a hand-crafted function or a neural network.
 
-One approach to determinate the best move could be to evaluate all possible positions that can be reached with a single move and choose the one that leads to the highest evaluation for the player who made the move. This idea can be extended to consider actions taken by the other player, and so on, to a fixed depth. Formally, this is called the minimax search algorithm \cite{minimax-survey:1995}.
+One approach to approximate a good move given a reasonable function $f$ could be to evaluate all possible positions that can be reached with a single move and choose the one that leads to the highest evaluation for the player who made the move. This idea can be extended to consider actions taken by the other player, and so on, to a fixed depth. Formally, this is called the minimax search algorithm \cite{minimax-survey:1995}.
 
-In a minimax tree search there are two kinds of nodes: maximizing nodes and minimizing nodes. 
+In a minimax tree there are two kinds of nodes: maximizing nodes and minimizing nodes. 
 
 \begin{itemize}
 \item \textbf{Maximizing nodes} are the ones where the player to move is our player. These nodes want to put the player in the best possible position, so they choose the action that maximizes the evaluation. Note that the root node is a maximizing node.
 \item \textbf{Minimizing nodes} are the ones where the player to move is the opponent. These nodes want to put the player in the worst possible position, so they choose the action that minimizes the evaluation.
 \end{itemize}
 
-The algorithm recursively explores the tree to a fixed depth, evaluating the positions at the leaves with $f$. The evaluation is then propagated up the tree, alternating between maximizing and minimizing nodes, until it reaches the root node. The best move is the one that leads to the highest evaluation at the root node.
+The algorithm recursively explores the tree to a fixed depth, evaluating the positions at the leaves with $f$. The evaluation is then propagated up the tree, alternating between maximizing and minimizing nodes, until it reaches the root node. After computing the whole tree to a fixed depth, the \enquote{best} move is defined by the move from the root node that maximizes the recursively computed evaluation (maximizing node).
 
-Usually we don't want to run the search to a fixed depth, but rather for a fixed amount of time. The algorithm itself runs to a fixed depth so iterative deepening is implemented. Iterative deepening runs the search in a loop, staring from depth 1 and increasing it by one each iteration until the time runs out. This way the best move found so far is always available. Note that we can't draw conclusions from any unfinished search, so the best move is the one found at the last iteration. This approach, when combined with a transposition table (a cache for evaluations) is very effective, making next iterations faster. \\
+Usually we do not want to run the search to a fixed depth, but rather for a fixed amount of time. The algorithm itself runs to a fixed depth, so what we can do is to run the search in a loop, staring from depth 1 and increasing it by one each iteration until the time runs out. This way the \enquote{best} move found so far is always available. Note that we can not draw conclusions from any unfinished search, so the \enquote{best} move is the one found at the last iteration. This approach is called iterative deepening, and when combined with a transposition table (a cache for evaluations) is very effective, making following iterations faster. \\
 
-The actual implementation I did was a variation of the minimax algorithm called negamax. Negamax is a simplification of minimax that takes advantage of the zero-sum property of chess, meaning that an evaluation for a player is equivalent to the negation of the evaluation in the opponent's point of view. Instead of having two kinds of nodes, all nodes are maximizing nodes and the evaluation is negated after the recursion. This simplifies the implementation.
+My implementation uses a variation of the minimax algorithm called \textit{negamax}. Negamax is a simplification of minimax that takes advantage of the zero-sum property of chess, meaning that an evaluation for a player is equivalent to the negation of the evaluation in the opponent's point of view. Instead of having two kinds of nodes, all nodes are maximizing nodes and the evaluation is negated after the recursion. This simplifies the implementation.
 
 \subsection{Quiescence search}
 
