@@ -70,7 +70,7 @@ Many other optimizations were made: history moves, killer moves, late move reduc
 %- POSITION STACK
 %- time control
 
-The engine is implemented in the Rust programming language. It uses the standard UCI protocol to communicate via standard input/output.
+The engine is implemented in the Rust programming language. It uses the standard UCI protocol \footnote{Universal Chess Interface specification can be found \href{https://www.shredderchess.com/chess-features/uci-universal-chess-interface.html}{here}.} to communicate via standard input/output.
 
 The most performance critical part of the engine aside from the evaluation is move generation, that is, given a position, list all available moves and make them.
 Fortunately there is a battle-tested library for it called \textit{shakmaty}. The library provides a copy-make interface instead of a make-unmake one, so I have to rely on a stack of positions when doing recursion.
