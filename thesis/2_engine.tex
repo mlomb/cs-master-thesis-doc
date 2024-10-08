@@ -25,7 +25,7 @@ My implementation uses a variation of the minimax algorithm called \textit{negam
 
 \subsection{Quiescence search}
 
-The search algorithm runs to a fixed depth, which causes a horizon effect. The horizon effect manifests when the search stops at a position where a negative event (such a capture) is inevitable but due the fixed depth, the search results in weaker moves in an effort to avoid the inevitable (prefers branches where the capture has not happened yet).
+The search algorithm runs to a fixed depth, which causes a horizon effect. The horizon effect manifests when the search stops at a position where a negative event (such a capture) is inevitable but due the fixed depth, the search results in weaker moves in an effort to avoid the inevitable, prefering branches where the negative event (the capture) has not happened yet.
 
 To fix this, instead of returning the evaluation of the position at the leaves, an additional smaller search is done which only considers captures. This way the search can continue until a \enquote{quiet} position is reached, where no captures are available.
 
@@ -38,24 +38,24 @@ Many optimizations were made to the engine to make it reach a decent depth in a 
 The most prominent optimizations implemented are:
 
 \begin{itemize}
-\item \textbf{Alpha-beta pruning}: a way to eliminate big portions of the search tree by using the branch-and-bound technique. It allows to prune branches that are guaranteed to be worse than the best move found so far. This means that it doesn't affect the result of the search, it only makes it faster.
+\item \textbf{Alpha-beta pruning}: a way to eliminate big portions of the search tree by using the branch-and-bound technique. It allows to prune branches that are guaranteed to be worse than the most promising move found so far. This means that it does not affect the result of the search, it only makes it faster.
 
 Each node in the search tree has two values associated with it: $\alpha$ and $\beta$. $\alpha$ is the best value found so far that the maximizing player can guarantee up to that node. $\beta$ is the best value found so far that the minimizing player can guarantee up to that node. Note that $\alpha \le \beta$ and the maximizing player tries to \enquote{push} $\alpha$ up and the minimizing player tries to \enquote{pull} $\beta$ down.
 
 When a node is visited, the algorithm checks if $\alpha \ge \beta$. If this is the case, the branch can be pruned because the minimizing player can guarantee a value of $\beta$, which is worse than the best value found so far.
 
-\item \textbf{Move ordering}: the order in which the moves are evaluated can have a big impact on the effectiveness of the alpha-beta pruning. There are a couple of ways to improve move ordering, the most important being:
+\item \textbf{Move ordering}: the order in which the moves are visited can have a big impact on the effectiveness of the alpha-beta pruning. If the move ordering is optimal, the effective branching factor is reduced to its square root, which means that the search can go twice as deep for the same amount of computation. In the worst case, it is identical to minimax. There are a couple of ways to improve move ordering, the most important being:
 \begin{itemize}
-\item \textbf{MVV/LVA} The most valuable victim, least valuable attacker is a simple heuristic that orders the moves by the value of the captured piece minus the value of the attacking piece. This way the most valuable captures are evaluated first, which are more likely to cause a cutoff.
+\item \textbf{MVV/LVA} the most valuable victim, least valuable attacker is a simple heuristic that orders the moves by the value of the captured piece minus the value of the attacking piece. This way the most valuable captures are evaluated first, which are more likely to cause a cutoff.
 \end{itemize}
 
-\item \textbf{Transposition table}: During search, a position may be visited many times with different sequences of moves. This is called a transposition. The transposition table is a large hash table storing information about positions that have already been visited. This way, if a position is visited again, the engine can use the stored information to avoid re-evaluating it.
+\item \textbf{Transposition table}: during search, a position may be visited many times with different sequences of moves. This is called a transposition. The transposition table is a large hash table storing information about positions that have already been visited. This way, if a position is visited again, the engine can use the stored information to avoid re-evaluating it.
 
 Even if the depth of the stored evaluation is lower than the current depth (insufficient to draw conclusions at the current depth), it can still be used to improve the move ordering.
 
 \end{itemize}
 
-Many other optimizations were made and can be found in the documented code.
+Many other optimizations were made: history moves, killer moves, late move reductions, null move prunning, and more. They can be found in the documented code.
 
 %- principal variation (mainline)
 %- null move prunning
