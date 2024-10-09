@@ -3,13 +3,20 @@
 \caption{Axes feature sets final results}
 \centering
 \begin{adjustbox}{center}
-\begin{tabular}{@{} cccc|cc @{}}
+\begin{tabular}{@{} cccccc @{}}
 \toprule
-\bf \multirow{2}{*}{Feature set} & \bf \multirow{2}{*}{Run} & \bf Val. loss & \bf Runtime & \bf Rating @ 192 & \bf Rating @ 256 \\
- &  & \textit{min} & \textit{hh:mm:ss} & \textit{TC=100ms/m} & \textit{TC=100ms/m} \\
+\bf \multirow{2}{*}{Feature set} & \bf \multirow{2}{*}{Run} & \bf \multirow{2}{*}{Epoch} & \bf Val. loss  & \bf Rating & \bf TBD \\
+ &  &  & \textit{min}  & \textit{TC=100ms/m} &  \\
 \midrule
-    \midrule
-\multicolumn{6}{c}{\makecell{None}} \\
+    \featureset{All} & 3 & 256 & 0.003134 & \bf0.0 $\pm$ 0.0\\
+\featureset{All} + \featureset{D1} + \featureset{D2} & 2 & 256 & 0.003087 & -26.1 $\pm$ 3.8\\
+\featureset{All} + \featureset{H} + \featureset{V} & 2 & 192 & 0.003082 & -27.1 $\pm$ 4.1\\
+\featureset{All} + \featureset{H} + \featureset{V} + \featureset{D1} + \featureset{D2} & 3 & 256 & \bf0.003067 & -58.7 $\pm$ 3.7\\
+\featureset{H} + \featureset{V} + \featureset{D1} + \featureset{D2} & 2 & 256 & 0.003907 & -183.5 $\pm$ 4.1\\
+\featureset{H} + \featureset{V} & 1 & 256 & 0.005810 & -384.3 $\pm$ 5.1\\
+\featureset{D1} + \featureset{D2} & 1 & 256 & 0.006707 & -444.1 $\pm$ 5.1\\
+\midrule
+\multicolumn{6}{c}{\makecell{TODO: write notes}} \\
 \end{tabular}
 \end{adjustbox}
 \end{table}

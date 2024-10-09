@@ -39,7 +39,7 @@ def make_runs_table(sweep_path, rating_path, output_path, caption):
 
     note = "\\textbf{Batch size}: 16384, \\textbf{LR}: 5e-04, \\textbf{Gamma}: 0.99, \\textbf{L1}: 512, \\textbf{L2}: 32"
     note += "\n\\\\"
-    note += "\nA tournament was held for each feature set (8 networks), with 100ms per move.\\\\Opening book was UHO\\_Lichess\\_4852\\_v1.epd. Around 10000 games per network.\\\\Ratings computed using Ordo."
+    note += "\nA tournament was held for each feature set (8 networks), with 100ms per move.\\\\Opening book was UHO\\_Lichess\\_4852\\_v1.epd. Each network played around 10000 games.\\\\Ratings computed using Ordo, relative to the average (rating=0 is the average)."
 
     table = """
     \\begin{table}[H]
@@ -105,22 +105,49 @@ def make_runs_table(sweep_path, rating_path, output_path, caption):
 def make_final_table(sweep_path, rating_path, output_path, caption):
     df_sweep = pd.read_csv(sweep_path)
     df_ratings = pd.read_csv(rating_path)
-    df = pd.merge(df_sweep, df_ratings, on="Name", how='left')
+    df = pd.merge(df_sweep, df_ratings, on="Name", how='right')
 
-    note = "None"
+    df = df.sort_values(by=["Perf/rating"], ascending=[False])
+
+    note = "TODO: write notes"
 
     table = """
     \\begin{table}[H]
 \\caption{""" + caption + """}
 \\centering
 \\begin{adjustbox}{center}
-\\begin{tabular}{@{} cccc|cc @{}}
+\\begin{tabular}{@{} cccccc @{}}
 \\toprule
-\\bf \\multirow{2}{*}{Feature set} & \\bf \\multirow{2}{*}{Run} & \\bf Val. loss & \\bf Runtime & \\bf Rating @ 192 & \\bf Rating @ 256 \\\\
- &  & \\textit{min} & \\textit{hh:mm:ss} & \\textit{TC=100ms/m} & \\textit{TC=100ms/m} \\\\
+\\bf \\multirow{2}{*}{Feature set} & \\bf \\multirow{2}{*}{Run} & \\bf \\multirow{2}{*}{Epoch} & \\bf Val. loss  & \\bf Rating & \\bf TBD \\\\
+ &  &  & \\textit{min}  & \\textit{TC=100ms/m} &  \\\\
 \\midrule
     """
 
+    min_loss = df['Train/val_loss.min'].min()
+    max_rating = df['Perf/rating'].max()
+    
+    for index, row in df.iterrows():
+        table += fs(row['feature_set'])
+
+        table += f" & "
+        table += str(row['run'])
+
+        table += f" & "
+        table += str(row['Perf/epoch'])
+
+        loss = float(row['Train/val_loss.min'])
+        is_best_loss = int(row['Train/val_loss.min'] * 1_000_000) <= int(min_loss * 1_000_000)
+        table += f" & "
+        table += f"\\bf" if is_best_loss else ""
+        table += f"{loss:.6f}"
+
+        rating = row[f'Perf/rating']
+        rating_error = row[f'Perf/rating_error']
+        table += f" & "
+        table += f"\\bf" if rating >= max_rating else ""
+        table += f"{rating:.1f} $\\pm$ {rating_error:.1f}"
+
+        table += "\\\\\n"
 
     table += "\\midrule\n"
     table += "\\multicolumn{6}{c}{\\makecell{" + note + "}} \\\\\n"
