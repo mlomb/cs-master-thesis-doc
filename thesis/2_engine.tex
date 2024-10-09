@@ -27,6 +27,57 @@ My implementation uses a variation of the minimax algorithm called \textit{negam
 
 The search algorithm runs to a fixed depth, which causes a horizon effect. The horizon effect manifests when the search stops at a position where a negative event (such a capture) is inevitable but due the fixed depth, the search results in weaker moves in an effort to avoid the inevitable, prefering branches where the negative event (the capture) has not happened yet.
 
+\begin{figure}[H]
+\centering
+% https://tikz.dev/tikz-trees
+\begin{tikzpicture}[level distance=15mm,level/.style={sibling distance=22mm/#1},line width=0.25mm]
+\tikzstyle{root node}=[circle,draw,inner sep=3.0]
+\tikzstyle{bad node}=[circle,inner sep=3.0,fill=red]
+\tikzstyle{good node}=[circle,inner sep=3.0,fill=ForestGreen]
+\tikzstyle{unk node}=[circle,inner sep=3.0,fill=gray]
+\tikzstyle{best node}=[circle,inner sep=3.0,fill=blue]
+\node(0-0)[root node]{}
+child{
+    node(1-0)[good node]{} edge from parent[draw=ForestGreen]
+    child{
+        node(2-0)[bad node]{} edge from parent[draw=red] node[left]{PxQ}
+    }
+    child{
+        node(2-1)[good node]{}
+        child{node(3-0)[unk node]{} edge from parent[dashed,draw=gray] node[left]{PxQ}}
+        edge from parent[draw=ForestGreen]
+    }
+}
+child{
+    node(1-1)[bad node]{} edge from parent[draw=red]
+    child{
+        node(2-2)[bad node]{}
+    }
+    child{node(2-3)[bad node]{}}
+    edge from parent node[left]{PxQ}
+}
+child{
+    node(1-2)[good node]{} edge from parent[draw=ForestGreen]
+    child{node(2-4)[bad node]{} edge from parent[draw=red] node[left]{PxQ}}
+    child{
+        node(2-5)[good node]{}
+        child{node(3-1)[unk node]{} edge from parent[dashed,draw=gray] node[left]{PxQ}}
+    }
+}
+;
+
+%\draw[dashed,rounded corners=15,draw=orange]($(0-0)+(0.0,0.5)$) -- ($(2-0)+(-3.0,-0.3)$) -- ($(2-5)+(3.0,-0.3)$) -- cycle;
+%\node[text=orange] at($(0-0)+(3.0,-0.5)$){\makecell{search up to\\depth 2}};
+
+% horizon line
+\draw[dashed,draw=blue]($(2-0)+(-2.5,-0.45)$) -- ($(2-5)+(2.5,-0.45)$);
+% horizon label
+\node[text=blue] at($(2-0)+(-1.8,-0.75)$){\makecell{horizon}};
+
+\end{tikzpicture}
+\caption{Demonstration of the horizon effect (not a minimax tree, only showing opponent nodes), when the search stops at depth 2. The capture PxQ (\sympawn\ Pawn takes \symqueen\ Queen) is inevitable. In the \textcolor{red}{red branches}, the capture has already happened. In the \textcolor{ForestGreen}{green branches}, the capture has not happened yet. Evaluations at the leaves favour the \textcolor{ForestGreen}{green positions} because those have an extra \symqueen\ Queen. Since losing the piece is inevitable, \textcolor{ForestGreen}{green positions} may actually be weaker than \textcolor{red}{red positions}, but the search does not know that.}
+\end{figure}
+
 To fix this, instead of returning the evaluation of the position at the leaves, an additional smaller search is done which only considers captures. This way the search can continue until a \enquote{quiet} position is reached, where no captures are available.
 
 Since most of the positions the network will be evaluating are quiet due the quiescence search, it is important to make sure that the training set reflect that. Later on, only positions that are quiet will be used to train the network.
