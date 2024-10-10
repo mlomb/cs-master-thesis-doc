@@ -13,9 +13,86 @@ One approach to approximate a good move given a reasonable function $f$ could be
 In a minimax tree there are two kinds of nodes: maximizing nodes and minimizing nodes. 
 
 \begin{itemize}
-\item \textbf{Maximizing nodes} are the ones where the player to move is our player. These nodes want to put the player in the best possible position, so they choose the action that maximizes the evaluation. Note that the root node is a maximizing node.
-\item \textbf{Minimizing nodes} are the ones where the player to move is the opponent. These nodes want to put the player in the worst possible position, so they choose the action that minimizes the evaluation.
+\item \textcolor{ForestGreen}{$\triangle$} \textbf{Maximizing nodes} are the ones where the player to move is our player. These nodes want to put the player in the best possible position, so they choose the action that maximizes the evaluation. Note that the root node is a maximizing node.
+\item \textcolor{red}{\raisebox{0.1em}{\rotatebox[origin = c]{180}{$\triangle$}}} \textbf{Minimizing nodes} are the ones where the player to move is the opponent. These nodes want to put the player in the worst possible position, so they choose the action that minimizes the evaluation.
 \end{itemize}
+
+
+\begin{figure}[H]
+\centering
+% https://tikz.dev/tikz-trees
+\begin{tikzpicture}[level distance=18mm,level/.style={sibling distance=70mm/#1},line width=0.5mm,minimum size=1.5cm, inner sep=-10mm]
+    % regular polygon, regular polygon sides=3
+\tikzstyle{max node}=[regular polygon, regular polygon sides=3,draw=ForestGreen]
+\tikzstyle{min node}=[regular polygon, regular polygon sides=3,shape border rotate=180,draw=red]
+\node[max node]{-7}
+child{
+    node[min node]{-10} edge from parent[draw=black]
+    child {
+        node[max node]{10} edge from parent[draw=black]
+        child {
+            node[min node]{10} edge from parent[draw=black]
+            child {
+                node[max node]{10} edge from parent[draw=black]
+            }
+            child {
+                node[max node]{$+\infty$} edge from parent[draw=black]
+            }
+        }
+        child {
+            node[min node]{5} edge from parent[draw=black]
+            child {
+                node[max node]{5} edge from parent[draw=black]
+            }
+        }
+    }
+    child {
+        node[max node]{-10} edge from parent[draw=black]
+        child {
+            node[min node]{-10} edge from parent[draw=black]
+            child {
+                node[max node]{-10} edge from parent[draw=black]
+            }
+        }
+    }
+}
+child {
+    node[min node]{-7} edge from parent[draw=blue]
+    child {
+        node[max node]{5} edge from parent[draw=black]
+        child {
+            node[min node]{5} edge from parent[draw=black]
+            child {
+                node[max node]{7} edge from parent[draw=black]
+            }
+            child {
+                node[max node]{5} edge from parent[draw=black]
+            }
+        }
+        child {
+            node[min node]{$-\infty$} edge from parent[draw=black]
+            child {
+                node[max node]{$-\infty$} edge from parent[draw=black]
+            }
+        }
+    }
+    child {
+        node[max node]{-7} edge from parent[draw=black]
+        child {
+            node[min node]{-7} edge from parent[draw=black]
+            child {
+                node[max node]{-7} edge from parent[draw=black]
+            }
+            child {
+                node[max node]{-5} edge from parent[draw=black]
+            }
+        }
+    }
+}
+;
+\end{tikzpicture}
+\caption{A minimax tree.}
+\end{figure}
 
 The algorithm recursively explores the tree to a fixed depth, evaluating the positions at the leaves with $f$. The evaluation is then propagated up the tree, alternating between maximizing and minimizing nodes, until it reaches the root node. After computing the whole tree to a fixed depth, the \enquote{best} move is defined by the move from the root node that maximizes the recursively computed evaluation (maximizing node).
 
