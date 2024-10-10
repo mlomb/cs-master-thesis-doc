@@ -60,7 +60,7 @@ To evaluate chess positions, the engine will use a neural network with an archit
 
 A feature set (or feature block) is comprised of elements which represent some information about a chess position. A feature set is usually built by a cartesian product of smaller sets of features, to represent more complex patterns. Each element corresponds to a value in the input vector, which will be set to $1$ if the pattern captured by the element is present in the position (we say that the element is \textit{active}), and $0$ otherwise.
 
-Let's consider some basic sets of features. The following sets encode positional information about the board:
+Let's consider some basic sets of features. For example, the following sets encode positional information about the board:
 
 \begin{center}
 \begin{tabular}{cc}

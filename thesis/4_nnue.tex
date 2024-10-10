@@ -1,16 +1,17 @@
 \section{Efficiently updatable neural networks}
 
-NNUE (\reflectbox{NNUE} Efficiently updatable neural network) is a neural network architecture that allows for very fast subsequent evaluations for minimal input changes. It was invented for Shogi by Yu Nasu in 2018 \cite{nnue:2018}, later adapted to Chess for use in Stockfish in 2019 and may be used in other board games as well. Most of the information described in this chapter can be found in the excellent Stockfish NNUE documentation \cite{nnue-pytorch}. \\
+NNUE (\reflectbox{NNUE} Efficiently updatable neural network) is a neural network architecture that allows for very fast subsequent evaluations when changes in the input are minimal. It was invented for Shogi by Yu Nasu in 2018 \cite{nnue:2018}, later adapted to Chess for use in Stockfish in 2019. Most of the information described in this chapter can be found in the excellent Stockfish NNUE documentation \cite{nnue-pytorch}. \\
 
-NNUE operates in the following principles:
+NNUE operates on the following principles:
 
 \begin{itemize}
     \item \textbf{Input sparsity}: The network should have a relatively low amount of non-zero inputs, determined by the chosen feature set. The presented feature sets have between 0.1\% and 2\% of non-zero inputs for a typical position. Having a low amount of non-zero inputs places a low upper bound on the time required to evaluate the network in its entirety, which can happen using some feature sets like \featureset{King-All} that triggers a complete refresh when the king is moved.
-    \item \textbf{Efficient updates}: From one evaluation to the next, the number of inputs changes should be minimal. This allows for the most expensive part of the network to be efficiently updated, instead of recomputed from scratch.
-    \item \textbf{Simple architecture}: The network should be composed of a few and simple operators, that can be efficiently implemented with low-precision arithmetic in integer domain using CPU hardware. [no accelerators, aggresive quantization techniques]
+    \item \textbf{Efficient updates}: From one evaluation to the next, the number of inputs changes should be as low as possible. This allows for the most expensive part of the network to be efficiently updated, instead of recomputed from scratch.
+    \item \textbf{Simple architecture}: The network should be composed of a few and simple operators, that can be efficiently implemented with low-precision arithmetic in integer domain using CPU hardware (quantization).
+
 \end{itemize}
 
-[tradeoff between speed and accuracy]
+[tradeoff between speed and accuracy?]
 
 \subsection{Layers}
 
@@ -36,7 +37,7 @@ The operation $\bm{W} \bm{x}$ can be simplified to \enquote{if $\bm{x_i}$ is not
 \label{fig:linear_comparison}
 \end{figure}
 
-In the case of the first layer, the input is a very sparse one-hot encoded vector. This means that very few columns will have to be processed and the multiplication can be skipped altogether, due all inputs being either 0 or 1.
+In the case of the first layer, the input is a very sparse one-hot encoded vector. This means that very few columns will have to be processed and the multiplication can be skipped altogether, due all inputs being either 0 or 1. Skipping the multiplication reduces the operations to only additions and subtractions.
 
 \paragraph[short]{Clipped ReLU} This is a simple activation that clips the output in the range $[0, 1]$. The operation is $\bm{y=\min(\max(x,0),1)}$.
 The output of this activation function is the input for the next layer, and because of the aggresive quantization that will be described later, it is necessary to restrain the values so it does not overflow. \\
@@ -44,7 +45,7 @@ The output of this activation function is the input for the next layer, and beca
 \subsection{Efficient updates}
 
 When running a depth-first search algorithm, the state of the position is updated every time the algorithm \textit{makes} and \textit{unmakes} moves, usually before and after the recursion.
-NNUEs are designed to work with this kind of search, since every time the algorithm \textit{makes} (or \textit{unmakes}) a move, the changes in the position are minimal (at most two pieces are affected), meaning that the amount of features becoming active or inactive is minimal as well. This is depicted in Figure \ref{fig:updates_tree}.
+NNUEs are designed to work with this kind of search, since every time the algorithm \textit{makes} (or \textit{unmakes}) a move, the changes in the position are minimal (at most two pieces are affected in \featureset{All}), meaning that the amount of features becoming active or inactive is minimal as well. This is depicted in Figure \ref{fig:updates_tree}.
 
 \begin{figure}[H]
 \centering
@@ -84,9 +85,10 @@ NNUEs are designed to work with this kind of search, since every time the algori
 \label{fig:updates_tree}
 \end{figure}
 
-To take advantage of this during search, instead of computing all the features active in a position and then evaluate the network in its entirety, we can \textbf{accumulate} the output of the first linear layer and update it with when the position changes. Linear layers can be computed adding the corresponding columns of the weight matrix into the output, so when a feature becomes active or inactive, we can add or subtract the corresponding column to the output. When the evaluation is needed, only the layer (usually small) has to be computed. \\
+[REVISAR ESTO]
+To take advantage of this during search, instead of computing all the features active in a position and then evaluate the network in its entirety, we can \textbf{accumulate} the output of the first linear layer and update it with when the position changes. Linear layers can be computed adding the corresponding columns of the weight matrix into the output, so when a feature becomes active or inactive, we can add or subtract the corresponding column to the output. When the evaluation is needed, only the next layers (usually small) have to be computed. \\
 
-Recall that the way I defined feature sets, they always encode the position from white's point of view. This means that its not possible to use the same \textbf{accumulator} for both players. So when running the search, we have to keep two accumulators, one for white and one for black, where the black board is flipped and has the colors swapped to match the point of view.
+Recall that the way I defined feature sets, they always encode the position from one white's point of view. This means that its not possible to use the same \textbf{accumulator} for both players. So when running the search, we have to keep two accumulators, one for white and one for black, where the black board is flipped and has the colors swapped to match the point of view.
 
 % [agregar grafico de black → white board → encode, para mostrar como se flipea / swapea. arriba el white → encode; poner los features activos quizas?]
 
