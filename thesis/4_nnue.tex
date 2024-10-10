@@ -85,7 +85,6 @@ NNUEs are designed to work with this kind of search, since every time the algori
 \label{fig:updates_tree}
 \end{figure}
 
-[REVISAR ESTO]
 To take advantage of this during search, instead of computing all the features active in a position and then evaluate the network in its entirety, we can \textbf{accumulate} the output of the first linear layer and update it with when the position changes. Linear layers can be computed adding the corresponding columns of the weight matrix into the output, so when a feature becomes active or inactive, we can add or subtract the corresponding column to the output. When the evaluation is needed, only the next layers (usually small) have to be computed. \\
 
 Recall that the way I defined feature sets, they always encode the position from one white's point of view. This means that its not possible to use the same \textbf{accumulator} for both players. So when running the search, we have to keep two accumulators, one for white and one for black, where the black board is flipped and has the colors swapped to match the point of view.
