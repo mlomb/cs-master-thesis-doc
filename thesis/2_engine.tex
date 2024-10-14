@@ -91,7 +91,8 @@ child {
 }
 ;
 \end{tikzpicture}
-\caption{A minimax tree.}
+\caption{A minimax tree of depth 4. The best move for the maximizing player is the one that leads to the highest evaluation, marked in \textcolor{blue}{blue}.
+}
 \end{figure}
 
 The algorithm recursively explores the tree to a fixed depth, evaluating the positions at the leaves with $f$. The evaluation is then propagated up the tree, alternating between maximizing and minimizing nodes, until it reaches the root node. After computing the whole tree to a fixed depth, the \enquote{best} move is defined by the move from the root node that maximizes the recursively computed evaluation (maximizing node).
@@ -172,7 +173,7 @@ Each node in the search tree has two values associated with it: $\alpha$ and $\b
 
 When a node is visited, the algorithm checks if $\alpha \ge \beta$. If this is the case, the branch can be pruned because the minimizing player can guarantee a value of $\beta$, which is worse than the best value found so far.
 
-\item \textbf{Move ordering}: the order in which the moves are visited can have a big impact on the effectiveness of the alpha-beta pruning. If the move ordering is optimal, the effective branching factor is reduced to its square root, which means that the search can go twice as deep for the same amount of computation. In the worst case, it is identical to minimax. There are a couple of ways to improve move ordering, the most important being:
+\item \textbf{Move ordering}: the order in which the moves are visited can have a big impact on the effectiveness of the alpha-beta pruning. If the move ordering is optimal, the effective branching factor is reduced to its square root, which means that the search can go twice as deep for the same amount of computation \cite[section 5.3.1]{ai_modern_approach}. In the worst case, it is identical to minimax. There are a couple of ways to improve move ordering, the most important being:
 \begin{itemize}
 \item \textbf{MVV/LVA} the most valuable victim, least valuable attacker is a simple heuristic that orders the moves by the value of the captured piece minus the value of the attacking piece. This way the most valuable captures are evaluated first, which are more likely to cause a cutoff.
 \end{itemize}
