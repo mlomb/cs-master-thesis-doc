@@ -55,12 +55,34 @@ The main method to train the network will use the scores provided in the dataset
 \setcounter{secnumdepth}{4}
 \subsubsection{Score-space to WDL-space}
 
-Scores are values ranging from -10000 to 10000. [hablar de que score vs performance ajusta a una sigmoid]
-[hablar de que se necesita una escala]
+Evaluations in the dataset are values ranging from -10000 to 10000. We call this range of values the score-space, also refered to as the \textit{centipawn scale} (or something proportional to it). We want the network to output the same values as the dataset, in \textit{score-space}.
 
-% I guess it is to steer the old network to the new one while making 
-% The evaluations from Stockfish are in centipawns, which is not the exact number the network has to use as target.
-% decir que no usamos el outcome de la partida para el score
+The WDL-space is a different scale in [0, 1] where 0 is a loss, 0.5 is a draw and 1 is a win. The WDL model \cite{wdl-model} states that the win rate for a position can be modeled as a function of the evaluation of the position. The data shows that the logistic function (sigmoid) gives a good approximation for the evaluation $e$:
+
+\[
+\mathcal{W}(e) = \sigma\left(\frac{e-a}{b}\right) = \frac{1}{1 + e^{-\frac{e-a}{b}}}
+\]
+
+where $a$ and $b$ need to be fitted to the data. The value of $a$ is the evaluation where a 50\% winrate is observed and $b$ indicates how fast the winrate change when the evaluation changes. The fitted sigmoid is shown in Figure \ref{wdl-fit}, and the values obtained are $a=1.28$ and $b=297.21$.
+
+\begin{figure}[H]
+\centering
+\makebox[\textwidth]{\includegraphics[width=\textwidth]{../assets/sigmoid_fit.pdf}}
+\caption{WDL model function (sigmoid) fitted to 100 million evaluations in the dataset.}
+\label{wdl-fit}
+\end{figure}
+
+
+During training, it is better to use a loss function with the target and output of the model in WDL-space instead of score-space. WDL-space has some advantages over score-space:
+
+\begin{itemize}
+\item Large evaluations are \enquote{closer} together in WDL-space., since having a score of 7500 or 8000 is not that different in terms of winrate (less than 1\%) than between 50 and 550 (more than 30\%). This is desirable because the evaluations don't need to be that precise when the outcome of the game is almost decided.
+\item The result of a game can be interpolated in WDL-space. If we introduce a new parameter $\lambda$, we can interpolate the evaluation $e$ and the game result $r$ (in WDL-space) using: $\lambda * \mathcal{W}(e) + (1 - \lambda) * r$. This way, the information about the outcome of the game can be used to steer the network in the right direction. This is not implemented in this work.
+\item Values in WDL-space are smaller than in score-space, so it avoids large gradients.
+\end{itemize}
+
+
+
 
 \subsubsection{Loss function}
 
@@ -71,7 +93,7 @@ The loss function is a mean square errror with a power of 2.6 (the value used by
 % loss = torch.pow(torch.abs(p - q), 2.6).mean()
 
 \[
-L(y,f(x,\bm{W}))= \left| \sigma\left(\frac{y}{\text{scale}_{\text{in}}}\right) - \sigma\left(\frac{f(x,\bm{W})}{\text{scale}_{\text{out}}}\right) \right| ^{2.6}
+L(y,f(x,\bm{W}))= \left| \mathcal{W}(y) - \mathcal{W}(f(x,\bm{W})) \right| ^{2.6}
 \]
 
 
@@ -83,8 +105,7 @@ where\dots
 \item $f$ is the model.
 \item $\bm{W}$ are the parameters of the model.
 \item $x$ is the input (encoded feature set).
-\item $\sigma$ is the sigmoid function.
-\item $\text{scale}_{\text{in}}$, $\text{scale}_{\text{out}}$ are the scaling factors of the scores.
+\item $\mathcal{W}$ is the winrate function that maps from score-space to WDL-space.
 \end{enumerate}
 
 \subsection{Method 2: PQR triplets}
