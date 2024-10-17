@@ -86,7 +86,7 @@ During training, it is better to use a loss function with the target and output 
 
 \subsubsection{Loss function}
 
-The loss function is a mean square errror with a power of 2.6 (the value used by the Stockfish's official trainer) given by
+The loss function chosen is mean square error with a power of 2.6 (the value used by the Stockfish's official trainer) given by
 
 % q = (output / out_scaling).sigmoid()
 % p = (target / in_scaling).sigmoid()
@@ -103,23 +103,23 @@ where\dots
 \itemsep0em
 \item $y$ is the target score.
 \item $f$ is the model.
-\item $\bm{W}$ are the parameters of the model.
 \item $x$ is the input (encoded feature set).
+\item $\bm{W}$ are the parameters of the model.
 \item $\mathcal{W}$ is the winrate function that maps from score-space to WDL-space.
 \end{enumerate}
 
 \subsection{Method 2: PQR triplets}
 
-This is an additional technique I wanted to try, described in \cite{dlchess:2014}. The method is based in the assumption that moves in the dataset are optimal. In the blog they used human moves from the Lichess database \cite{lichessdb}, so they rely in that humans make optimal or near-optimal moves most of the time, even if they are amateurs. In my case I will use Stockfish moves, which are extremely good. This method does not use the scores provided, it will have to learn them from scratch. Of course this is way harder to train but I'm curious to see how far the following idea can go.
+This is an additional technique I wanted to try, described in \cite{dlchess:2014}. The method is based in the assumption that moves in the training data are better than random. In the blog they used human moves from the Lichess database \cite{lichessdb}, so they rely in that humans make good or near-optimal moves most of the time, even if they are amateurs. In my case I will use Stockfish moves, which are extremely good. This method does not use the scores provided, it will have to learn them from scratch. Of course this is way harder to train but I'm curious to see how far the following idea can go.
 
 Remember that we are trying to obtain a function $f$ (the model) to give an evaluation of a position. The idea is based on the following two principles:
 
 \begin{enumerate}
-\item For two position in succession $p \rightarrow q$ observed in the game, we will have $f(p)=-f(q)$. This comes from the fact that the game is zero-sum.
-\item Going from $p$, not to $q$, but to a \textit{random} position $p \rightarrow r$, we must have $f(r) > f(q)$ because the random move is better for the next player and worse for the player that made the move.
+\item For two positions in succession $p \rightarrow q$ observed in a game, we will have $f(p)=-f(q)$. This comes from the fact that the game is zero-sum.
+\item Going from the position $p$, not to observed position $q$, but to a \textit{random} position $p \rightarrow r$, we must have $f(r) > f(q)$ because the random move is better for the next player and worse for the player that made the move.
 \end{enumerate}
 
-If this reasonable assumptions hold, a loss function that expresses the equality and inequality can be built.
+If this reasonable assumptions hold, a loss function that expresses the equality in (1) and the inequality in (2) can be constructed.
 
 % Consider an optimal $f$, that outputs $-1,0,1$ depending on who wins.
 % With infinite compute, $f$ would be the result of running minimax to the end of the game, since minimax always finds optimal moves.
@@ -148,15 +148,13 @@ where\dots
 \begin{enumerate}
 \itemsep0em
 \item $
-p = \frac{f(x_p, \bm{W})}{\text{scale}_{\text{out}}},\text{ }
-q = \frac{f(x_q, \bm{W})}{\text{scale}_{\text{out}}},\text{ }
-r = \frac{f(x_r, \bm{W})}{\text{scale}_{\text{out}}}
-$
+p = \frac{f(x_p, \bm{W}) - a}{b},\text{ }
+q = \frac{f(x_q, \bm{W}) - a}{b},\text{ }
+r = \frac{f(x_r, \bm{W}) - a}{b}
+$, where $a$ and $b$ are the parameters of the WDL model.
 \item $f$ is the model.
 \item $\bm{W}$ are the parameters of the model.
 \item $x_i$ is the input (encoded feature set) for the $i \in \{p,q,r\}$ position.
-\item $\sigma$ is the sigmoid function.
-\item $\text{scale}_{\text{out}}$ are the scaling factors of the scores.
 \end{enumerate}
 
 It is important to note that quantization is happening in this method too, so the output of the model must be scaled appropriately.
@@ -166,15 +164,15 @@ It is important to note that quantization is happening in this method too, so th
 \subsection{Setup}
 
 
-The project is written in two languages: Rust and Python. The Rust part is used to process dataset files, generate statistics and provide final training batches for Python to consume. The Python part defines the Pytorch model, runs the training loop, quantizes the model and runs the evaluations.
+The project is written in two languages: Rust and Python. The Rust part is used to process dataset files, generate statistics and provide final training batches for Python to consume. The Python part defines the Pytorch model, runs the training loop, quantizes the model and runs the evaluations. \\
 
-The training process is started by running a Python script (\texttt{scrips/train.py}) and it requires to define the model architecture (number of neurons on each layer), general training parameters (learning rate, batch size, epochs, checkpoints, etc) and the feature set to use, which in turn determines the size of the batches. For example, if PQR is used, the size of a sample is 3 times the size of the feature set times two (because it is siamese), and if it is eval (short for score \textbf{eval}uations), it is the size of the feature set times two plus 1 for the target score.
+The training process is started by running a Python script (\texttt{scrips/train.py}) and it requires to define the model architecture (number of neurons on each layer), general training parameters (learning rate, batch size, epochs, checkpoints, etc) and the feature set to use, which in turn determines the size of the batches. For example, if PQR is used, the size of a sample is 3 times the size of the feature set times two (because it is siamese), and if it is score target, it is the size of the feature set times two plus 1 for the target score.
 
 To orchestrate training runs, the platform Weights and Biases (WandB) is used. It provides automatic sweeping of hyperparameter, logging of metrics and visualizations. Results are exported from the platform in CSV and then processed by Python scripts. \\
 
 The training data has to be converted to an actual tensor of floats to be consumed by Pytorch. This is done by a Rust subprocess running the subcommand \texttt{batch-loader} that read the training data file and generates training batches for the specified feature set in a shared memory buffer.
 
-The batch generation process is heavily parallelized. Let's call $N$ the number of threads ($N=8$ was used). On startup, the process splits the dataset file into $N$ equal parts and assigns each part to a thread. Each thread reads samples sequentially and builds the batch in a buffer. The buffer is then sent to the main thread where it is copied to the shared memory buffer.
+The batch generation process is heavily parallelized. Let's call $N$ the number of threads ($N=8$ was used). When the process starts, it splits the dataset file into $N$ equal parts and assigns each part to a thread. Each thread reads samples sequentially and builds the batch in a buffer. The buffer is then sent to the main thread where it is copied to the shared memory buffer.
 
 The Python script copies the data from the shared buffer at the start of each iteration, allowing Rust to generate the next batch (in the CPU) while Pytorch is training the current batch (in the GPU). To coordinate the memory access between the two processes, a single byte is sent using standard I/O.
 
