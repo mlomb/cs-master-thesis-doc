@@ -173,11 +173,16 @@ S_P \oplus T_Q = {(S \cup T)}_R
 
 The sum operator is useful when we want to let the network find patterns combining information between two sets of features.
 
+Even though the two operands are feature sets, they are usually called \enquote{feature blocks} since they are part of a larger feature set. The final feature set that is used for training is a sum of many feature blocks.
+
 \subsection{Product $\times$}
 
 The product of two feature sets $\featureset{A}$ and $\featureset{B}$, denoted by $\featureset{A} \times \featureset{B}$, is a new feature set where each new feature is a combination of the features of both sets. One way to interpret this is that each new feature will be active if both features in the original sets are active \textit{at the same time}. Formally, given two feature sets $S_P$ and $T_Q$, we can define the product operator as
 \begin{equation*}
-S_P \times T_Q = {(S \times T)}_{P(e_0)\ \land\ Q(e_1)}
+S_P \times T_Q = {(S \times T)}_{R}
+\end{equation*}
+\begin{equation*}
+\text{where } R(\langle e_0, e_1 \rangle) = P(e_0)\ \land\ Q(e_1)
 \end{equation*}
 
 This operation is not that useful because it requires both predicates to be independent from each other. This will be used specifically to define the \featureset{King-All} feature set and potentially its variations.
@@ -216,8 +221,11 @@ The features in this set are easy to compute like in $\featureset{All}$, but sin
 \newpage
 \subsection{Indexing}
 
-[LO VUELO?]
-The input to the network is a one-dimensional vector, so we need a way to map the tuples (elements are trivial) in a feature set to elements in the input vector. The correct index for a tuple is computed using the order of the sets in the cartesian product and the size of each set, like strides in a multi-dimensional array. For this to work, each element in a set $S$ must correspond to a number between $0$ and $|S| - 1$. For example, the feature set $A \times B \times C$ has $|A| \times |B| \times |C|$ elements, and the tuple $(a, b, c)$ is mapped to the element indexed at $a \times |B| \times |C| + b \times |C| + c$. The same striding logic applies to feature sets built with the sum operator, recursively.
+% The input to the network is a one-dimensional vector, so we need a way to map the tuples (elements are trivial) in a feature set to elements in the input vector. The correct index for a tuple is computed using the order of the sets in the cartesian product and the size of each set, like strides in a multi-dimensional array. For this to work, each element in a set $S$ must correspond to a number between $0$ and $|S| - 1$. For example, the feature set $A \times B \times C$ has $|A| \times |B| \times |C|$ elements, and the tuple $(a, b, c)$ is mapped to the element indexed at $a \times |B| \times |C| + b \times |C| + c$. The same striding logic applies to feature sets built with the sum operator, recursively.
+
+We need a way to map the tuples in a feature set to elements in the input vector. The correct index for a tuple is computed using the order of the sets in the cartesian product and the size of each set, like strides in a multi-dimensional array. For this to work, each element $e$ in a set $S$ must correspond to a number between $0$ and $|S| - 1$, we call this bijective mapping $I(e)$.
+
+For example, the feature set $(A \times B \times C)_{P}$ has $|A| \times |B| \times |C|$ features, and the feature \feature{a, b, c} is mapped to the element indexed at $I(a) \times |B| \times |C| + I(b) \times |C| + I(c)$. The same striding logic applies to feature sets built with the sum and product operators, recursively.
 
 \subsection{Dead features}
 
@@ -229,7 +237,7 @@ Consider the $\featureset{All}$ feature set. For every position, role and color 
 \item $\bm S$: set of concepts (roles, colors, squares, files, ranks, etc.).
 \item $\bm{P(e)}$: predicate that defines when the feature $e$ is present in the (implicit) position.
 \item ${\bm S}_{\bm P}$: a feature set. Every element in $S$ is a feature. Features in $S$ that satisfy $P$ are \textit{active}.
-\item $S_P \times T_Q={(S \times T)}_{P(e_0)\ \land\ Q(e_1)}$
+\item $S_P \times T_Q={(S \times T)}_{R}$ where $R(\langle e_0, e_1 \rangle) = P(e_0)\ \land\ Q(e_1)$
 \item $S_P \oplus T_Q={(S \cup T)}_R$ where $R(e) = \begin{cases}
         P(e) & \text{if } e \in S \\
         Q(e) & \text{if } e \in T
