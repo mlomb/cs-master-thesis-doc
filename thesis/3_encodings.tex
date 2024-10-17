@@ -52,23 +52,26 @@
 }
 
 \newcommand{\featureset}[1]{\textsc{#1}}
+\newcommand{\feature}[1]{$\langle$#1$\rangle$}
 
 
 \section{Feature sets (board encodings)}
 
-To evaluate chess positions, the engine will use a neural network with an architecture explained in detail in the next chapter. In this chapter, I will show how to build the one-dimensional input vector for such network, which can be described entirely by a feature set.
+To evaluate chess positions, the engine will use a neural network with an architecture explained in detail in the next chapter. In this chapter, I will show how to build the one-dimensional input vector for such network, which can be described entirely by a feature set. \\
 
-A feature set (or feature block) is comprised of elements which represent some information about a chess position. A feature set is usually built by a cartesian product of smaller sets of features, to represent more complex patterns. Each element corresponds to a value in the input vector, which will be set to $1$ if the pattern captured by the element is present in the position (we say that the element is \textit{active}), and $0$ otherwise.
+A feature set is a set with a predicate attached to it. The elements can be anything, but usually we want to represent chess concepts like piece locations, piece roles, colors, etc. We may want to represent more complex patterns, so we can build feature sets by taking the cartesian product of smaller sets. The predicate $\bm{P(e)}$ defines if the element or pattern $e$ is present (or \textit{active}) in the (implicit) position. The predicate is generally written using natural language.
 
-Let's consider some basic sets of features. For example, the following sets encode positional information about the board:
+Formally, given a set of concepts or tuples $\bm{S}$ and a predicate $\bm{P}$, we can define a feature set as ${\bm S}_{\bm P}$, where each element is called a feature. Each feature corresponds to a value in a vector, which will be set to $1$ if the predicate is satisfied for that element in the position, and $0$ otherwise. This is the vector that will be used as input to the neural network. \\
+
+Let's consider some basic sets of concepts. For example, the following sets describe positional information about the board:
 
 \begin{center}
 \begin{tabular}{cc}
 
 $\begin{aligned}[t]
-\featureset{File} &= \{a, b, ..., h\} \\
-\featureset{Rank} &= \{1, 2, ..., 8\} \\
-\featureset{Square} &= \{a1, a2, ..., h8\}
+\featureset{Files} &= \{a, b, ..., h\} \\
+\featureset{Ranks} &= \{1, 2, ..., 8\} \\
+\featureset{Squares} &= \{a1, a2, ..., h8\}
 \end{aligned}$
 
 &
@@ -87,24 +90,27 @@ $\begin{aligned}[t]
 \end{tabular}
 \end{center}
 
-And the following encode information about the pieces:
+And the following describe information about the pieces:
 
 \begin{center}
 $\begin{aligned}[t]
-\featureset{Role} &= \text{\{
+\featureset{Roles} &= \text{\{
     \sympawn\ Pawn,
     \symknight\ Knight,
     \symbishop\ Bishop,
     \symrook\ Rook,
     \symqueen\ Queen,
     \symking\ King\}}\textsuperscript{1} \\
-\featureset{Color} &= \text{\{\white\ White, \black\ Black\}}
+\featureset{Colors} &= \text{\{\white\ White, \black\ Black\}}
 \end{aligned}$
 \end{center}
 
 \footnotetext[1]{The color of the pieces have no meaning in the definition. They are present for illustrative purposes.}
 
-Since each set has to capture some pattern from the position, it must be stated explicitly. For example, consider the feature set $\featureset{File}_{P} \times \featureset{Color}_{P}$ where $P$ is \textit{any} piece in the board, meaning that the tuples $(file, color)$ that will be active are the ones where there is at least one piece in $file$ with the color $color$ (disregarding any other kind of information, like the piece's role). Another possible feature set could be $\featureset{File}_{P} \times \featureset{Role}_{P}$, with a similar interpretation. Note that $\featureset{Square}_Q = \featureset{File}_Q \times \featureset{Rank}_Q$ $\forall Q$. An illustration of the active features of these two feature sets for the same board is shown in Figure \ref{fig:active_features}.
+For example, consider the feature set $(\featureset{Files} \times \featureset{Colors})_{P}$ where $P$ is defined like $P(\langle f, c \rangle): $ there is a piece in file $f$ with color $c$. A feature in this set will be active if there is at least one piece in the board that makes the predicate true. In this case, disregarding any other kind of information, like the piece's role.
+Another possible feature set could be $(\featureset{Files} \times \featureset{Roles})_{Q}$, with a similar interpretation. An illustration of the active features of these two feature sets is shown in Figure \ref{fig:active_features}.
+
+Note that $\featureset{Squares}_R$ is equivalent to $(\featureset{Files} \times \featureset{Ranks})_R$ $\forall R$.
 
 \begin{figure}[H]
 \centering
@@ -126,20 +132,27 @@ Since each set has to capture some pattern from the position, it must be stated 
 \cline{2-3}
 \multicolumn{1}{c|}{} & \multicolumn{2}{c|}{\centering Feature set} \\
 \cline{2-3}
-\multicolumn{1}{c|}{} & \centering $\featureset{File}_{P} \times \featureset{Color}_{P}$ & \centering $\featureset{File}_{P} \times \featureset{Role}_{P}$ & \\
+\multicolumn{1}{c|}{} & \centering $(\featureset{Files} \times \featureset{Colors})_{P}$ & \centering $(\featureset{Files} \times \featureset{Roles})_{Q}$ & \\
 \cline{1-3}
 Active features &
-(a, \white), (a, \black), (c, \black), (c, \white), (d, \white), (h, \black) &
-(a, \sympawn), (c, \symking), (c, \symknight), (d, \sympawn), (h, \symbishop) \\
+\feature{a, \white}, \feature{a, \black}, \feature{c, \black}, \feature{c, \white}, \feature{d, \white}, \feature{h, \black} &
+\feature{a, \sympawn}, \feature{c, \symking}, \feature{c, \symknight}, \feature{d, \sympawn}, \feature{h, \symbishop} \\
 \cline{1-3}
-\end{tabular}
+
+\multicolumn{3}{c}{
+\makecell{
+~\\
+$P(\langle f,c \rangle)$: there is a piece in file $f$ with color $c$.\\
+$Q(\langle f,r \rangle)$: there is a piece in file $f$ with role $r$.
+}    
+}
 
 \end{tabular}
+\end{tabular}
 
-\caption{Active features of the feature sets $\featureset{File}_{P} \times \featureset{Color}_{P}$ and $\featureset{File}_{P} \times \featureset{Role}_{P}$ for the same board.}
+\caption{Active features of two feature sets for the same board.}
 \label{fig:active_features}
 \end{figure}
-
 
 \subsection{Sum $\oplus$}
 
@@ -147,16 +160,30 @@ Active features &
 % we want the network to find patterns between the two sets
 % some feature sets can be built merging the features of two or more sets
 
-The sum (or concatenation) of two feature sets (often called blocks) $\featureset{A}$ and $\featureset{B}$, denoted by $\featureset{A} \oplus \featureset{B}$, is a new feature set comprised of the elements of both sets $\featureset{A}$ and $\featureset{B}$. These elements do not interfere with each other, even if they share basic elements (e.g. h, 8, \symrook, \black), they \textbf{must} have different interpretations.
-For example, given the feature sets $\featureset{File}_{W}$ where $W$ is any white piece in the board and $\featureset{File}_{B}$ where $B$ is any black piece in the board, the feature set $\featureset{File}_{W} \oplus \featureset{File}_{B}$ will have the basic elements $\{a, b, ..., h\}$ for both white and black pieces, but each with a different interpretation. Note that the notation presented in this work is not standard.
+The sum (or concatenation) of two feature sets $\featureset{A}$ and $\featureset{B}$, denoted by $\featureset{A} \oplus \featureset{B}$, is a new feature set comprised of the features of both sets. These features do not interfere with each other at all. Formally, given two feature set $S_P$ and $T_Q$, we can define the sum operator as
+\begin{equation*}
+S_P \oplus T_Q = {(S \cup T)}_R
+\end{equation*}
+\begin{equation*}
+    \text{where } R(e) = \begin{cases}
+        P(e) & \text{if } e \in S \\
+        Q(e) & \text{if } e \in T
+    \end{cases}
+\end{equation*}
 
 The sum operator is useful when we want to let the network find patterns combining information between two sets of features.
 
-\subsection{Indexing}
+\subsection{Product $\times$}
 
-The input to the network is a one-dimensional vector, so we need a way to map the tuples (elements are trivial) in a feature set to elements in the input vector. The correct index for a tuple is computed using the order of the sets in the cartesian product and the size of each set, like strides in a multi-dimensional array. For this to work, each element in a set $S$ must correspond to a number between $0$ and $|S| - 1$. For example, the feature set $A \times B \times C$ has $|A| \times |B| \times |C|$ elements, and the tuple $(a, b, c)$ is mapped to the element indexed at $a \times |B| \times |C| + b \times |C| + c$. The same striding logic applies to feature sets built with the sum operator, recursively.
+The product of two feature sets $\featureset{A}$ and $\featureset{B}$, denoted by $\featureset{A} \times \featureset{B}$, is a new feature set where each new feature is a combination of the features of both sets. One way to interpret this is that each new feature will be active if both features in the original sets are active \textit{at the same time}. Formally, given two feature sets $S_P$ and $T_Q$, we can define the product operator as
+\begin{equation*}
+S_P \times T_Q = {(S \times T)}_{P(e_0)\ \land\ Q(e_1)}
+\end{equation*}
 
-\subsection{Feature sets}
+This operation is not that useful because it requires both predicates to be independent from each other. This will be used specifically to define the \featureset{King-All} feature set and potentially its variations.
+
+\newpage
+\subsection{Known feature sets}
 
 In this section, I will define two of the most important feature sets known and used extensively in existing engines.
 
@@ -165,20 +192,19 @@ In this section, I will define two of the most important feature sets known and 
 This feature set is the most natural encoding for a chess position. It is called \enquote{All} because it captures all the pieces. There is a one-to-one mapping between pieces in the board and features:
 
 \begin{center}
-    $\featureset{All} = \featureset{Square}_{P} \times \featureset{Role}_{P} \times \featureset{Color}_{P}$ \\
-    for every $P$ piece in the board \\
+    $\featureset{All}:\ (\featureset{Squares} \times \featureset{Roles} \times \featureset{Colors})_{P}$ \\
+    $P(\langle s, r, c \rangle)$: there is a piece in square $s$ with role $r$ and color $c$\\
 \end{center}
 
-Tuples in this set are \textit{active} if there is a piece in the board that matches the role, color and position of the tuple. For example, the tuple $(e4, \sympawn, \white)$ is active if there is a white pawn in the square e4. This way, for every possible piece, in every possible position, there is a feature. The set has $64*6*2=$\textbf{ 768 features}, which makes it very small and it is very easy to compute which features are active.
+Tuples in this set are \textit{active} if there is a piece in the board that matches the role, color and position of the tuple. For example, the tuple \feature{e4, \sympawn, \white} is active if there is a white pawn in the square e4. This way, for every possible piece, in every possible position, there is a feature. The set has $64*6*2=$\textbf{ 768 features}, which makes it very small and it is very easy to compute which features are active.
 
 \subsubsection{\mdseries\featureset{King-All}}
 
-Another feature set built on top of $\featureset{All}$ is the \featureset{King-All} feature set, or \enquote{KA} for short. For each possible position of the king of the side to move, it captures all the pieces in the board ($\featureset{All}$):
+Another feature set built on top of $\featureset{All}$ is the \featureset{King-All} feature set, or \enquote{KA} for short. For every possible position where the king of the side to move can be, there is a complete copy of the \featureset{All} set:
 
 \begin{center}
-    $\featureset{King-All} = \featureset{Square}_{K} \times \featureset{All}_{P}$ \\
-    where $K$ is the king of the side to move and\\
-    $P$ is every piece in the board \\
+    $\featureset{King-All} = \featureset{Square}_{K} \times \featureset{All}$ \\
+    $K(s)$: $s$ is the square of the king of the side to move\\
 \end{center}
 
 This encoding allows the network to understand better the position of the pieces in relation to the king, which is very tied to the evaluation of the position.
@@ -187,6 +213,27 @@ The number of features is $64*768=$ \textbf{49152 features}. There is a variatio
 
 The features in this set are easy to compute like in $\featureset{All}$, but since the number of features is much larger, it is a lot harder to train and use in practice. I will restrain this work to smaller feature sets that are easier to manage.
 
+\newpage
+\subsection{Indexing}
+
+[LO VUELO?]
+The input to the network is a one-dimensional vector, so we need a way to map the tuples (elements are trivial) in a feature set to elements in the input vector. The correct index for a tuple is computed using the order of the sets in the cartesian product and the size of each set, like strides in a multi-dimensional array. For this to work, each element in a set $S$ must correspond to a number between $0$ and $|S| - 1$. For example, the feature set $A \times B \times C$ has $|A| \times |B| \times |C|$ elements, and the tuple $(a, b, c)$ is mapped to the element indexed at $a \times |B| \times |C| + b \times |C| + c$. The same striding logic applies to feature sets built with the sum operator, recursively.
+
 \subsection{Dead features}
 
-Consider the $\featureset{All}$ feature set. For every position, role and color each piece could be, there is a feature. There are 16 tuples in the set that will never be active: (a8..h8, \sympawn, \white) and (a1..h1, \sympawn, \black) that correspond to the white pawns in the last rank and the black pawns in the first rank. This is because pawns promote to another piece when they reach the opponent side of the board, so no pawns will ever be found there. Effectively, these will be dead neurons in the network, but this way we can keep the indexing straightforward. Most feature sets will have dead features, and the same logic applies.
+Consider the $\featureset{All}$ feature set. For every position, role and color each piece could be, there is a feature. There are 16 tuples in the set that will never be active: \feature{a8..h8, \sympawn, \white} and \feature{a1..h1, \sympawn, \black} that correspond to the white pawns in the last rank and the black pawns in the first rank. This is because pawns promote to another piece when they reach the opponent side of the board, so no pawns will ever be found there. Effectively, these will be dead neurons in the network, but this way we can keep the indexing straightforward. Most feature sets will have dead features, and the same logic applies.
+
+\subsection{Summary}
+
+\begin{enumerate}
+\item $\bm S$: set of concepts (roles, colors, squares, files, ranks, etc.).
+\item $\bm{P(e)}$: predicate that defines when the feature $e$ is present in the (implicit) position.
+\item ${\bm S}_{\bm P}$: a feature set. Every element in $S$ is a feature. Features in $S$ that satisfy $P$ are \textit{active}.
+\item $S_P \times T_Q={(S \times T)}_{P(e_0)\ \land\ Q(e_1)}$
+\item $S_P \oplus T_Q={(S \cup T)}_R$ where $R(e) = \begin{cases}
+        P(e) & \text{if } e \in S \\
+        Q(e) & \text{if } e \in T
+    \end{cases}
+$
+
+\end{enumerate}
