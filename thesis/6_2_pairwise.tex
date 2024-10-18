@@ -106,16 +106,25 @@ In contrast to the previous experiment where the features were more general (\te
 
 \begin{tabular}{ccccc}
 \toprule
-\bf Depiction & \bf \makecell{Block\\name} & \bf Definition & \bf \makecell{Number of\\features} \\
+\bf Depiction & \bf \makecell{Block\\name} & \bf Definition & \bf \makecell{Num. of\\features} \\
 \toprule
-\depiction{PH} & PH & \makecell{$\featureset{Rank}_{P} \times (\featureset{Role}_{P} \times \featureset{Color}_{P}) \times (\featureset{Role}_{Q} \times \featureset{Color}_{Q})$ \\for every $P$, $Q$ adjacent pieces in the same rank,\\such that $file(P) < file(Q)$} & 1152 \\
+\depiction{PH} & PH & \makecell{
+\vspace{0.2cm}
+$(\featureset{Ranks} \times (\featureset{Roles} \times \featureset{Colors}) \times (\featureset{Roles} \times \featureset{Colors}))_{P}$ \\
+P($\langle r, r_1, c_1, r_2, c_2 \rangle$): there is a piece in rank $r$ with role $r_1$\\ and color $c_1$ to the left of a piece with role $r_2$ and color $c_2$
+} & 1152 \\
 \toprule
-\depiction{PV} & PV & \makecell{$\featureset{File}_{P} \times (\featureset{Role}_{P} \times \featureset{Color}_{P}) \times (\featureset{Role}_{Q} \times \featureset{Color}_{Q})$ \\for every $P$, $Q$ adjacent pieces in the same file,\\such that $rank(P) < rank(Q)$} & 1152 \\
+\depiction{PV} & PV & \makecell{
+\vspace{0.2cm}
+$(\featureset{Files} \times (\featureset{Roles} \times \featureset{Colors}) \times (\featureset{Roles} \times \featureset{Colors}))_Q$ \\
+Q($\langle f, r_1, c_1, r_2, c_2 \rangle$): there is a piece in file $f$ with role $r_1$\\ and color $c_1$ below a piece with role $r_2$ and color $c_2$
+} & 1152 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Note that it is important to consider the order of the pieces in the pair, so that features are not mirrored (we want to differentiate between both). In code this is taking care of just by iterating  over the pieces and building the pair in the same order every time.
+Note that it is important to consider the order of the pieces in the pair, as expressed in the direction of the definition (left and below).
+This makes sure features are not mirrored, since we want to differentiate between both. In code this is taking care of just by iterating  over the pieces and building the pair in the same order every time.
 
 The following figure shows what pairs of pieces (features) are considered for the horizonal and vertical axes in a complete board:
 
@@ -375,7 +384,6 @@ The feature sets to be evaluated are \featureset{All} $\oplus$ \featureset{PH} (
 I expect that the networks are able to take advantage of the specific features, enough to conteract the loss in performance due to the big increase in the number of features and more complex updates. \\
 
 \textbf{Results.} The results in table \ref{tab:pairwise_results} show that...
-
 
 \begin{table}[H]
 \caption{Pairwise encodings results}

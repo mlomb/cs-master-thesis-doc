@@ -16,7 +16,7 @@ Every model's training configuration is defined by the following variables:
 \item \textbf{Dataset}: The positions to train on. The dataset used is explained in detail in chapter 5. In summary, there are 48.5 billion positions to train on and the dataset remains constant across all runs. About 5 million positions are used for validation.
 
 % no me gusta la palabra computed...
-\item \textbf{Training method}: Can choose to use either computed evaluations or PQR triplets. This determinates the format of the samples as well as the loss function. All experiments will train using computed evaluations, unless specified. Explained in detail in chapter 5.
+\item \textbf{Training method}: Can choose to use either score targets or PQR triplets. This determinates the format of the samples as well as the loss function. All experiments will train using score targets, unless specified. Methods were explained in detail in chapter 5.
 
 \item \textbf{Training hyperparameters}: The usual machine learning hyperparameters for training, such as batch size, learning rate and scheduler. Recall that each epoch is 100 million positions, and the training will last for 256 epochs (25.6 billion positions).
 \end{itemize}
@@ -26,7 +26,7 @@ Once training is completed, the models will be evaluated depending on the experi
 \begin{itemize}
 \item \textbf{Loss}: The training and validation loss are used to detect overfitting and other possible problems. It can't be used to measure the performance of a model. Bigger models must have much better predictions to outweight the cost of having slower inferences and thus less node visits. It's a tradeoff.
 
-\item \textbf{Puzzle accuracy}: The percentage of moves correctly predicted by the engine in Lichess puzzles. Each puzzle may contain multiple moves, and the engine has 100ms per move. Since the engine is not that strong, it does not solve 100\% of puzzles like many other engines do, so differences in this metric are good indicators. A small set of puzzles is used during training as (a very bad) proxy for the engine's strength, to have early insight of the strength and to detect catastrophic failures that did arise. A bigger set is used after training.
+\item \textbf{Puzzle accuracy}: The percentage of moves correctly predicted by the engine in Lichess puzzles. Each puzzle may contain multiple moves, and the engine has 100ms per move. Since the engine is not that strong, it does not solve 100\% of puzzles like many other engines do, so I expect differences in this metric to be good indicators. A small set of puzzles is used during training as (a very bad) proxy for the engine's strength, to have early insight of the strength and to detect catastrophic failures that did arise. A bigger set of 85000 puzzles is used after training.
 
 \item \textbf{Relative ELO rating}: A tournament is played between different models to determine their relative strength. Ordo is used to compute the ELO of each model based on the results of the tournament. This is the most important metric, as it is the most reliable way to compare the strength of engines.
 
@@ -35,10 +35,9 @@ Once training is completed, the models will be evaluated depending on the experi
 \item \textbf{Training duration}: The amount of time it takes to train a model. This is a one time operation and it does not affect the performance of a model. However, it does condition which and how many experiments I can run.
 \end{itemize}
 
-[TODO: hablar de que los experimentos se corren 4 veces, se toma el mejor y recien ahi se comparan]
+All networks that are not in the first experiment (the baseline), are trained 4 times and a tournament is played between the epoch 192 and 256 of each network (8 networks in total). I have observed a difference of 30 elo points between runs, so this step is crucial to have sensible results. In the appendix are the results of each run and tournament. \\
 
 The experiments are all run in the same hardware: Intel 14900K CPU (24 cores, 32 threads) for dataset generation, batching and evaluation, and a single NVIDIA RTX 4090 24GB GPU for training.
-
 
 \input{6_1_baseline}
 \input{6_2_axes}
@@ -54,6 +53,29 @@ Further experiments will focus on features not related to the position of the pi
 \noindent\rule{\textwidth}{1pt}
 
 \input{6_3_mobility}
+
+\input{6_X_pqr}
+
+%\subsection{Active neurons}
+%medir si hay feature sets que no usen neuronas, que esto disparo el uso de HalfTopK
+%average number of features enabled by feature set (cantidad y porcentaje)
+%measure updates per move average and refreshes average per FS
+%[ESTO PONERLO EN EL APPENDIX]
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 
 \subsection{Attacks / Threats}
 
@@ -91,11 +113,3 @@ Hacer un subset de \featureset{AA} (589824).
 \item Probar si es lo mismo quedarse con el TOP K de las mas comunes o con las que dice el performance.
 \item Catboost? PCA?
 \end{itemize}
-
-\input{6_X_pqr}
-
-%\subsection{Active neurons}
-%medir si hay feature sets que no usen neuronas, que esto disparo el uso de HalfTopK
-%average number of features enabled by feature set (cantidad y porcentaje)
-%measure updates per move average and refreshes average per FS
-%[ESTO PONERLO EN EL APPENDIX]

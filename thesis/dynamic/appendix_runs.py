@@ -164,13 +164,13 @@ make_runs_table(
     '../../assets/results/exp2_axes/sweep.csv',
     '../../assets/results/exp2_axes/rating_runs.csv',
     './output/exp2_axes_runs.tex',
-    caption="Axes feature sets preliminar runs"
+    caption="Axis feature sets preliminar runs"
 )
 make_final_table(
     '../../assets/results/exp2_axes/sweep.csv',
     '../../assets/results/exp2_axes/rating_final.csv',
     './output/exp2_axes_final.tex',
-    caption="Axes feature sets final results"
+    caption="Axis feature sets final results"
 )
 
 # \\multirow{2}{*}{\\bf Feature set} &

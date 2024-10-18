@@ -102,11 +102,20 @@ Each approach was implemented as a block:
 
 \begin{tabular}{ccc}
 \toprule
-\bf Block name & \bf Definition & \bf Number of features \\ 
+\bf Block name & \bf Definition & \makecell{\bf Number\\ of features} \\
 \toprule
-MB & \makecell{$\featureset{Square}_{P} \times (\featureset{Role}_{Q} \times \featureset{Color}_{Q})$ \\for every square $P$ and piece $Q$\\ such that $Q$ can move to $P$} & 768 \\
+MB & \makecell{
+\vspace{0.2cm}
+($\featureset{Squares} \times \featureset{Roles} \times \featureset{Colors})_P$ \\
+P($\langle s, r, c \rangle$): there is a piece of role $r$\\ and color $c$ that \textbf{can move to} square $s$
+} & 768 \\
 \toprule
-MC & \makecell{$M(R)_{R,C} \times (\featureset{Role}_{R} \times \featureset{Color}_{C})$\\for every role $R$ and color $C$\\where $M(R)=\{0\hdots\}$ are the mobility values for the role R} & 206 \\
+MC & \makecell{
+$(M(R) \times \featureset{Roles} \times \featureset{Colors})_{P}$\\
+\vspace{0.2cm}
+$M(r)=\{0\hdots\}$ are the mobility values for the role $r$\\
+P($\langle m, r, c \rangle$): the value of mobility for a piece of role $r$\\ and color $c$ is $m$
+} & 206 \\
 \bottomrule
 \end{tabular}
 \end{table}
