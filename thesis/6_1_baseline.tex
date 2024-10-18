@@ -14,7 +14,7 @@ I expect that there will be a model that performs best and other models that are
 
 When the models are loaded into the engine and evaluated in a tournament, we can see that when L2 drops, the performance drops dramatically. This is due the fact that the inference time is mostly dominated by L2. This result suggests that it may be a good idea explore even lower values of L2, such as 16 or even 8. However, the SIMD implementation requires L2 to be a multiple of 32 so it needs a refactor to keep being fast. So, instead of fiddling further with SIMD I decided to \textbf{keep L2 at 32}.
 
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 \makebox[\textwidth]{\includegraphics[width=\textwidth]{./dynamic/output/baseline_heatmaps.pdf}}
 \captionsetup{justification=centering}

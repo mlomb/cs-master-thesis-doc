@@ -86,7 +86,7 @@ During training, it is better to use a loss function with the target and output 
 
 \subsubsection{Loss function}
 
-The loss function chosen is mean square error with a power of 2.6 (the value used by the Stockfish's official trainer) given by
+The loss function chosen is mean squared error (MSE) with a power of 2.6 (the value used by the Stockfish's official trainer) given by
 
 % q = (output / out_scaling).sigmoid()
 % p = (target / in_scaling).sigmoid()
@@ -174,7 +174,14 @@ The training data has to be converted to an actual tensor of floats to be consum
 
 The batch generation process is heavily parallelized. Let's call $N$ the number of threads ($N=8$ was used). When the process starts, it splits the dataset file into $N$ equal parts and assigns each part to a thread. Each thread reads samples sequentially and builds the batch in a buffer. The buffer is then sent to the main thread where it is copied to the shared memory buffer.
 
-The Python script copies the data from the shared buffer at the start of each iteration, allowing Rust to generate the next batch (in the CPU) while Pytorch is training the current batch (in the GPU). To coordinate the memory access between the two processes, a single byte is sent using standard I/O.
+The Python script copies the data from the shared buffer at the start of each iteration, allowing Rust to generate the next batch (in the CPU) while Pytorch is training the current batch (in the GPU). To coordinate the memory access between the two processes, a single byte is sent using standard I/O. The sequence of a training loop is shown in Figure \ref{training-loop}.
+
+\begin{figure}[H]
+\centering
+\makebox[\textwidth]{\includegraphics[width=\textwidth]{../assets/training-loop.pdf}}
+\caption{Sequence of steps to send a batch from the \texttt{batch-loader} subprocess in Rust to Pytorch.}
+\label{training-loop}
+\end{figure}
 
 Given that the input vector is multiple-hot encoded, the data written by the Rust process are not float values. Instead, they are 64-bit integers acting as a bitset. Before passing the vector to the model, it is expanded into floats. This means 64 floats can be packed into a single 64-bit integer, meaning a \textbf{96.875\%} reduction in memory usage (from 256 to 8 bytes). The speedup obtained by this optimization was substantial. The compression can be further improved using sparse tensors, but it is not implemented in this work. \\
 
