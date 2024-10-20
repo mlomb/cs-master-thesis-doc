@@ -19,15 +19,15 @@ Training NNUEs is a daunting task, and there are lots of variables that affect d
 
 The following are some key points that could be explored in a future work: \\
 
-% deduplication de posiciones (al computar el score de Stockfish)
 % not much is known what makes a dataset good
-\textbf{Dataset:}
-A great deal of effort is put into good training data: the source, the filtering, ........ 
-\\
+\textbf{Dataset:} A great deal of effort is put into good training data. The training data I used was generated using very specific parameters: depth 9, 5000 nodes and selected opening books. It is known that higher depth data results in worse networks. It is believed that the reason is that data becomes too hard for the network to learn. Also datasets generated with different books also affect the performance of the network.  Generating new data is a very slow process so it is harder to experiment with, which means that not that much reasearch has been done in this area. \\
+Filtering of the data (skipping checks, captures, etc.) also affects the performance dramatically, but it is a lot easier to work with since it can be done after the data has been generated. New filtering conditions can be tried. \\
 
 \textbf{Alternative to PQR:} Instead of the loss function used to train PQR, the triplet loss function could be tried, where the anchor is the P position, the positive is the observed position (Q) and the negative is the random position (R). I don't expect this to improve the that much, but it is worth trying. \\
 
 \textbf{Network architecture:} The architecture of NNUE-like networks has gone through multiple iterations since its inception. This work focused on the first and most basic iteration of it. Maybe it is worth exploring more complex architectures with a fixed feature set rather than a fixed architecture with a variable feature set.
 Almost certainly try lower values of L2, which may bring better results. \\
 
-\textbf{Feature sets:} more fs, pruning de features al pepe para evitar updates
+\textbf{Feature sets:} When it comes to feature sets, 
+
+more fs, pruning de features al pepe para evitar updates
