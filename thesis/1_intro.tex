@@ -22,6 +22,11 @@ The chess engine Stockfish \cite{stockfish}, modern successor of DeepBlue with i
 \newpage
 \subsection{Thesis plan}
 
-The main goal of this thesis is to explore different kinds of board encodings for NNUE networks, called feature sets. These encodings are the input for a neural network. To do so, I needed a chess engine that supports neural networks with the ability to customize encodings and a way to train them. The initial idea was to use Stockfish with the official Pytorch trainer \cite{nnue-pytorch}. However, I quickly realized that implementing some of the features sets I had in mind may be too complicated  with Stockfish's representation and the unconventional training test (PQR) that I wanted to do was impossible. This, and given that Stockfish engine and trainer codebases are huge, I felt there was too much magic involved so I turned away. I could have picked up another less complex engine written in Rust (like Marlin) and modify it, but I choose not to.
+The main goal of this thesis is to explore different kinds of board encodings called feature sets. These encodings are the input for a NNUE network. To do so, I need a chess engine that supports neural networks with the ability to customize encodings and a way to train them.
 
-So, I decided to implement my own engine and training pipeline from scratch.
+I decided to implement a simple but capable classic engine based on well known algorithms and optimizations. Then change the evaluation to use NNUE networks, with a versatile framework to build feature sets. Finally, I implemented a training pipeline to train the networks and measure their performance.
+
+With the setup ready, I run multiple experiments. I propose different feature sets, train networks with them and compare their performance.
+
+% The initial idea was to use Stockfish with the official Pytorch trainer \cite{nnue-pytorch}. However, I quickly realized that implementing some of the features sets I had in mind may be too complicated  with Stockfish's representation and the unconventional training test (PQR) that I wanted to do was impossible. This, and given that Stockfish engine and trainer codebases are huge, I felt there was too much magic involved so I turned away. I could have picked up another less complex engine written in Rust (like Marlin) and modify it, but I choose not to.
+% So, I decided to implement my own engine and training pipeline from scratch.
