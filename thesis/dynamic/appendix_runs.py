@@ -47,6 +47,8 @@ def make_runs_table(sweep_path, rating_path, output_path, caption):
 
 
     note = "\\textbf{Batch size}: 16384, \\textbf{LR}: 5e-04, \\textbf{Gamma}: 0.99, \\textbf{L1}: 512, \\textbf{L2}: 32"
+    note += "\\\\"
+    note += "Each tournament rating is relative to its average (rating=0)"
 
     table = """
     \\begin{table}[H]
@@ -117,6 +119,8 @@ def make_final_table(sweep_path, rating_path, output_path, caption):
     df = df.sort_values(by=["Perf/rating"], ascending=[False])
 
     note = "\\textbf{Batch size}: 16384, \\textbf{LR}: 5e-04, \\textbf{Gamma}: 0.99, \\textbf{L1}: 512, \\textbf{L2}: 32"
+    note += "\\\\"
+    note += "Tournament rating is relative to \\featureset{All} (rating=0)"
 
     table = """
     \\begin{table}[H]

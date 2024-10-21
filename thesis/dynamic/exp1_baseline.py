@@ -190,7 +190,7 @@ def make_baseline_table(df, sort_by_elo=False, avg_exp="avg=0"):
 
         table += f" & {dt.timedelta(seconds=int(runtime))} \\\\\n"
 
-    note = ""
+    note = "Ratings are relative to the average (rating=0)"
 
     table += "\\toprule\n"
     table += "\\multicolumn{10}{c}{\\makecell{" + note + "}} \\\\\n"
