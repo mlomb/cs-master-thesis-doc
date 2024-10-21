@@ -11,7 +11,7 @@ def fs_part(fs: str):
     # :)
     if fs == "PH":
         fs = "PV"
-    if fs == "PV":
+    elif fs == "PV":
         fs = "PH"
 
     return "\\featureset{" + fs + "}"
