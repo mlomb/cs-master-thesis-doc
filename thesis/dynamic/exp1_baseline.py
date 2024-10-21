@@ -13,7 +13,6 @@ import re
 # use latex for font rendering
 matplotlib.rcParams['text.usetex'] = True
 
-from appendix import make_runs_table
 from heatmap import make_heatmap
 
 LOSS_CMAP = "flare"
@@ -36,25 +35,6 @@ def parse_arch(arch: str):
     }
 
 
-def quantization_error():
-    df = pd.read_csv('../../assets/results/quant_errors.csv')
-    df["err"] = (df["expected_output"] - df["output"])
-    df["rel_err"] = (df["err"] / df["expected_output"]).abs()
-
-    sns.displot(df, x='err', height=3, aspect=1.3, bins=20) # , linewidth=0
-    plt.xlabel('Error of quantized model')
-    plt.ylabel('Count')
-
-    # draw quantile 0.5 line
-    plt.axvline(x=df["err"].mean(), color='r', linestyle='dotted')
-    plt.text(df["err"].mean(), 11500, 'mean', color='r', ha='left', va='top', rotation=90)
-    print(f"Quantization error: min: {df["output"].min()} max: {df["output"].max()} mean: {df["output"].mean()}")
-
-    #plt.ylim(0, 3000)
-    plt.savefig("./output/quant_errors.pdf", format='pdf')
-    plt.close()
-
-
 def exp_1_baseline():
     df_sweep = pd.read_csv('../../assets/results/baseline/sweep.csv')
     df_puzzles = pd.read_csv('../../assets/results/baseline/puzzles.csv')
@@ -66,7 +46,7 @@ def exp_1_baseline():
 
     # write runs appendix
     with open('./output/baseline_appendix.tex', 'w') as f:
-        f.write(make_runs_table(df_sweep))
+        f.write(make_baseline_table(df_sweep))
 
     # draw validation loss plot
     # each line is a step, each column is a run
@@ -132,26 +112,91 @@ def exp_1_baseline():
     plt.savefig("./output/baseline_heatmaps.pdf", format='pdf')
     plt.close()
 
-def exp_2_axes():
-    df_sweep = pd.read_csv('../../assets/results/axes/sweep.csv')
-    df_elo = pd.read_csv('../../assets/results/axes/rating.csv')
-    df_sweep = pd.merge(df_sweep, df_elo, on="Name", how='left')
 
-    # write runs appendix
-    with open('./output/axes_appendix.tex', 'w') as f:
-        f.write(make_runs_table(df_sweep, sort_by_elo=True, avg_exp="rel. to \\featureset{All}"))
+def fs_part(fs: str):
+    fs = fs.upper()
+    if fs == "HV":
+        fs = "All"
+    return "\\featureset{" + fs + "}"
 
-def exp_3_baseline():
-    df_sweep = pd.read_csv('../../assets/results/pairwise/sweep.csv')
-    df_elo = pd.read_csv('../../assets/results/pairwise/rating.csv')
-    df_sweep = pd.merge(df_sweep, df_elo, on="Name", how='left')
-
-    # write runs appendix
-    with open('./output/pairwise_appendix.tex', 'w') as f:
-        f.write(make_runs_table(df_sweep, sort_by_elo=True, avg_exp="rel. to \\featureset{All}"))
+def fs(feature_set: str):
+    # split by +
+    parts = feature_set.split("+")
+    return " + ".join([fs_part(part) for part in parts])
 
 
-quantization_error()
+def make_baseline_table(df, sort_by_elo=False, avg_exp="avg=0"):
+    """Don't look at this function :)"""
+
+    df = df.sort_values(by=["feature_set", "batch_size", "l1_size", "l2_size"], ascending=[False, True, True, True])
+
+    if sort_by_elo:
+        df = df.sort_values(by=["Perf/rating"], ascending=False)
+
+    last_fs = None
+
+    has_rating = "Perf/rating" in df.columns
+    has_puzzles = "Puzzle/accuracy" in df.columns
+
+    # $\\gamma$
+    # \\multirow{2}{*}{\\makecell{\\bf Feature\\\\set}} &
+
+    table = """
+\\centering
+\\begin{adjustbox}{center}
+\\begin{tabular}{@{} cccccccc""" + ('c' if has_rating else '') + ('c' if has_puzzles else '')  + """ @{}} \\toprule
+\\multirow{2}{*}{\\bf Feature set} &
+\\multicolumn{3}{c}{\\bf Train hyperparams} &
+\\multicolumn{2}{c@{}}{\\bf Network} &
+\\multirow{2}{*}{\\makecell{\\bf Val. loss\\\\\\textit{min}}} &""" + (
+"""\\multirow{2}{*}{\\makecell{\\bf Rating\\\\\\textit{elo (""" + avg_exp + """)}}} &""" if has_rating else "") + (
+"""\\multirow{2}{*}{\\makecell{\\bf Puzzles\\\\\\textit{move acc.}}} &""" if has_puzzles else "") + """
+\\multirow{2}{*}{\\makecell{\\bf Runtime\\\\\\textit{hh:mm:ss}}} \\\\
+\\cmidrule(lr){2-4} \\cmidrule(l){5-6}
+& \\bf Batch & \\bf LR & \\bf Gamma & \\bf L1 & \\bf L2 & \\\\
+\\midrule
+    """
+    # table += "Feature set & Batch size & L1 size & Train loss (min) & Runtime \\\\ \\midrule\n"
+
+    for index, row in df.iterrows():
+        if last_fs is not None and last_fs != row['feature_set']:
+            table += "\\midrule\n"
+        last_fs = row['feature_set']
+
+        min_loss = df['Train/val_loss.min'].min()
+        loss = F"{row['Train/val_loss.min']:.5f}"
+        # print(int(row['Train/val_loss.min'] * 1_00000) ,"<=", int(min_loss * 1_00000))
+        if int(row['Train/val_loss.min'] * 1_00000) <= int(min_loss * 1_00000):
+            loss = f"\\textbf{{{loss}}}"
+
+        table += f"{fs(row['feature_set'])} & {row['batch_size']} & {row['learning_rate']:.0e} & {row['gamma']} & {row['l1_size']} & {row['l2_size']} & {loss}"
+        
+        if has_rating:
+            max_rating = df['Perf/rating'].max()
+            if row['Perf/rating'] >= max_rating:
+                table += f" & \\textbf{{{row['Perf/rating']:.1f} $\\pm$ {row['Perf/rating_error']:.1f}}}"
+            else:
+                table += f" & {row['Perf/rating']:.1f} $\\pm$ {row['Perf/rating_error']:.1f}"
+
+        if has_puzzles:
+            max_puzzles = df['Puzzle/accuracy'].max()
+            if row['Puzzle/accuracy'] == max_puzzles:
+                table += f" & \\textbf{{{row['Puzzle/accuracy']:.4f}}}"
+            else:
+                table += f" & {row['Puzzle/accuracy']:.4f}"
+
+        runtime = row['Runtime']
+        runtime = (int(runtime) / row['epochs']) * 256 # rescale to 256 epochs
+
+        table += f" & {dt.timedelta(seconds=int(runtime))} \\\\\n"
+
+    note = ""
+
+    table += "\\toprule\n"
+    table += "\\multicolumn{10}{c}{\\makecell{" + note + "}} \\\\\n"
+    table += "\\end{tabular}\n"
+    table += "\\end{adjustbox}\n"
+
+    return table
+
 exp_1_baseline()
-exp_2_axes()
-exp_3_baseline()

@@ -5,6 +5,15 @@ def fs_part(fs: str):
     fs = fs.upper()
     if fs == "HV":
         fs = "All"
+    if fs == "ALL":
+        fs = "All"
+
+    # :)
+    if fs == "PH":
+        fs = "PV"
+    if fs == "PV":
+        fs = "PH"
+
     return "\\featureset{" + fs + "}"
 
 def fs(feature_set: str):
@@ -38,8 +47,6 @@ def make_runs_table(sweep_path, rating_path, output_path, caption):
 
 
     note = "\\textbf{Batch size}: 16384, \\textbf{LR}: 5e-04, \\textbf{Gamma}: 0.99, \\textbf{L1}: 512, \\textbf{L2}: 32"
-    note += "\n\\\\"
-    note += "\nA tournament was held for each feature set (8 networks), with 100ms per move.\\\\Opening book was UHO\\_Lichess\\_4852\\_v1.epd. Each network played around 10000 games.\\\\Ratings computed using Ordo, relative to the average (rating=0 is the average)."
 
     table = """
     \\begin{table}[H]
@@ -92,7 +99,7 @@ def make_runs_table(sweep_path, rating_path, output_path, caption):
 
             table += "\\\\\n"
 
-    table += "\\midrule\n"
+    table += "\\toprule\n"
     table += "\\multicolumn{6}{c}{\\makecell{" + note + "}} \\\\\n"
     table += "\\end{tabular}\n"
     table += "\\end{adjustbox}\n"
@@ -109,7 +116,7 @@ def make_final_table(sweep_path, rating_path, output_path, caption):
 
     df = df.sort_values(by=["Perf/rating"], ascending=[False])
 
-    note = "TODO: write notes"
+    note = "\\textbf{Batch size}: 16384, \\textbf{LR}: 5e-04, \\textbf{Gamma}: 0.99, \\textbf{L1}: 512, \\textbf{L2}: 32"
 
     table = """
     \\begin{table}[H]
@@ -149,7 +156,7 @@ def make_final_table(sweep_path, rating_path, output_path, caption):
 
         table += "\\\\\n"
 
-    table += "\\midrule\n"
+    table += "\\toprule\n"
     table += "\\multicolumn{6}{c}{\\makecell{" + note + "}} \\\\\n"
     table += "\\end{tabular}\n"
     table += "\\end{adjustbox}\n"
@@ -171,6 +178,19 @@ make_final_table(
     '../../assets/results/exp2_axes/rating_final.csv',
     './output/exp2_axes_final.tex',
     caption="Axis feature sets final results"
+)
+
+make_runs_table(
+    '../../assets/results/exp3_pairwise/sweep.csv',
+    '../../assets/results/exp3_pairwise/rating_runs.csv',
+    './output/exp3_pairwise_runs.tex',
+    caption="Pairwise feature sets preliminar runs"
+)
+make_final_table(
+    '../../assets/results/exp3_pairwise/sweep.csv',
+    '../../assets/results/exp3_pairwise/rating_final.csv',
+    './output/exp3_pairwise_final.tex',
+    caption="Pairwise feature sets final results"
 )
 
 # \\multirow{2}{*}{\\bf Feature set} &
