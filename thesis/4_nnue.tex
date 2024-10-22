@@ -199,8 +199,6 @@ Since the objective is to take advantage of modern CPUs that allow doing low-pre
 
 \subsubsection{Stockfish quantization scheme}
 
-[Quizas hay que explicar mas esta parte, es compleja]
-
 \def\int#1{\texttt{int#1}}
 
 In this thesis, I will use the same quantization scheme used in the engine Stockfish \cite{nnue-pytorch}, due its simplicity and it has been battle tested. It uses \int{8} $[-128, 127]$ for inputs and weights, and \int{16} $[-32768, 32767]$ where \int{8} does not fit the range of values we need.
@@ -265,10 +263,12 @@ The Stockfish repository provides an AVX2 implementation of the mathematical ope
 
 To make sure the quantization is working as expected, I measured the error introduced by running a trained model in thousands of positions. The error is computed as the difference between the output of the quantized model (in Rust) and the float model (in Pytorch).
 
+% https://discord.com/channels/435943710472011776/718853716266188890/802646172388294706
+
 \begin{figure}[H]
 \centering
-\includegraphics[width=12cm]{./dynamic/output/quant_errors.pdf}
-\caption{Error of the quantized model compared to the float model. N=50000}
+\includegraphics[width=\textwidth]{./dynamic/output/quant_errors.pdf}
+\caption{Comparison between the float model and the quantized model. $N=100000$}
 \label{fig:quant_errors}
 \end{figure}
 
