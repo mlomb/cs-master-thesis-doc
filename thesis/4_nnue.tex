@@ -251,8 +251,6 @@ The last linear layer (L3) is a bit different since there is no activation after
 \end{aligned}
 \end{equation}
 
-[seguir escribiendo y arreglar cosas arriba]
-
 % no se tiene el mismo problema que en el accumulator layer porque la multiplicacion en SIMD se hace en 32 bits (osea sin hacer overflow), para despues aplicar clippedrelu a eso.
 
 \subsection{Implementation}
@@ -261,7 +259,7 @@ The Stockfish repository provides an AVX2 implementation of the mathematical ope
 
 \subsubsection{Quantization error}
 
-To make sure the quantization is working as expected, I measured the error introduced by running a trained model in thousands of positions. The error is computed as the difference between the output of the quantized model (in Rust) and the float model (in Pytorch).
+To make sure the quantization is working as expected, I compared the actual output of the quantized model (in Rust) with the float model (in Python) by running them in thousands of positions.
 
 % https://discord.com/channels/435943710472011776/718853716266188890/802646172388294706
 
@@ -272,6 +270,6 @@ To make sure the quantization is working as expected, I measured the error intro
 \label{fig:quant_errors}
 \end{figure}
 
-[rever porque esta corrido]
-In Figure \ref{fig:quant_errors} we can see that the error is centered around zero and most of the errors are within 50 units, which is acceptable given that the model output values much higher.
+In Figure \ref{fig:quant_errors} we can see that the distribution of the evaluation of both models is almost identical, indicating that the implementation is correct.
 
+To measure the error introduced it is better to do it in WDL-space, since we can make sense of values in that space. The errors are near zero, and almost all errors are within 0.03 units, which is a 3\% difference in winrate. The Stockfish team has reported that errors in quantization up to 5\% do not affect the engine's strength.
