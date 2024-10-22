@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 
 # use latex for font rendering
 matplotlib.rcParams['text.usetex'] = True
+matplotlib.rcParams['font.family'] = ['serif']
 matplotlib.rcParams['text.latex.preamble'] = "\n".join([
     r'\usepackage{skak}',
     r'\usepackage{xskak}'
