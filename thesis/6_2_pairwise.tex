@@ -381,35 +381,34 @@ Since the blocks need at least two pieces to generate a feature, if there is onl
 
 The feature sets to be evaluated are \featureset{All} $\oplus$ \featureset{PH} (1920 features), \featureset{All} $\oplus$ \featureset{PV} (1920 features) and \featureset{All} $\oplus$ \featureset{PH} $\oplus$ \featureset{PV} (3072 features). Like before, a network will be trained for each feature set and a tournament will be played to determinate the relative elo to the \featureset{All} baseline.
 
-I expect that the networks are able to take advantage of the specific features, enough to conteract the loss in performance due to the big increase in the number of features and more complex updates. \\
+I expect that the networks are able to take advantage of the specific features, enough to conteract the loss in performance due to the big increase in the number of features and slower updates. \\
 
-\textbf{Results.} The results in table \ref{tab:pairwise_results} show that...
+\textbf{Results.} The results in table \ref{tab:pairwise_results} show that there is a clear difference in performance between \depictionSM{PH} and \depictionSM{PV}. The feature set \featureset{All} $\oplus$ \depictionSM{PV} has a lower loss and rating than its counterpart \featureset{All} $\oplus$ \depictionSM{PH}. It is not clear why the vertical pairs achieve a better rating than the horizontal pairs, since they have a similar amount of row updates (Appendix \ref{appendix:fs}).
+
+Both \featureset{All} $\oplus$ \depictionSM{PV} and \featureset{All} $\oplus$ \depictionSM{PH} perform worse than \featureset{All}. It seems that the networks were able to take advantage of the pairs, since the loss is lower than the reference. However, it is not enough to conteract the increase in row updates.
+
+Suprisingly the feature set with both axes (\featureset{All} $\oplus$ \depictionSM{PH} $\oplus$ \depictionSM{PV}) has a similar rating to \featureset{All} $\oplus$ \depictionSM{PV}, probably counteracted by having an even lower loss.
 
 \begin{table}[H]
 \caption{Pairwise encodings results}
 \label{tab:pairwise_results}
 \centering
 
-% # PLAYER                                                :  RATING  ERROR   POINTS  PLAYED   (%)  CFS(%)
-% 1 256-eval_16384_(hv[768]→512)x2→32→1.nn          :     0.0   ----  12557.0   24038    52      57
-% 2 256-eval_16384_(hv+ph[1920]→512)x2→32→1.nn      :    -0.5    5.1  12535.5   24038    52     100
-% 3 256-eval_16384_(hv+pv[1920]→512)x2→32→1.nn      :   -14.1    4.5  11917.0   24037    50     100
-% 4 256-eval_16384_(hv+ph+pv[3072]→512)x2→32→1.nn   :   -32.8    4.7  11066.5   24039    46     ---
-
 \begin{tabular}{ccccc}
 \toprule
 \bf Feature set  & \bf \makecell{Number\\of features} & \makecell{\bf Val. loss\\\textit{min}} & \makecell{\bf Rating\\\textit{elo (rel. to \featureset{All})}} \\
 \toprule
-\featureset{All} (reference) & 768 & 0.00316 & \textbf{0.0} \\
+\featureset{All} (reference) & 768 & 0.003134 & \textbf{0.0} \\
 \midrule
-\featureset{All} $\oplus$ \depiction{PH} & 1920 & 0.00296 & -0.5 $\pm$ 5.1 \\
+\featureset{All} $\oplus$ \depiction{PH} & 1920 & 0.003033 & -38.2 $\pm$ 4.8 \\
 \midrule
-\featureset{All} $\oplus$ \depiction{PV} & 1920 & 0.00303 & -14.1 $\pm$ 4.5 \\
+\featureset{All} $\oplus$ \depiction{PV} & 1920 & 0.002946 & -8.4 $\pm$ 5.0 \\
 \midrule
-\featureset{All} $\oplus$ \depiction{PH} $\oplus$ \depiction{PV} & 3072 & \textbf{0.00287} & -32.8 $\pm$ 4.7 \\
+\featureset{All} $\oplus$ \depiction{PH} $\oplus$ \depiction{PV} & 3072 & \textbf{0.002868} & -37.6 $\pm$ 4.9 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
+Future work could gather some statistics about the pairs and determinate if skipping some pairs is worth it. For example, pairs related to pawns cause many updates since it is the most common piece and may not be that useful. Reducing the amount of pairs would lower the amount of updates and may overtake \featureset{All}.
 
 I did not bother implementing diagonal pairs (\depiction{PD1} and \depiction{PD2}) due the adverse result of the other axes.
