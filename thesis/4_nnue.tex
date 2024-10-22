@@ -11,7 +11,9 @@ NNUE operates on the following principles:
 
 \end{itemize}
 
-[tradeoff between speed and accuracy?]
+There is a tradeoff between inference time and quality of the predictions, which affect the amount of nodes evaluated. If the inference is faster, more nodes can be evaluated thus reaching deeper in the search tree. Having higher quality predictions, which usually comes with a more complex model and/or feature set, can make stronger moves with shallower searches, and may improve prunning.
+
+Models must be so much better to compensate the slowdown in inference when using bigger models or more complex feature sets. This is a tradeoff that will appear further in the experiments.
 
 \subsection{Layers}
 
