@@ -1,0 +1,24 @@
+
+    \begin{table}[H]
+\caption{Mobility feature sets preliminar runs}
+\centering
+\begin{adjustbox}{center}
+\begin{tabular}{@{} cccc|cc @{}}
+\toprule
+\bf \multirow{2}{*}{Feature set} & \bf \multirow{2}{*}{Run} & \bf Val. loss & \bf Runtime & \bf Rating @ 192 & \bf Rating @ 256 \\
+ &  & \textit{min} & \textit{hh:mm:ss} & \textit{TC=100ms/m} & \textit{TC=100ms/m} \\
+\midrule
+    \multirow{4}{*}{\featureset{All} + \featureset{MB}} & 1 & \bf0.002809 & 2:46:15 & 0.1 $\pm$ 5.7 & -7.5 $\pm$ 5.9\\
+ & 2 & 0.002824 & 2:51:49 & -6.1 $\pm$ 6.1 & \bf12.1 $\pm$ 6.5\\
+ & 3 & 0.002812 & 2:49:58 & -2.4 $\pm$ 5.2 & 11.4 $\pm$ 5.2\\
+ & 4 & 0.002828 & 2:53:24 & -7.5 $\pm$ 6.0 & 0.0 $\pm$ 5.7\\
+\midrule
+\multirow{4}{*}{\featureset{All} + \featureset{MC}} & 1 & 0.003045 & 2:23:00 & 15.5 $\pm$ 5.2 & -30.5 $\pm$ 5.3\\
+ & 2 & 0.003060 & 2:22:55 & -41.5 $\pm$ 5.5 & 2.6 $\pm$ 5.3\\
+ & 3 & 0.003040 & 2:38:55 & 0.7 $\pm$ 5.4 & 12.6 $\pm$ 4.3\\
+ & 4 & \bf0.003032 & 2:21:59 & 19.0 $\pm$ 5.6 & \bf21.5 $\pm$ 4.9\\
+\toprule
+\multicolumn{6}{c}{\makecell{\textbf{Batch size}: 16384, \textbf{LR}: 5e-04, \textbf{Gamma}: 0.99, \textbf{L1}: 512, \textbf{L2}: 32\\Each tournament rating is relative to its average (rating=0)}} \\
+\end{tabular}
+\end{adjustbox}
+\end{table}

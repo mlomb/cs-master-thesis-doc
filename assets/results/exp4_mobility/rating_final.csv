@@ -1,0 +1,4 @@
+"Perf/epoch","Name","Perf/rating","Perf/rating_error"
+256,"2-eval_16384_(all+mb[1536]→512)x2→32→1",-260.9,5.4
+256,"4-eval_16384_(all+mc[974]→512)x2→32→1",-280.9,5.6
+

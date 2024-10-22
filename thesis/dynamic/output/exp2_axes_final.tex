@@ -3,10 +3,10 @@
 \caption{Axis feature sets final results}
 \centering
 \begin{adjustbox}{center}
-\begin{tabular}{@{} cccccc @{}}
+\begin{tabular}{@{} ccccc @{}}
 \toprule
-\bf \multirow{2}{*}{Feature set} & \bf \multirow{2}{*}{Run} & \bf \multirow{2}{*}{Epoch} & \bf Val. loss  & \bf Rating & \bf TBD \\
- &  &  & \textit{min}  & \textit{TC=100ms/m} &  \\
+\bf \multirow{2}{*}{Feature set} & \bf \multirow{2}{*}{Run} & \bf \multirow{2}{*}{Epoch} & \bf Val. loss  & \bf Rating \\
+ &  &  & \textit{min}  & \textit{TC=100ms/m} \\
 \midrule
     \featureset{All} & 3 & 256 & 0.003134 & \bf0.0 $\pm$ 0.0\\
 \featureset{All} + \featureset{D1} + \featureset{D2} & 2 & 256 & 0.003087 & -26.1 $\pm$ 3.8\\
@@ -16,7 +16,7 @@
 \featureset{H} + \featureset{V} & 1 & 256 & 0.005810 & -384.3 $\pm$ 5.1\\
 \featureset{D1} + \featureset{D2} & 1 & 256 & 0.006707 & -444.1 $\pm$ 5.1\\
 \toprule
-\multicolumn{6}{c}{\makecell{\textbf{Batch size}: 16384, \textbf{LR}: 5e-04, \textbf{Gamma}: 0.99, \textbf{L1}: 512, \textbf{L2}: 32\\Tournament rating is relative to \featureset{All} (rating=0)}} \\
+\multicolumn{5}{c}{\makecell{\textbf{Batch size}: 16384, \textbf{LR}: 5e-04, \textbf{Gamma}: 0.99, \textbf{L1}: 512, \textbf{L2}: 32\\Tournament rating is relative to \featureset{All} (rating=0)}} \\
 \end{tabular}
 \end{adjustbox}
 \end{table}

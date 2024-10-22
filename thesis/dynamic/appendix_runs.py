@@ -127,10 +127,10 @@ def make_final_table(sweep_path, rating_path, output_path, caption):
 \\caption{""" + caption + """}
 \\centering
 \\begin{adjustbox}{center}
-\\begin{tabular}{@{} cccccc @{}}
+\\begin{tabular}{@{} ccccc @{}}
 \\toprule
-\\bf \\multirow{2}{*}{Feature set} & \\bf \\multirow{2}{*}{Run} & \\bf \\multirow{2}{*}{Epoch} & \\bf Val. loss  & \\bf Rating & \\bf TBD \\\\
- &  &  & \\textit{min}  & \\textit{TC=100ms/m} &  \\\\
+\\bf \\multirow{2}{*}{Feature set} & \\bf \\multirow{2}{*}{Run} & \\bf \\multirow{2}{*}{Epoch} & \\bf Val. loss  & \\bf Rating \\\\
+ &  &  & \\textit{min}  & \\textit{TC=100ms/m} \\\\
 \\midrule
     """
 
@@ -161,7 +161,7 @@ def make_final_table(sweep_path, rating_path, output_path, caption):
         table += "\\\\\n"
 
     table += "\\toprule\n"
-    table += "\\multicolumn{6}{c}{\\makecell{" + note + "}} \\\\\n"
+    table += "\\multicolumn{5}{c}{\\makecell{" + note + "}} \\\\\n"
     table += "\\end{tabular}\n"
     table += "\\end{adjustbox}\n"
     table += "\\end{table}\n"
@@ -195,6 +195,19 @@ make_final_table(
     '../../assets/results/exp3_pairwise/rating_final.csv',
     './output/exp3_pairwise_final.tex',
     caption="Pairwise feature sets final results"
+)
+
+make_runs_table(
+    '../../assets/results/exp4_mobility/sweep.csv',
+    '../../assets/results/exp4_mobility/rating_runs.csv',
+    './output/exp4_mobility_runs.tex',
+    caption="Mobility feature sets preliminar runs"
+)
+make_final_table(
+    '../../assets/results/exp4_mobility/sweep.csv',
+    '../../assets/results/exp4_mobility/rating_final.csv',
+    './output/exp4_mobility_final.tex',
+    caption="Mobility feature sets final results"
 )
 
 # \\multirow{2}{*}{\\bf Feature set} &
