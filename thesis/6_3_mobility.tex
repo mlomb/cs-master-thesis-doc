@@ -8,7 +8,7 @@
 \begin{itemize}
 \item \textbf{Bitsets (per piece type):} Provide the exact squares each piece type can move to. The number of features would be $64 * 6 * 2 = 768$. The problem with this approach is not the amount of features, but the number of updates to the accumulator per move is very high, which slows down the search.
 
-\begin{figure}[h]
+\begin{figure}[H]
 \centering
 
 \begin{tabular}{ccccc}
@@ -69,7 +69,7 @@ Board &
 
 \item \textbf{Counts (per piece type):} Use the number of available moves per piece type as features. This means having a feature for each possible count value, which are a lot less row updates. To find which values to include as features I computed the total mobility for each piece role in 2 billion boards, shown in figure \ref{fig:mobility}. From the data we can extract the range of values to use as features:
 
-\begin{table}
+\begin{table}[H]
 \centering
 \begin{tabular}{c|c|c}
 \toprule
@@ -120,9 +120,27 @@ a piece of role $r$ and color $c$ is $m$
 \end{tabular}
 \end{table}
 
-decir los fs
+The blocks will be combined with the \featureset{All} feature set. Neither of the blocks can be used alone, since they do not carry the information to deduce every piece on the board (trivially).
+
+The feature sets to be trained and evaluated are \featureset{All} $\oplus$ \featureset{MB} (1536 features) and \featureset{All} $\oplus$ \featureset{MC} (974 features). Like prior experiments, a network will be trained for each feature set and evaluated in a tournament. \\
+
+\textbf{Results.} 
 
 
-asdasdasd \\
+\begin{table}[H]
+\caption{Mobility encodings results}
+\label{tab:mobility_results}
+\centering
 
-\textbf{Results.} asdadasdasd
+\begin{tabular}{ccccc}
+\toprule
+\bf Feature set  & \bf \makecell{Number\\of features} & \makecell{\bf Val. loss\\\textit{min}} & \makecell{\bf Rating\\\textit{elo (rel. to \featureset{All})}} \\
+\toprule
+\featureset{All} (reference) & 768 & 0.003134 & \textbf{0.0} \\
+\midrule
+\featureset{All} $\oplus$ \featureset{MB} & 1536 & 0.002824 & -260.9 $\pm$ 5.4 \\
+\midrule
+\featureset{All} $\oplus$ \featureset{MC} & 974 & 0.003032 & -280.9 $\pm$ 5.6 \\
+\bottomrule
+\end{tabular}
+\end{table}
