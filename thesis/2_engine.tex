@@ -6,7 +6,7 @@ Classic chess engines are composed of two main components: \textbf{the search} a
 
 \subsection{Minimax search}
 
-A position $p$ in chess is the state of the board with any other relevant information, like castling rights, en passant and the 50-move clock. Given a position $p$, we can call $f(p)$ its evaluation, a number that provides an assessment of how good the position is, computed either by a hand-crafted function or a neural network.
+A position $p$ in chess is the state of the board along with any relevant information, like castling rights, en passant and the 50-move clock. Given a position $p$, we can call $f(p)$ its evaluation, a number that provides an assessment of how good the position is, computed either by a hand-crafted function or a neural network.
 
 One approach to approximate a good move given a reasonable function $f$ could be to evaluate all possible positions that can be reached with a single move and choose the one that leads to the highest evaluation for the player who made the move. This idea can be extended to consider actions taken by the other player, and so on, to a fixed depth. Formally, this is called the minimax search algorithm \cite{minimax-survey:1995}.
 
