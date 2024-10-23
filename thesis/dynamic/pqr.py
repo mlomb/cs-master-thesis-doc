@@ -10,7 +10,7 @@ matplotlib.rcParams['font.family'] = ['serif']
 
 def plot_pqr(file: str, output: str, title: str):
     df = pd.read_csv(file) # names=['p','q','r']
-    df = df.sample(10000)
+    df = df.sample(4000)
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(8, 4))
     fig.suptitle(title, fontsize=18)
