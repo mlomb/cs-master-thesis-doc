@@ -20,7 +20,7 @@ Before starting the experiment, I checked if existing networks trained with the 
 \item \textbf{Train from a checkpoint.} A strong checkpoint trained with the other method is used to initialize the network. This way, the network does not have to learn too much at once and may enable it to improve the existing parameters. I believe that two scenarios are likely to happen: the model improves very slowly, or it completely forgets what it have learned before and ends up like a model trained from scratch. The best scenario is that the model improves slowly, proving that it can be used to further optimize existing models.
 \end{itemize}
 
-\textbf{Results.} After training a single network from scratch, the results do not look promising. Looking at figure \ref{pqr1-evolution}, we can see that the network improves steadily up to the epoch 32 (3.2 billion positions), but then it starts to get consistently worse. There are no indications of overfitting, as the validation loss is still decreasing.
+\textbf{Results.} After training a single network from scratch, the results do not look promising. Looking at figure \ref{pqr1-evolution}, we can see that the network improves steadily up to the epoch 32 (trained on 3.2 billion samples), but then it starts to get consistently worse. There are no indications of overfitting, as the validation loss is still decreasing.
 
 \begin{figure}[H]
 \centering
@@ -34,3 +34,14 @@ To investigate, I tried comparing the loss of
 . \\
 
 seguir...
+
+Positions that are very similar in score f(q)~f(r) are being penalized the same way that more extreme ones. A way to mitigate this is generate a dataset which takes into account multiple lines of play, and only include samples where there is a significant difference between the moves.
+
+
+----
+
+Further work:
+
+* change the filter on the minimum number of moves to draw during training
+* lines of play
+* data with more depth
