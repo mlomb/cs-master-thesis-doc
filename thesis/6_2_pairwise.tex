@@ -383,9 +383,9 @@ The feature sets to be evaluated are \featureset{All} $\oplus$ \featureset{PH} (
 
 I expect that the networks are able to take advantage of the specific features, enough to conteract the loss in performance due to the big increase in the number of features and slower updates. \\
 
-\textbf{Results.} The results in table \ref{tab:pairwise_results} show that there is a clear difference in performance between \depictionSM{PH} and \depictionSM{PV}. The feature set \featureset{All} $\oplus$ \depictionSM{PV} has a lower loss and rating than its counterpart \featureset{All} $\oplus$ \depictionSM{PH}. It is not clear why the vertical pairs achieve a better rating than the horizontal pairs, since they have a similar amount of row updates (Appendix \ref{appendix:fs}).
+\textbf{Results.} The results in table \ref{tab:pairwise_results} show that there is a clear difference in performance between \depictionSM{PH} and \depictionSM{PV}. The feature set \featureset{All} $\oplus$ \depictionSM{PV} has a lower loss and rating than its counterpart \featureset{All} $\oplus$ \depictionSM{PH}. It is not clear why the vertical pairs achieve a better rating than the horizontal pairs, since they have a similar amount of feature updates (Appendix \ref{appendix:fs}).
 
-Both \featureset{All} $\oplus$ \depictionSM{PV} and \featureset{All} $\oplus$ \depictionSM{PH} perform worse than \featureset{All}. It seems that the networks were able to take advantage of the pairs, since the loss is lower than the reference. However, it is not enough to conteract the increase in row updates.
+Both \featureset{All} $\oplus$ \depictionSM{PV} and \featureset{All} $\oplus$ \depictionSM{PH} perform worse than \featureset{All}. It seems that the networks were able to take advantage of the pairs, since the loss is lower than the reference. However, it is not enough to conteract the increase in feature updates.
 
 Suprisingly the feature set with both axes (\featureset{All} $\oplus$ \depictionSM{PH} $\oplus$ \depictionSM{PV}) has a similar rating to \featureset{All} $\oplus$ \depictionSM{PV}, probably counteracted by having an even lower loss.
 
