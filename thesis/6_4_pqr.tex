@@ -20,4 +20,17 @@ Before starting the experiment, I checked if existing networks trained with the 
 \item \textbf{Train from a checkpoint.} A strong checkpoint trained with the other method is used to initialize the network. This way, the network does not have to learn too much at once and may enable it to improve the existing parameters. I believe that two scenarios are likely to happen: the model improves very slowly, or it completely forgets what it have learned before and ends up like a model trained from scratch. The best scenario is that the model improves slowly, proving that it can be used to further optimize existing models.
 \end{itemize}
 
-\textbf{Results.} aquí pondria los resultados... si los tuviera!
+\textbf{Results.} After training a single network from scratch, the results do not look promising. Looking at figure \ref{pqr1-evolution}, we can see that the network improves steadily up to the epoch 32 (3.2 billion positions), but then it starts to get consistently worse. There are no indications of overfitting, as the validation loss is still decreasing.
+
+\begin{figure}[H]
+\centering
+\makebox[\textwidth]{\includegraphics[width=\textwidth]{./dynamic/output/pqr1_ratings.pdf}}
+\caption{Rating evolution of a network trained with the PQR method from scratch.}
+\label{pqr1-evolution}
+\end{figure}
+
+To investigate, I tried comparing the loss of 
+
+. \\
+
+seguir...
