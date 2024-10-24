@@ -124,8 +124,7 @@ The blocks will be combined with the \featureset{All} feature set. Neither of th
 
 The feature sets to be trained and evaluated are \featureset{All} $\oplus$ \featureset{MB} (1536 features) and \featureset{All} $\oplus$ \featureset{MC} (974 features). Like prior experiments, a network will be trained for each feature set and evaluated in a tournament. \\
 
-\textbf{Results.} 
-
+\textbf{Results.} The results in table \ref{tab:mobility_results} show that the blocks did not provide features of enough quality to improve the network predictions enough to overcome the cost of making more row updates. I have underestimated the cost of a row update, that was not a problem in previous experiments. The block \featureset{MB} has, in average, 10.03 row updates per move and the block \featureset{MC} has 3.82 (see Appendix \ref{appendix:fs}). In comparison, the \featureset{All} feature set has 1.58 row updates per move. Even though the block \featureset{MB} has almost 3 times the number of row updates, it has a better performance than \featureset{MC}. This is attributed to having a 7\% lower loss, which compensates the cost of the updates. \\
 
 \begin{table}[H]
 \caption{Mobility encodings results}
