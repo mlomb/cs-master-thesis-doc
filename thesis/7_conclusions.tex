@@ -2,26 +2,19 @@
 \subsection{Conclusions}
 
 
+The main takeaway from this work is that the \featureset{All} feature set is at a sweetspot that is hard to beat. Bigger feature sets are known to be more effective, like \featureset{King-All}, but this work was restricted to feature sets with a few thousands features to be practical to train.
 
-falta escribir la conclusion, pero los puntos importantes son:
+The feature set \featureset{All} has all the information of the board, it is easy to implement, cheap to compute which features are active, and it has a low number of feature updates per move (1.58). This makes it very effective, and thus very fast when used with a NNUE network. \\
 
-\begin{itemize}
-\item maybe implementing a custom engine was not a good idea. bugs and stuff
-\item feature sets: havent changed much in a long time. thats why it is so hard find anything better
-\item feature engineering slow with this kind of task, iteration times are extremely slow. This is why fishnet exists.
-\item I have underestimated the impact in speed of the tradeoff? es mucho mas importante minimizar la cantidad de feature updates que otra cosa
-\item ...
-\end{itemize}
+When building other feature sets, I have underestimated the cost of extra feature updates. The performance hit of making more updates is, in the feature sets I tested, greater than the performance gain of having more information available. In the end, NNUE networks are trying to reduce the number of dot products, which is what each feature update does. \\
 
-% lo ideal de un feature set son patrones que NO se den en simultáneo? asi podes aprender mas usando menos neuronas
-
-WIP:
-
-The main takeaway from this work is that the \featureset{All} feature set is at a sweetspot that is hard to beat. It has all the information of the board, it is easy to implement, easy to compute which features are active and it has a low number of feature updates per move (1.58).
-
-When building other feature sets, I have underestimated the cost of extra feature updates. The performance hit of making more updates is, in the feature sets I tested, greater than the performance gain of having more information available. In the end, NNUE networks are trying to reduce the number of dot products, which is what each feature update does.
+It has been a few years since the introduction of NNUE networks and feature sets, in particular variations of the \featureset{King-All} feature set, which uses at its core the \featureset{All} feature set. 
+The community has not found a better feature set or additional blocks of features to add alongside it. Not only new features need to improve the network prediction, but also have few updates per move and be fast to compute, which is a hard balance to achieve.
+Feature engineering in this kind of taks is very slow. Each iteration takes hours (or days) of training and evaluations to see if there is a (usually small) improvement. \\
 
 [...]
+
+[hablar en la conclusion de PQR]
 
 \subsection{Future work}
 
