@@ -1,6 +1,8 @@
 \section{Final words}
 \subsection{Conclusions}
 
+
+
 falta escribir la conclusion, pero los puntos importantes son:
 
 \begin{itemize}
@@ -12,6 +14,14 @@ falta escribir la conclusion, pero los puntos importantes son:
 \end{itemize}
 
 % lo ideal de un feature set son patrones que NO se den en simultáneo? asi podes aprender mas usando menos neuronas
+
+WIP:
+
+The main takeaway from this work is that the \featureset{All} feature set is at a sweetspot that is hard to beat. It has all the information of the board, it is easy to implement, easy to compute which features are active and it has a low number of feature updates per move (1.58).
+
+When building other feature sets, I have underestimated the cost of extra feature updates. The performance hit of making more updates is, in the feature sets I tested, greater than the performance gain of having more information available. In the end, NNUE networks are trying to reduce the number of dot products, which is what each feature update does.
+
+[...]
 
 \subsection{Future work}
 
