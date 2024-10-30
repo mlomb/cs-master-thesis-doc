@@ -18,7 +18,7 @@ The \texttt{binpack} format is a very efficient method of storing samples yet ve
 
 \footnotetext{Standard notation to describe positions of a chess game. It is a sequence of ASCII characters.}
 
-The file was too big to be practical and it would wear off my SSD, so I made a tool to compact the data into a similar format. The new format expoits the fact that samples in a row belong to the same game. This means that contiguous FENs are a move from a previous one, so it stores the move instead of the FEN:
+The file was too big to be practical and it would wear off my SSD, so I made a tool to compact the data into a similar format. The new format exploits the fact that samples in a row belong to the same game. This means that contiguous FENs are a move from a previous one, so it stores the move instead of the FEN:
 
 \begin{center}
 \begin{tabular}{|cp{0.0005cm}cp{0.0005cm}c|}
