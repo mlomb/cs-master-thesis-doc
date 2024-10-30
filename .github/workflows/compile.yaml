@@ -22,12 +22,24 @@ jobs:
         with:
           root_file: main.tex
           working_directory: thesis
+      - name: Build slides PDF
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: main.tex
+          working_directory: slides
+      - name: Build slides PDF (handout)
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: main_handout.tex
+          working_directory: slides
 
       - name: Copy PDFs to public
         run: |
           mkdir -p public
           cp proposal/main.pdf public/proposal.pdf
           cp thesis/main.pdf public/thesis.pdf
+          cp slides/main.pdf public/slides.pdf
+          cp slides/main_handout.pdf public/slides_handout.pdf
           cp .github/workflows/index.html public/index.html
 
       - name: Deploy to GitHub Pages
