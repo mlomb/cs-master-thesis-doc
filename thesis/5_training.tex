@@ -147,11 +147,13 @@ where\dots
 \item $x^i$ are the inputs (encoded feature sets) for the $i \in \{p,q,r\}$ positions.
 \item $f$ is the model.
 \item $\bm{W}$ are the parameters of the model.
+\item $\mathcal{W}$ is the winrate function that maps from score-space to WDL-space.
+\item $\overline{\mathcal{W}}(x) = 2 \mathcal{W}(x) - 1$ is a function that maps from WDL-space [0, 1] to $[-1, 1]$, so that $\overline{\mathcal{W}}(x) = -\overline{\mathcal{W}}(-x)$.
 \item $
-\hat{p}_i = \frac{f(x^p_i, \bm{W}) - a}{b},\text{ }
-\hat{q}_i = \frac{f(x^q_i, \bm{W}) - a}{b},\text{ }
-\hat{r}_i = \frac{f(x^r_i, \bm{W}) - a}{b}
-$, where $a$ and $b$ are the parameters of the WDL model. Note that quantization is happening in this method too, so the output of the model must be scaled appropriately.
+\hat{p}_i = \overline{\mathcal{W}}(f(x^p_i, \bm{W})),\text{ }
+\hat{q}_i = \overline{\mathcal{W}}(f(x^q_i, \bm{W}),\text{ }
+\hat{r}_i = \overline{\mathcal{W}}(f(x^r_i, \bm{W})
+$. Note that quantization is happening in this method too, so the output of the model is being scaled appropriately.
 \end{enumerate}
 
 
