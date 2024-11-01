@@ -28,7 +28,7 @@ For this thesis, I have chosen to use a very simple NNUE architecture, which con
 \item $\bm{y}$ the output column vector of shape \textbf{out\_features}.
 \end{enumerate}
 
-If we call $\bm{A_i}$ the $i$-th column of the weight matrix $\bm{W}$, the operation $\bm{W} \bm{x}$ can be simplified to \enquote{if $\bm{x_i}$ is not zero, take the column $\bm{A_i}$, multiply it by $\bm{x_i}$ and add it to the result}. This means that we can skip the processing of columns that have a zero input, as depicted in Figure \ref{fig:linear_comparison}.
+If we call $\bm{A_i}$ the $i$-th column of the weight matrix $\bm{W}$, the operation $\bm{W} \bm{x}$ can be simplified to \enquote{if $\bm{x_i}$ is not zero, take the column $\bm{A_i}$, multiply it by $\bm{x_i}$ and add it to the result}. This means that we can skip the processing of columns that have a zero input, as depicted in figure \ref{fig:linear_comparison}.
 
 \begin{figure}[H]
 \centering
@@ -47,7 +47,7 @@ The output of this activation function is the input for the next layer, and beca
 \subsection{Efficient updates}
 
 When running a depth-first search algorithm, the state of the position is updated every time the algorithm \textit{makes} and \textit{unmakes} moves, usually before and after the recursion.
-NNUEs are designed to work with this kind of search, since every time the algorithm \textit{makes} (or \textit{unmakes}) a move, the changes in the position are minimal (at most two pieces are affected in \featureset{All}), meaning that the amount of features becoming active or inactive is minimal as well. This is depicted in Figure \ref{fig:updates_tree}.
+NNUEs are designed to work with this kind of search, since every time the algorithm \textit{makes} (or \textit{unmakes}) a move, the changes in the position are minimal (at most two pieces are affected in \featureset{All}), meaning that the amount of features becoming active or inactive is minimal as well. This is depicted in figure \ref{fig:updates_tree}.
 
 \begin{figure}[H]
 \centering
@@ -178,7 +178,7 @@ $\bm{N}$: number of features in the feature set
 \end{enumerate}
 
 
-The size of each layer is not fixed since it is a hyperparameter I will experiment with. The network architecture is depicted in Figure \ref{fig:network}, with example parameters.
+The size of each layer is not fixed since it is a hyperparameter I will experiment with. The network architecture is depicted in figure \ref{fig:network}, with example parameters.
 
 \begin{figure}[H]
 \centering
@@ -270,6 +270,6 @@ To make sure the quantization is working as expected, I compared the actual outp
 \label{fig:quant_errors}
 \end{figure}
 
-In Figure \ref{fig:quant_errors} we can see that the distribution of the evaluation of both models is almost identical, indicating that the implementation is correct.
+In figure \ref{fig:quant_errors} we can see that the distribution of the evaluation of both models is almost identical, indicating that the implementation is correct.
 
 To measure the error introduced it is better to do it in WDL-space, since we can make sense of values in that space. The errors are near zero, and almost all errors are within 0.03 units, which is a 3\% difference in winrate. The Stockfish team has reported that errors in quantization up to 5\% do not affect the engine's strength \footnote{\href{https://discord.com/channels/435943710472011776/718853716266188890/814260897040039977}{Sopel's message on Discord about this} (official Stockfish server).}.

@@ -63,7 +63,7 @@ The WDL-space is a different scale in [0, 1] where 0 is a loss, 0.5 is a draw an
 \mathcal{W}(f(p)) = \sigma\left(\frac{f(p)-a}{b}\right) = \frac{1}{1 + e^{-\frac{f(p)-a}{b}}}
 \]
 
-where $a$ and $b$ need to be fitted to the data. The value of $a$ is the evaluation where a 50\% winrate is observed and $b$ indicates how fast the winrate changes when the evaluation change. The fitted sigmoid is shown in Figure \ref{wdl-fit}, and the values obtained are $a=1.28$ and $b=297.21$.
+where $a$ and $b$ need to be fitted to the data. The value of $a$ is the evaluation where a 50\% winrate is observed and $b$ indicates how fast the winrate changes when the evaluation change. The fitted sigmoid is shown in figure \ref{wdl-fit}, and the values obtained are $a=1.28$ and $b=297.21$.
 
 \begin{figure}[H]
 \centering
@@ -198,7 +198,7 @@ The training data has to be converted to an actual tensor of floats to be consum
 
 The batch generation process is heavily parallelized. Let's call $N$ the number of threads ($N=8$ was used). When the process starts, it splits the dataset file into $N$ equal parts and assigns each part to a thread. Each thread reads samples sequentially and builds the batch in a buffer. The buffer is then sent to the main thread where it is copied to the shared memory buffer.
 
-The Python script copies the data from the shared buffer at the start of each iteration, allowing Rust to generate the next batch (in the CPU) while Pytorch is training the current batch (in the GPU). To coordinate the memory access between the two processes, a single byte is sent using standard I/O. The sequence of a training loop is shown in Figure \ref{training-loop}.
+The Python script copies the data from the shared buffer at the start of each iteration, allowing Rust to generate the next batch (in the CPU) while Pytorch is training the current batch (in the GPU). To coordinate the memory access between the two processes, a single byte is sent using standard I/O. The sequence of a training loop is shown in figure \ref{training-loop}.
 
 \begin{figure}[H]
 \centering
