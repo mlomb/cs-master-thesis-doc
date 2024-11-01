@@ -272,4 +272,4 @@ To make sure the quantization is working as expected, I compared the actual outp
 
 In Figure \ref{fig:quant_errors} we can see that the distribution of the evaluation of both models is almost identical, indicating that the implementation is correct.
 
-To measure the error introduced it is better to do it in WDL-space, since we can make sense of values in that space. The errors are near zero, and almost all errors are within 0.03 units, which is a 3\% difference in winrate. The Stockfish team has reported that errors in quantization up to 5\% do not affect the engine's strength.
+To measure the error introduced it is better to do it in WDL-space, since we can make sense of values in that space. The errors are near zero, and almost all errors are within 0.03 units, which is a 3\% difference in winrate. The Stockfish team has reported that errors in quantization up to 5\% do not affect the engine's strength \footnote{\href{https://discord.com/channels/435943710472011776/718853716266188890/814260897040039977}{Sopel's message on Discord about this} (official Stockfish server).}.
