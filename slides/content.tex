@@ -28,14 +28,27 @@ This is some text in the first frame.\pause This is some text in the first frame
 
 \begin{frame}
 \frametitle{Sample frame title}
-This is some text in the first frame. This is some text in the first frame. \pause This is some text in the first frame.
+
+\begin{figure}[H]
+\centering
+\makebox[\textwidth]{\includegraphics[width=\textwidth]{../assets/sigmoid_fit.pdf}}
+\caption{WDL model function (sigmoid) fitted to 100 million evaluations in the dataset.}
+\label{wdl-fit}
+\end{figure}
+
 \end{frame}
 
 \section{Parte 2}
 
 \begin{frame}
 \frametitle{Sample frame title}
-This is some text in the first frame. This is some text in the first frame. This is some text in the first frame.
+
+\begin{figure}[H]
+\centering
+\makebox[\textwidth]{\includegraphics[width=\textwidth]{../assets/training-loop.pdf}}
+\caption{Sequence of steps to send a batch from the \texttt{batch-loader} subprocess in Rust to Pytorch.}
+\label{training-loop}
+\end{figure}
 \end{frame}
 
 \end{document}
