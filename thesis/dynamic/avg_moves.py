@@ -5,8 +5,8 @@ import numpy as np
 import matplotlib
 
 # use latex for font rendering
-#matplotlib.rcParams['text.usetex'] = True
-#matplotlib.rcParams['font.family'] = ['serif']
+matplotlib.rcParams['text.usetex'] = True
+matplotlib.rcParams['font.family'] = ['serif']
 
 df = pd.read_csv("../../assets/results/pqr/avg_moves.csv")
 # CSV columns: color, fullmove, legal_moves, count
@@ -56,7 +56,7 @@ for (label, M, color) in [
     Y = np.array([ecdf(x, M) for x in Xr])
     plt.plot(Xr, Y, label=label, color=color, linestyle='dashed')
 
-plt.legend(facecolor='white', framealpha=1)
+plt.legend(facecolor='white', framealpha=1, loc='upper right', title='Quantile')
 
 plt.xlabel("Turn number (full moves)")
 plt.ylabel("Number of available moves")
