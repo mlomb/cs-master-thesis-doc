@@ -64,3 +64,7 @@ plt.title("Number of available moves for White throughout the game")
 
 plt.tight_layout()
 plt.savefig("./output/avg_moves.pdf", format='pdf')
+
+
+#for p in [0.75, 0.5, 0.25, 0]:
+#    print(p, [(x, ecdf(x, p)) for x in range(101)])
