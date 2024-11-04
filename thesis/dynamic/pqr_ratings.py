@@ -35,22 +35,27 @@ def plot_rating_over_time_series(data: str, output: str):
     for network, group in df.groupby('network'):
         if network == 'all':
             label = 'Target scores'
+            color = 'm'
         elif network == 'P00':
             label = 'PQR $p=0.00$'
+            color = 'orange'
         elif network == 'P25':
             label = 'PQR $p=0.25$'
+            color = 'blue'
         elif network == 'P50':
             label = 'PQR $p=0.50$'
+            color = 'green'
         elif network == 'P75':
             label = 'PQR $p=0.75$'
+            color = 'red'
         else:
             label = network
 
-        if network == 'all' or network == 'P00':
+        if network == 'all' or network == 'P00' or network == 'P75':
             last_epoch_data = group.iloc[-1]
-            plt.annotate('{} $\pm$ {}'.format(last_epoch_data["rating"], last_epoch_data["error"]), xy=(last_epoch_data["epoch"],last_epoch_data["rating"]), xytext=(-5, 5), ha='right', textcoords='offset points')
+            plt.annotate('{} $\pm$ {}'.format(last_epoch_data["rating"], last_epoch_data["error"]), xy=(last_epoch_data["epoch"],last_epoch_data["rating"]), xytext=(-5, -15 if network == 'P75' else 5), ha='right', textcoords='offset points')
 
-        plt.errorbar(group["epoch"], group["rating"], yerr=group["error"], fmt='-o', markersize=5, capsize=5, label=label)
+        plt.errorbar(group["epoch"], group["rating"], yerr=group["error"], fmt='-o', markersize=4, capsize=4, label=label, color=color)
     plt.xlim(None, 256 + 10)
     plt.ylim(-500, None)
     plt.xlabel('Epoch')

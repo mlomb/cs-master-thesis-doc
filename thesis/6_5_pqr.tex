@@ -24,7 +24,7 @@ The training data is not filtered the same way as with target scores, where it w
 
 Choosing fixed values of $M$ is not ideal, since the number of available moves varies throughout the game. A value of $M$ will be chosen for every turn in the game, based on the distribution of available moves for that particular turn and color. It is known that the white player has more available moves in average than the black player, so $M$ will be different for each.
 
-Four networks will be trained from scratch where $M$ is chosen to filter 0\%, 25\%, 50\% and 75\% of samples with the least available moves for that turn. In figure \ref{avg-moves} we can see the value of $M$ changing throughout the game for each percentile. Note that when $p=0$ the value of $M$ is 2 in every turn, so no filtering is done. \\
+Four networks will be trained from scratch where $M$ is chosen to filter 0\%, 25\%, 50\% and 75\% of samples with the least available moves for that turn. In figure \ref{avg-moves} we can see the value of $M$ changing throughout the game for each quantile. Note that when $p=0$ the value of $M$ is 2 in every turn, so no filtering is done. \\
 
 \begin{figure}[H]
 \centering
