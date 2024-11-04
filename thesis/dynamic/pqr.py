@@ -54,3 +54,16 @@ plot_pqr(
     output='./output/pqr_scratch.pdf',
     title='PQR analysis for a network trained from scratch ($p=0.0$)'
 )
+
+
+plot_pqr(
+    file='../../assets/results/pqr/pqr_checkpoint_start.csv',
+    output='./output/pqr_checkpoint_start.pdf',
+    title='pqr_checkpoint_start'
+)
+
+plot_pqr(
+    file='../../assets/results/pqr/pqr_finetuned.csv',
+    output='./output/pqr_finetuned.pdf',
+    title='pqr_finetuned'
+)
