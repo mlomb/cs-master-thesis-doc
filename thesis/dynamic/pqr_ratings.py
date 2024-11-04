@@ -62,7 +62,7 @@ def plot_rating_over_time_series(data: str, output: str):
     plt.ylabel('Rating (relative to average)')
     plt.title('Rating of networks trained with the PQR method')
 
-    plt.legend(title='Network')
+    plt.legend(title='Training method')
 
     plt.tight_layout()
     plt.savefig(output, format='pdf')
