@@ -8,10 +8,11 @@ Before starting the experiment, I checked if existing networks trained with the 
 \begin{figure}[H]
 \centering
 \makebox[\textwidth]{\includegraphics[width=\textwidth]{./dynamic/output/pqr_eval.pdf}}
-\caption{Analysis of $N=4000$ PQR positions using a model trained with target scores and the feature set \featureset{All}.}
+\caption{Analysis of $N=4000$ PQR samples using a model trained with target scores and the feature set \featureset{All}.}
 \label{pqr-eval}
 \end{figure}
 
+\newpage
 \textbf{Experiment.} I will train the canonical \featureset{All} feature set with this method in two ways:
 
 \begin{itemize}
@@ -24,7 +25,7 @@ The training data is not filtered the same way as with target scores, where it w
 
 Choosing fixed values of $M$ is not ideal, since the number of available moves varies throughout the game. A value of $M$ will be chosen for every turn in the game, based on the distribution of available moves for that particular turn and color. It is known that the white player has more available moves in average than the black player, so $M$ will be different for each.
 
-Four networks will be trained from scratch where $M$ is chosen to filter 0\%, 25\%, 50\% and 75\% of samples with the least available moves for that turn. In figure \ref{avg-moves} we can see the value of $M$ changing throughout the game for each quantile. Note that when $p=0$ the value of $M$ is 2 in every turn, so no filtering is done. \\
+Four networks will be trained from scratch where $M$ is chosen to filter 0\%, 25\%, 50\% and 75\% of samples with the least available moves for that turn. In figure \ref{avg-moves} we can see the value of $M$ changing throughout the game for each quantile. Note that when $p=0$, $M=2$ in every turn, so no filtering is done. \\
 
 \begin{figure}[H]
 \centering
@@ -33,39 +34,53 @@ Four networks will be trained from scratch where $M$ is chosen to filter 0\%, 25
 \label{avg-moves}
 \end{figure}
 
-\textbf{Results.} The network is able to learn with the PQR method from scratch, without the use of existing evaluations like the other method. In figure \ref{pqr1-evolution}, we can see the evolution of the rating of each of the networks trained with different filtering, along with the reference target scores network.
-
+\newpage
+\textbf{Results.} The networks are able to learn with the PQR method from scratch, without the use of existing evaluations like the other method. In figure \ref{pqr-evolution}, we can see the evolution of the ratings of each of the networks trained, along with a network trained with target scores.
 
 \begin{figure}[H]
 \centering
 \makebox[\textwidth]{\includegraphics[width=\textwidth]{./dynamic/output/pqr_comparison.pdf}}
-\caption{Rating evolution of a network trained with the PQR method from scratch.}
-\label{pqr1-evolution}
+\caption{Performance of networks trained from scratch using the PQR method varying the filtering parameter ($p=0,\ 0.25,\ 0.5,\ 0.75$). A network trained with target scores is shown for comparison.}
+\label{pqr-evolution}
 \end{figure}
 
-To investigate, I tried comparing the loss of 
+The target scores method outperforms the best PQR network by $235 \pm 41$ rating. This result was anticipated, since the target scores method is a lot simpler for the network to learn.
+
+Contrary to what was expected, the larger the pool of moves to choose from (higher values of $p$), the worse the network performs. It was expected that with a higher $M$, it was more likely to find a move that was worse than $P \rightarrow Q$, but this was not the case. A possible explanation is that the positions located in the bottom cloud of the distribution in figure \ref{avg-moves} are good training samples for this method. In the other method, this positions were excluded since most are check positions. The experiment was run again including check positions but the results were the same. \\
+
+\newpage
+When looking at the behaviour of $f$ in figure \ref{pqr-scratch}, it does resemble what we expect to happen, a negative correlation between $f(p)$ and $f(q)$ and a positive difference between $f(r)$ and $f(q)$. However, the correlation is a lot more spread out, specially in $f(p)=-f(q)$, which is crucial that they are as close as possible since the network would be predicting different scores for the same position but the other perspective.
+
+A possible improvement could be to try to increase the weight of the $f(p)=-f(q)$ inequalities in the loss function, to force the network to be more like the target scores method. This means reducing the spread in the left plot and give less importance to high differences of $f(r)-f(q)$ since the values should not be as extreme. This is left for future work.
+
+\begin{figure}[H]
+\centering
+\makebox[\textwidth]{\includegraphics[width=\textwidth]{./dynamic/output/pqr_scratch.pdf}}
+\caption{Analysis of $N=4000$ PQR samples using the epoch 256 of the model trained from scratch with no filtering ($p=0.0$) and the feature set \featureset{All}.}
+\label{pqr-scratch}
+\end{figure}
+
+Of course everything boils down to the dataset, and the dataset used is not ideal for PQR. There are no guarantees that the $P \rightarrow R$ move is not similar in strength or in fact worse than $P \rightarrow Q$. Not only that, but the scale is not the same for all samples. Positions that have a small but significant difference in strength are being penalized the same way as more extreme ones. Trying filter by the number of available moves did not work, so there is no way around it. \\
+
+A good dataset for PQR can be generated using multiple lines of play (maybe dozens), and only include samples where there is a significant difference in strength between the $P \rightarrow Q$ and $P \rightarrow R$ moves. This also can prevent zugzwang\footnote{A zugzwang position occurs when any move a player can make, worsens their position.} positions from being included. It is necessary to decide what threshold is considered significant. One may analyze the distribution of differences and find something good, but in the end we are trying to convey this information to the network, which is what target scores already does, and better.
+
+-----
+
+PQR desde checkpoint intro
+
+\begin{figure}[H]
+\centering
+\makebox[\textwidth]{\includegraphics[width=\textwidth]{./dynamic/output/pqr_ckp.pdf}}
+\caption{asd}
+\label{pqr-ckp}
+\end{figure}
+
+el resultado, una pija
 
 . \\
 
 seguir...
 
-Positions that are very similar in score f(q)~f(r) are being penalized the same way that more extreme ones. A way to mitigate this is generate a dataset which takes into account multiple lines of play, and only include samples where there is a significant difference between the moves.
-
-
-% Initially, the loss proposed was going to work in score-space with the proper scaling without going through the transformation to WDL-space, however the network was 
-
-The most important decision is how the random position is chosen.
-
 ----
 
 Further work:
-
-* change the filter on the minimum number of moves to draw during training
-* lines of play
-* data with more depth
-* possibly detect zugzwang positions
-
----
-* try to change dataset to filter out similar f(q) and f(r) scores
-* try to give a good distribution of those
-* end up again with scores, because they contain all that information

@@ -47,3 +47,10 @@ plot_pqr(
     output='./output/pqr_eval.pdf',
     title='PQR analysis for a network trained with target scores'
 )
+
+
+plot_pqr(
+    file='../../assets/results/pqr/pqr_scratch.csv',
+    output='./output/pqr_scratch.pdf',
+    title='PQR analysis for a network trained from scratch ($p=0.0$)'
+)
