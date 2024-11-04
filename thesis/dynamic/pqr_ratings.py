@@ -53,7 +53,7 @@ def plot_rating_over_time_series(data: str, output: str):
 
         if network == 'all' or network == 'P00' or network == 'P75':
             last_epoch_data = group.iloc[-1]
-            plt.annotate('{} $\pm$ {}'.format(last_epoch_data["rating"], last_epoch_data["error"]), xy=(last_epoch_data["epoch"],last_epoch_data["rating"]), xytext=(-5, -15 if network == 'P75' else 5), ha='right', textcoords='offset points')
+            plt.annotate('\\bf{} $\pm$ {}'.format(last_epoch_data["rating"], last_epoch_data["error"]), xy=(last_epoch_data["epoch"],last_epoch_data["rating"]), xytext=(-5, -15 if network == 'P75' else 5), ha='right', textcoords='offset points', color=color)
 
         plt.errorbar(group["epoch"], group["rating"], yerr=group["error"], fmt='-o', markersize=4, capsize=4, label=label, color=color)
     plt.xlim(None, 256 + 10)
