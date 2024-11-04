@@ -15,11 +15,11 @@ Before starting the experiment, I checked if existing networks trained with the 
 \newpage
 \textbf{Experiment.} I will train the canonical \featureset{All} feature set with this method in two ways:
 
-\begin{itemize}
+\begin{enumerate}[label=\bf\Alph*.]
 \item \textbf{Train from scratch.} The network is initialized with random weights and trained with the PQR method. This is what the original authors did, and I do not expect to reach the performance of models trained with the evaluations method. Using precomputed evaluations as a target is a lot simpler for the model, since it only has to learn to mimic the scores.
 
-\item \textbf{Train from a checkpoint.} A strong checkpoint trained with the other method is used to initialize the network. This way, the network does not have to learn too much at once and may enable it to improve the existing parameters. I believe that two scenarios are likely to happen: the model improves very slowly, or it completely forgets what it have learned before and ends up like a model trained from scratch. The best scenario is that the model improves slowly, proving that it can be used to further optimize existing models.
-\end{itemize}
+\item \textbf{Continue from a checkpoint.} A strong checkpoint trained with the other method is used to initialize the network. This way, the network does not have to learn too much at once and may enable it to improve the existing parameters. I believe that two scenarios are likely to happen: the model improves very slowly, or it completely forgets what it have learned before and ends up like a model trained from scratch. The best scenario is that the model improves slowly, proving that it can be used to further optimize existing models.
+\end{enumerate}
 
 The training data is not filtered the same way as with target scores, where it was known that captures and checks are detrimental. When choosing a random position $R$ from a position $P$, the number of available moves to choose from is $m$ (including $P \rightarrow Q$). A training sample is skipped if $m < M$. The reasoning behind $M$ is that the bigger the pool to choose from, the more likely it is to find a move that is worse than $P \rightarrow Q$. Note that $M \geq 2$ since otherwise there is only one available move.
 
@@ -35,7 +35,7 @@ Four networks will be trained from scratch where $M$ is chosen to filter 0\%, 25
 \end{figure}
 
 \newpage
-\textbf{Results.} The networks are able to learn with the PQR method from scratch, without the use of existing evaluations like the other method. In figure \ref{pqr-evolution}, we can see the evolution of the ratings of each of the networks trained, along with a network trained with target scores.
+\textbf{(A) Results.} The networks are able to learn with the PQR method from scratch, without the use of existing evaluations like the other method. In figure \ref{pqr-evolution}, we can see the evolution of the ratings of each of the networks trained, along with a network trained with target scores.
 
 \begin{figure}[H]
 \centering
@@ -62,25 +62,19 @@ A possible improvement could be to try to increase the weight of the $f(p)=-f(q)
 
 Of course everything boils down to the dataset, and the dataset used is not ideal for PQR. There are no guarantees that the $P \rightarrow R$ move is not similar in strength or in fact worse than $P \rightarrow Q$. Not only that, but the scale is not the same for all samples. Positions that have a small but significant difference in strength are being penalized the same way as more extreme ones. Trying filter by the number of available moves did not work, so there is no way around it. \\
 
-A good dataset for PQR can be generated using multiple lines of play (maybe dozens), and only include samples where there is a significant difference in strength between the $P \rightarrow Q$ and $P \rightarrow R$ moves. This also can prevent zugzwang\footnote{A zugzwang position occurs when any move a player can make, worsens their position.} positions from being included. It is necessary to decide what threshold is considered significant. One may analyze the distribution of differences and find something good, but in the end we are trying to convey this information to the network, which is what target scores already does, and better.
+A good dataset for PQR can be generated using multiple lines of play (maybe dozens), and only include samples where there is a significant difference in strength between the $P \rightarrow Q$ and $P \rightarrow R$ moves. This also can prevent zugzwang\footnote{A zugzwang position occurs when any move a player can make, worsens their position.} positions from being included. It is necessary to decide what threshold is considered significant. One may analyze the distribution of differences and find something good, but in the end we are trying to convey this information to the network, which is what target scores already does, and better. \\
 
------
-
-PQR desde checkpoint intro
+\textbf{(B) Results.} The checkpoint used to continue training is the epoch 256 of the network trained with target scores that appear in figure \ref{pqr-evolution} (rightest purple dot). The training was done for four different values of learning rate: $0.0005$ (previous initializer), $0.0003$, $0.0001$ and $0.00005$. Different values were used to make sure the network does not forget "too fast" what it has learned before. The results are shown in figure \ref{pqr-ckp}.
 
 \begin{figure}[H]
 \centering
 \makebox[\textwidth]{\includegraphics[width=\textwidth]{./dynamic/output/pqr_ckp.pdf}}
-\caption{asd}
+\caption{Performance of networks fine-tuned with the PQR method, starting from a target scores checkpoint. The dotted line represents the rating of the checkpoint, which all ratings are relative to.}
 \label{pqr-ckp}
 \end{figure}
 
-el resultado, una pija
+There are a few things to notice in this graph. First, there is a sudden jump from the checkpoint to the first epoch. Since the checkpoint is the starting point, all networks jump in the first epoch to +100 rating.
 
-. \\
-
-seguir...
-
-----
-
-Further work:
+- sudden jump
+- lower LR better
+- upwards trend

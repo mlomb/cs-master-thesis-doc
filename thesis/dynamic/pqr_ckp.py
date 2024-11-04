@@ -11,9 +11,13 @@ def plot_rating_over_time_series(data: str, output: str):
     # CSV columns: lr, epoch, rating, error
     df = pd.read_csv(data)
     df.sort_values(by=['lr','epoch'], ascending=[True, True], inplace=True)
+    G = df.groupby('lr')
+
+    # sort G by lr
+    G = sorted(G, key=lambda x: x[0])
 
     plt.figure(figsize=(6, 4))
-    for lr, group in df.groupby('lr'):
+    for lr, group in G:
         if lr == 'all':
             label = 'Target scores'
             color = 'm'
@@ -48,12 +52,14 @@ def plot_rating_over_time_series(data: str, output: str):
             E = np.concatenate(([0], E))
 
         plt.errorbar(X, Y, yerr=E, fmt='-o', markersize=4, capsize=4, label=label, color=color)
+
+    plt.ticklabel_format(useOffset=False, style='plain')
     plt.xlabel('Epoch')
     plt.ylabel('Rating (relative to start checkpoint)')
     plt.title('Rating of networks fine-tuned with the PQR method')
     #plt.xlim(0, None)
 
-    plt.legend(title='Learning rate')
+    plt.legend(title='Learning rate', loc='lower right')
 
     # horizontal line at 0
     plt.axhline(0, color='k', linestyle='--')
