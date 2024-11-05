@@ -12,10 +12,10 @@ It has been a few years since the introduction of NNUE networks and feature sets
 The community has not found a better feature set or additional blocks of features to add alongside it. Not only new features need to improve the network prediction, but also have few updates per move and be fast to compute, which is a hard balance to achieve.
 To make it worse, feature engineering in this kind of taks is very slow. Each iteration takes hours (or days) of training and evaluations to see if there is a (usually small) improvement. \\
 
-[...]
+The PQR method showed promising results. A network can be trained with this method, but since the data is inadequate, it is not able to reach the performance of networks trained with target scores.
+Fine-tuning existing networks with PQR has shown to be effective, it gives a bump in performance and steadly improves the network. However, more research is needed due the unexpected surge in rating after the first epoch.
 
-[hablar en la conclusion de PQR]
-
+\newpage
 \subsection{Future work}
 
 Training NNUEs is a daunting task, and there are lots of variables that affect dramatically the performance of the networks. Many decisions were made in this work to reduce the scope of the project, so naturally many variables were left unexplored.
