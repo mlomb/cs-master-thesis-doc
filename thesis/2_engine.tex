@@ -108,7 +108,7 @@ The search algorithm runs to a fixed depth, which causes a horizon effect. The h
 \begin{figure}[H]
 \centering
 % https://tikz.dev/tikz-trees
-\begin{tikzpicture}[level distance=15mm,level/.style={sibling distance=22mm/#1},line width=0.25mm]
+\begin{tikzpicture}[scale=1.3,level distance=15mm,level/.style={sibling distance=22mm/#1},line width=0.25mm]
 \tikzstyle{root node}=[circle,draw,inner sep=3.0]
 \tikzstyle{bad node}=[circle,inner sep=3.0,fill=red]
 \tikzstyle{good node}=[circle,inner sep=3.0,fill=ForestGreen]
@@ -160,6 +160,7 @@ To fix this, instead of returning the evaluation of the position at the leaves, 
 
 Since most of the positions the network will be evaluating are quiet due the quiescence search, it is important to make sure that the training set reflect that. Later on, only positions that are quiet will be used to train the network.
 
+\newpage
 \subsection{Optimizations}
 
 Many optimizations were made to the engine to make it reach a decent depth in a reasonable time, which makes the engine stronger. There are no novel improvements, most are well-known techniques that have been used in engines for decades and can be found in the Chess Programming Wiki \cite{cpw}.
