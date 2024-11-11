@@ -57,10 +57,10 @@ The main method to train the network will use the scores provided in the dataset
 
 Evaluations in the dataset are values ranging from -10000 to 10000. We call this range of values the score-space, also refered to as the \textit{centipawn scale} (or something proportional to it). We want the network to output the same values as the dataset, in \textit{score-space}.
 
-The WDL-space is a different scale in [0, 1] where 0 is a loss, 0.5 is a draw and 1 is a win. The WDL (win-draw-loss) model \cite{wdl-model} states that the win rate for a position can be modeled as a function of the evaluation of the position. The data shows that the logistic function (sigmoid) gives a good approximation for the evaluation $f(p)$:
+The WDL-space is a different scale in [0, 1] where 0 is a loss, 0.5 is a draw and 1 is a win. The WDL (win-draw-loss) model \cite{wdl-model} states that the win rate for a position can be modeled as a function of the evaluation of the position. The data shows that the logistic function (sigmoid) gives a good approximation for the evaluation $f(P)$:
 
 \[
-\mathcal{W}(f(p)) = \sigma\left(\frac{f(p)-a}{b}\right) = \frac{1}{1 + e^{-\frac{f(p)-a}{b}}}
+\mathcal{W}(f(P)) = \sigma\left(\frac{f(P)-a}{b}\right) = \frac{1}{1 + e^{-\frac{f(P)-a}{b}}}
 \]
 
 where $a$ and $b$ need to be fitted to the data. The value of $a$ is the evaluation where a 50\% winrate is observed and $b$ indicates how fast the winrate changes when the evaluation change. The fitted sigmoid is shown in figure \ref{wdl-fit}, and the values obtained are $a=1.28$ and $b=297.21$.
@@ -77,7 +77,7 @@ During training, it is better to use a loss function with the target and output 
 
 \begin{itemize}
 \item Large evaluations are \enquote{closer} together in WDL-space., since having a score of 7500 or 8000 is not that different in terms of winrate (less than 1\%) than between 50 and 550 (more than 30\%). This is desirable because the evaluations don't need to be that precise when the outcome of the game is almost decided.
-\item The result of a game can be interpolated in WDL-space. If we introduce a new parameter $\lambda$, we can interpolate the evaluation $f(p)$ and the game result $r$ (in WDL-space) using: $\lambda * \mathcal{W}(f(p)) + (1 - \lambda) * r$. This way, the information about the outcome of the game can be used to steer the network in the right direction. This is not implemented in this work.
+\item The result of a game can be interpolated in WDL-space. If we introduce a new parameter $\lambda$, we can interpolate the evaluation $f(P)$ and the game result $r$ (in WDL-space) using: $\lambda * \mathcal{W}(f(P)) + (1 - \lambda) * r$. This way, the information about the outcome of the game can be used to steer the network in the right direction. This is not implemented in this work.
 \item Values in WDL-space are smaller than in score-space, so it avoids large gradients.
 \end{itemize}
 
@@ -115,8 +115,8 @@ This is an additional technique I wanted to try, described in \cite{dlchess:2014
 Remember that we are trying to obtain a function $f$ (the model) to give an evaluation of a position. The idea is based on the following two principles:
 
 \begin{enumerate}
-\item For two positions in succession $p \rightarrow q$ observed in a game, we will have $f(p)=-f(q)$. This comes from the fact that the game is zero-sum.
-\item Going from the position $p$, not to observed position $q$, but to a \textit{random} position $p \rightarrow r$, we must have $f(r) > f(q)$ because the random move is better for the next player and worse for the player that made the move.
+\item For two positions in succession $P \rightarrow Q$ observed in a game, we will have \mbox{$f(P)=-f(Q)$}. This comes from the fact that the game is zero-sum.
+\item Going from the position $P$, not to observed position $Q$, but to a \textit{random} position $P \rightarrow R$, we must have $f(R) > f(Q)$ because the random move is better for the next player and worse for the player that made the move.
 \end{enumerate}
 
 If this reasonable assumptions hold, a loss function that expresses the equality in (1) and the inequality in (2) can be constructed.
@@ -126,17 +126,17 @@ If this reasonable assumptions hold, a loss function that expresses the equality
 
 \subsubsection{Loss function}
 
-The loss function is sum of the negative log-likelihood of the inequalities: ${f(r) > f(q)}$, ${f(p) > - f(q)}$ and ${f(p) < -f(q)}$. The last two are a way to express the equality $f(p)=-f(q)$. Each term is the negative log-likelihood function of the known Bradley-Terry model \cite{bradley-terry:1952}, that models the probability of an item (in our case a position) \enquote{beating} another item.
+The loss function is sum of the negative log-likelihood of the inequalities: ${f(R) > f(Q)}$, ${f(P) > - f(Q)}$ and ${f(P) < -f(Q)}$. The last two are a way to express the equality $f(P)=-f(Q)$. Each term is the negative log-likelihood function of the known Bradley-Terry model \cite{bradley-terry:1952}, that models the probability of an item (in our case a position) \enquote{beating} another item.
 
 The loss function is given by
 
 \begin{align*}
-\mathcal{L}(x^p, x^q, x^r, \bm{W})=
+\mathcal{L}(x^P, x^Q, x^R, \bm{W})=
 \frac{1}{N}
 \sum_i^N
-& -\log\left(\sigma(\hat{r}_i - \hat{q}_i)\right) \\
-& -\log\left(\sigma(\hat{p}_i + \hat{q}_i)\right) \\
-& -\log\left(\sigma(-(\hat{p}_i + \hat{q}_i))\right)
+& -\log\left(\sigma(r_i - q_i)\right) \\
+& -\log\left(\sigma(p_i + q_i)\right) \\
+& -\log\left(\sigma(-(p_i + q_i))\right)
 \end{align*}
 
 where\dots
@@ -144,15 +144,15 @@ where\dots
 \begin{enumerate}
 \itemsep0em
 \item $N$ is the number of samples.
-\item $x^i$ are the inputs (encoded feature sets) for the $i \in \{p,q,r\}$ positions.
+\item $x^i$ are the inputs (encoded feature sets) for the $i \in \{P,Q,R\}$ positions.
 \item $f$ is the model.
 \item $\bm{W}$ are the parameters of the model.
 \item $\mathcal{W}$ is the winrate function that maps from score-space to WDL-space.
 \item $\overline{\mathcal{W}}(x) = 2 \mathcal{W}(x) - 1$ is a function that maps from WDL-space [0, 1] to $[-1, 1]$, so that $\overline{\mathcal{W}}(x) = -\overline{\mathcal{W}}(-x)$.
 \item $
-\hat{p}_i = \overline{\mathcal{W}}(f(x^p_i, \bm{W})),\text{ }
-\hat{q}_i = \overline{\mathcal{W}}(f(x^q_i, \bm{W}),\text{ }
-\hat{r}_i = \overline{\mathcal{W}}(f(x^r_i, \bm{W})
+p_i = \overline{\mathcal{W}}(f(x^P_i, \bm{W})),\text{ }
+q_i = \overline{\mathcal{W}}(f(x^Q_i, \bm{W}),\text{ }
+r_i = \overline{\mathcal{W}}(f(x^R_i, \bm{W})
 $. Note that quantization is happening in this method too, so the output of the model is being scaled appropriately.
 \end{enumerate}
 
@@ -178,12 +178,12 @@ Let's look at each of the terms:
 
 \begin{enumerate}
 \itemsep0em
-\item $-\log(\sigma(\hat{r} - \hat{q}))$: This term is small when $\hat{r} > \hat{q}$, and large when $\hat{r} < \hat{q}$.
-\item $-\log(\sigma(\hat{p} + \hat{q}))$: This term is small when $\hat{p} > -\hat{q}$, and large when $\hat{p} < -\hat{q}$.
-\item $-\log(\sigma(-(\hat{p} + \hat{q}))$: This term is small when $\hat{p} < -\hat{q}$, and large when $\hat{p} > -\hat{q}$.
+\item $-\log(\sigma(r_i - q_i))$: This term is small when $r_i > q_i$, and large when $r_i < q_i$.
+\item $-\log(\sigma(p_i + q_i))$: This term is small when $p_i > -q_i$, and large when $p_i < -q_i$.
+\item $-\log(\sigma(-(p_i + q_i))$: This term is small when $p_i < -q_i$, and large when $p_i > -q_i$.
 \end{enumerate}
 
-The term (1) holds the inequality $f(r) > f(q)$, and the terms (2) and (3) hold the equality $f(p) = -f(q)$. The loss function is the sum of the three terms, so the model is encouraged when it satisfies the inequalities and penalized when it does not.
+The term (1) holds the inequality $f(R) > f(Q)$, and the terms (2) and (3) hold the equality $f(P) = -f(Q)$. The loss function is the sum of the three terms, so the model is encouraged when it satisfies the inequalities and penalized when it does not.
 
 \subsection{Setup}
 

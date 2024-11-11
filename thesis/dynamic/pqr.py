@@ -21,9 +21,9 @@ def plot_pqr(file: str, output: str, title: str):
     ax1.set_xlim(-2000, 2000)
     ax1.set_ylim(-2000, 2000)
     ax1.set_box_aspect(1)
-    ax1.set_xlabel('$f(p)$')
-    ax1.set_ylabel('$f(q)$')
-    ax1.title.set_text('$f(q)$ vs $f(p)$')
+    ax1.set_xlabel('$f(P)$')
+    ax1.set_ylabel('$f(Q)$')
+    ax1.title.set_text('$f(Q)$ vs $f(P)$')
 
     df['diff'] = df['r'] - df['q']
     sns.scatterplot(data=df, x='q', y='diff', alpha=0.1, ax=ax2)
@@ -34,9 +34,9 @@ def plot_pqr(file: str, output: str, title: str):
     ax2.set_box_aspect(1)
     ax2.yaxis.tick_right()
     ax2.yaxis.set_label_position("right")
-    ax2.set_xlabel('$f(q)$')
-    ax2.set_ylabel('$f(r) - f(q)$')
-    ax2.title.set_text('Difference between $f(r)$ and $f(q)$')
+    ax2.set_xlabel('$f(Q)$')
+    ax2.set_ylabel('$f(R) - f(Q)$')
+    ax2.title.set_text('Difference between $f(R)$ and $f(Q)$')
 
     plt.tight_layout()
     plt.savefig(output, format='pdf')
