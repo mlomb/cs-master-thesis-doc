@@ -1,12 +1,5 @@
 \section{Introduction}
 
-% The rise of NNUEs
-% https://stanford.edu/~cpiech/cs221/apps/deepBlue.html
-
-% https://deepmind.google/discover/blog/alphazero-shedding-new-light-on-chess-shogi-and-go/
-% https://crimsonpublishers.com/cojra/pdf/COJRA.000563.pdf
-% https://arxiv.org/pdf/2209.11902.pdf
-
 The development of chess engines was and continues to be a topic of study in the chess and computer communities for decades. IBM DeepBlue \cite{deepblue:2002} was the first chess machine to reach superhuman level by consistently beating the world champion, Garry Kasparov, in 1997 \cite{washingtonpost:1997}. Since then, engines have evolved in strength and complexity. \\
 
 Chess can be modeled as a tree, where each node is a particular board configuration and the edges are legal moves for that position. With this representation, engines can use tree search algorithms to explore the tree and approximate the best move. Since the 1950s and to this date, engines have used algorithms like Minimax \cite{minimax-survey:1995} and Monte Carlo Tree Search \cite{mcts-survey:2012} (MCTS) or some of its variants \cite{tree-search-methods:2014,mcts-modifications:2022} to accomplish this.
@@ -27,9 +20,6 @@ The main goal of this thesis is to explore different kinds of board encodings ca
 I decided to implement a simple but capable classic engine based on well-known algorithms and optimizations, and then change the evaluation to use NNUE networks, with a versatile framework to build feature sets. Finally, I implemented a training pipeline to train the networks and measure their performance.
 
 With the setup ready, I run multiple experiments. I propose different feature sets, train networks with them and compare their performance.
-
-% The initial idea was to use Stockfish with the official Pytorch trainer \cite{nnue-pytorch}. However, I quickly realized that implementing some of the features sets I had in mind may be too complicated  with Stockfish's representation and the unconventional training test (PQR) that I wanted to do was impossible. This, and given that Stockfish engine and trainer codebases are huge, I felt there was too much magic involved so I turned away. I could have picked up another less complex engine written in Rust (like Marlin) and modify it, but I choose not to.
-% So, I decided to implement my own engine and training pipeline from scratch.
 
 \subsection{Source code}
 
