@@ -30,3 +30,18 @@ With the setup ready, I run multiple experiments. I propose different feature se
 
 % The initial idea was to use Stockfish with the official Pytorch trainer \cite{nnue-pytorch}. However, I quickly realized that implementing some of the features sets I had in mind may be too complicated  with Stockfish's representation and the unconventional training test (PQR) that I wanted to do was impossible. This, and given that Stockfish engine and trainer codebases are huge, I felt there was too much magic involved so I turned away. I could have picked up another less complex engine written in Rust (like Marlin) and modify it, but I choose not to.
 % So, I decided to implement my own engine and training pipeline from scratch.
+
+\subsection{Source code}
+
+The source code for this work can be found online in the following repositories:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{ll}
+\toprule
+\textbf{Repository} & \textbf{Repository} \\
+\midrule
+Source code & \url{https://github.com/mlomb/cs-master-thesis} \\
+\LaTeX\ documents & \url{https://github.com/mlomb/cs-master-thesis-doc}
+\end{tabular}
+\end{table}
