@@ -37,7 +37,7 @@ The file was too big to be practical and it would wear off my SSD, so I made a t
 
 As you can see, the new format is compatible with the last one, so only one reader was implemented. After compacting the data, the file went down to a manageable 522GB. Also, reading a single FEN and later apply moves to it is much faster than parsing a FEN every time. \\
 
-There are many positions in the dataset that are known to not be good for training. Remember that the engine is doing quiescent search, so it does a smaller search looking for quiet positions to evaluate. This means that positions where the best move is a capture, or there is a check are filtered out when building the training batch. \\
+There are many positions in the dataset that are known to not be good for training. Remember that the engine is doing quiescent search, so it does a smaller search looking for quiet positions to evaluate. This means that positions where the \enquote{best} move is a capture, or there is a check are filtered out when building the training batch. \\
 
 Each training method will generate a new derived dataset based on this samples.
 
