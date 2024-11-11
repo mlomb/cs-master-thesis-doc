@@ -145,28 +145,16 @@
 \newcommand{\tablaDirectores}{%
 \ifthenelse{\boolean{showDirectores}}{%
 	\bigskip
-	Directores
-
-	\smallskip
-    \begin{tabular}[t]{ *{\value{directoresCount}}{c} }
-    \the\direcTabNombre \\%
-    \the\direcTabEmail %
+    \begin{tabular}[t]{ cc }
+    \smallskip
+    Director & Co-Director \\%
+    \the\direcTabNombre & \the\codirecTabNombre \\ %
+    \the\direcTabEmail & \the\codirecTabEmail%
     \end{tabular}%
 }{}%
 }
 
-\newcommand{\tablaCoDirectores}{%
-\ifthenelse{\boolean{showCoDirectores}}{%
-	\bigskip
-	Co-Directores
-
-	\smallskip
-    \begin{tabular}[t]{ *{\value{coDirectoresCount}}{c} }
-    \the\codirecTabNombre \\%
-    \the\codirecTabEmail %
-    \end{tabular}%
-}{}%
-}
+\newcommand{\tablaCoDirectores}{}
 
 \newcommand{\tablaEntregas}{%
 \ifthenelse{\boolean{showEntregas}}{%
