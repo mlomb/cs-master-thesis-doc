@@ -4,7 +4,7 @@
 
 The main takeaway from this work is that the \featureset{All} feature set is at a sweetspot that is hard to beat. Bigger feature sets are known to be more effective, like \featureset{King-All}, but this work was restricted to feature sets with a few thousands features to be practical to train.
 
-The feature set \featureset{All} has all the information of the board, it is easy to implement, cheap to compute which features are active, and it has a low number of feature updates per move (1.58). This makes it very effective, and thus very fast when used with a NNUE network. \\
+The feature set \featureset{All} has all the information of the board, it is easy to implement, cheap to compute which features are active, and it has a low number of feature updates per move (1.58 on average). This makes it very effective, and thus very fast when used with a NNUE network. \\
 
 When building other feature sets, I have underestimated the cost of extra feature updates. The performance hit of making more updates is, in the feature sets I tested, greater than the performance gain of having more information available. In the end, NNUE networks are trying to reduce the number of dot products, which is what each feature update does. \\
 
