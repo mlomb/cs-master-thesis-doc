@@ -4,38 +4,38 @@
 
 \section{Experiments and results}
 
-Now that the engine, the tools and the methodology are defined, we can proceed to the experiments. Experiments will be divided in three sections: motivation, experiment and results. The motivation will explain why I think the experiment is relevant and present possible hypothesis. The experiment will describe configurations to train different models, how they will be evaluated and what are my expectations. The results will present the data, explain whether my hypothesis was correct or not and give a brief conclusion. \\
+Now that the engine, the tools, and the methodology are defined, we can proceed to the experiments. Experiments will be divided in three sections: motivation, experiment, and results. The motivation will explain why I think the experiment is relevant and present possible hypotheses. The experiment will describe configurations to train different models, how they will be evaluated, and what my expectations are. The results will present the data, explain whether my hypothesis was correct or not, and give a brief conclusion. \\
 
 Every model's training configuration is defined by the following variables:
 
 \begin{itemize}
-\item \textbf{Feature set}: Determinates the encoding of the position, and thus the number of inputs of the model. It conditions which patterns the network can learn. Experimenting with this is the main focus of this thesis.
+\item \textbf{Feature set}: Determinates the encoding of the position and thus the number of inputs of the model. It conditions which patterns the network can learn. Experimenting with this is the main focus of this thesis.
 
-\item \textbf{Network architecture}: The size of each layer in the network. The first layer (L1) is the feature transformer and it is efficiently updated. The following layer (L2) should be tiny due the NNUE architecture. The size of the model (its complexity) roughly determinates how many patterns the network can learn.
+\item \textbf{Network architecture}: The size of each layer in the network. The first layer (L1) is the feature transformer, and it is efficiently updated. The following layer (L2) should be tiny due to the NNUE architecture. The size of the model (its complexity) roughly determines how many patterns the network can learn.
 
-\item \textbf{Dataset}: The positions to train on. The dataset used is explained in detail in chapter 5. In summary, there are 48.5 billion positions to train on and the dataset remains constant across all runs. About 5 million positions are used for validation.
+\item \textbf{Dataset}: The positions to train on. The dataset used is explained in detail in chapter 5. In summary, there are 48.5 billion positions to train on, and the dataset remains constant across all runs. About 5 million positions are used for validation.
 
 % no me gusta la palabra computed...
-\item \textbf{Training method}: Can choose to use either score targets or PQR triplets. This determinates the format of the samples as well as the loss function. All experiments will train using score targets, unless specified. Methods were explained in detail in chapter 5.
+\item \textbf{Training method}: Can choose to use either score targets or PQR triplets. This determines the format of the samples as well as the loss function. All experiments will train using score targets, unless specified. Methods were explained in detail in chapter 5.
 
-\item \textbf{Training hyperparameters}: The usual machine learning hyperparameters for training, such as batch size, learning rate and scheduler. I used the same epoch size used in Stockfish, where each epoch is 100 million positions. Each training run will last for 256 epochs, which means the network is trained in 25.6 billion positions (recall that some of the original 48.5 billion dataset are skipped).
+\item \textbf{Training hyperparameters}: The usual machine learning hyperparameters for training, such as batch size, learning rate, and scheduler. I used the same epoch size used in Stockfish, where each epoch is 100 million positions. Each training run will last for 256 epochs, which means the network is trained in 25.6 billion positions (recall that some of the original 48.5 billion positions are skipped).
 \end{itemize}
 
 Once training is completed, the models will be evaluated depending on the experiment. To assess the performance of a model or to compare a set of models, the following indicators are used:
 
 \begin{itemize}
-\item \textbf{Loss}: The training and validation loss are used to detect overfitting and other possible problems. It can't be used to measure the performance of a model. Bigger models must have much better predictions to outweight the cost of having slower inferences and thus less node visits. It's a tradeoff.
+\item \textbf{Loss}: The training and validation loss are used to detect overfitting and other possible problems. It can't be used to measure the performance of a model. Bigger models must have much better predictions to outweigh the cost of having slower inferences and thus fewer node visits. It's a tradeoff.
 
-\item \textbf{Puzzle accuracy}: The percentage of moves correctly predicted by the engine in Lichess puzzles. Each puzzle may contain multiple moves, and the engine has 100ms per move. Since the engine is not that strong, it does not solve 100\% of puzzles like many other engines do, so I expect differences in this metric to be good indicators. A small set of puzzles is used during training as (a very bad) proxy for the engine's strength, to have early insight of the strength and to detect catastrophic failures that did arise. A bigger set of 85000 puzzles is used after training.
+\item \textbf{Puzzle accuracy}: The percentage of moves correctly predicted by the engine in Lichess puzzles. Each puzzle may contain multiple moves, and the engine has 100 milliseconds per move. Since the engine is not that strong, it does not solve 100\% of puzzles like many other engines do, so I expect differences in this metric to be good indicators. A small set of puzzles is used during training as (a very bad) proxy for the engine's strength, to have early insight of the strength and to detect catastrophic failures that did arise. A bigger set of 85,000 puzzles is used after training.
 
 \item \textbf{Relative ELO rating}: A tournament is played between different models to determine their relative strength. Ordo is used to compute the ELO of each model based on the results of the tournament. This is the most important metric, as it is the most reliable way to compare the strength of engines.
 
 % \item \textbf{Inference performance (infs/s)}:
 
-\item \textbf{Training duration}: The amount of time it takes to train a model. This is a one time operation and it does not affect the performance of a model. However, it does condition which and how many experiments I can run.
+\item \textbf{Training duration}: The amount of time it takes to train a model. This is a one-time operation, and it does not affect the performance of a model. However, it does condition which and how many experiments I can run.
 \end{itemize}
 
-All networks that are not in the first experiment (the baseline), are trained 4 times and a tournament is played between the epoch 192 and 256 of each network (8 networks in total). I have observed a difference of 30 elo points between runs, so this step is crucial to have sensible results. In the appendix are the results of each run and tournament.
+All networks that are not in the first experiment (the baseline) are trained four times, and a tournament is played between the epochs 192 and 256 of each network (8 networks in total). I have observed a difference of 30 elo points between runs, so this step is crucial to have sensible results. In the appendix are the results of each run and tournament.
 
 \input{6_1_baseline}
 \input{6_2_axes}
@@ -46,7 +46,7 @@ All networks that are not in the first experiment (the baseline), are trained 4 
 \vspace{0.2cm}
 Up to this point, I have been trying to encode the position of the pieces in different or smarter ways, with no avail. It may seem that the network is able to extract all the information it needs from the most basic \featureset{All} feature set. Making the information available in another form makes no difference, as opposed to what I originally thought.
 
-Further experiments will focus on features not related to the position of the pieces, but to other aspects of the game, inspired by hand crafted evaluations.
+Further experiments will focus on features not related to the position of the pieces but to other aspects of the game, inspired by handcrafted evaluations.
 
 \noindent\rule{\textwidth}{1pt}
 

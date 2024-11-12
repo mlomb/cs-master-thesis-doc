@@ -2,18 +2,18 @@
 \subsection{Conclusions}
 
 
-The main takeaway from this work is that the \featureset{All} feature set is at a sweetspot that is hard to beat. Bigger feature sets are known to be more effective, like \featureset{King-All}, but this work was restricted to feature sets with a few thousands features to be practical to train.
+The main takeaway from this work is that the \featureset{All} feature set is at a sweet spot that is hard to beat. Bigger feature sets are known to be more effective, like \featureset{King-All}, but this work was restricted to feature sets with a few thousand features to be practical to train.
 
-The feature set \featureset{All} has all the information of the board, it is easy to implement, cheap to compute which features are active, and it has a low number of feature updates per move (1.58 on average). This makes it very effective, and thus very fast when used with a NNUE network. \\
+The feature set \featureset{All} has all the information of the board, it is easy to implement, cheap to compute which features are active, and it has a low number of feature updates per move (1.58 on average). This makes it very effective and thus very fast when used with a NNUE network. \\
 
 When building other feature sets, I have underestimated the cost of extra feature updates. The performance hit of making more updates is, in the feature sets I tested, greater than the performance gain of having more information available. In the end, NNUE networks are trying to reduce the number of dot products, which is what each feature update does. \\
 
 It has been a few years since the introduction of NNUE networks and feature sets, in particular variations of the \featureset{King-All} feature set, which uses at its core the \featureset{All} feature set. 
-The community has not found a better feature set or additional blocks of features to add alongside it. Not only new features need to improve the network prediction, but also have few updates per move and be fast to compute, which is a hard balance to achieve.
-To make it worse, feature engineering in this kind of taks is very slow. Each iteration takes hours (or days) of training and evaluations to see if there is a (usually small) improvement. \\
+The community has not found a better feature set or additional blocks of features to add alongside it. Not only new features need to improve the network prediction, but they also need to make few updates per move and be fast to compute, which is a hard balance to achieve.
+To make it worse, feature engineering in this kind of task is very slow. Each iteration takes hours (or days) of training and evaluations to see if there is a (usually small) improvement. \\
 
 The PQR method showed promising results. A network can be trained with this method, but since the data is inadequate, it is not able to reach the performance of networks trained with target scores.
-Fine-tuning existing networks with PQR has shown to be effective, it gives a bump in performance and steadly improves the network. However, more research is needed due the unexpected surge in rating after the first epoch.
+Fine-tuning existing networks with PQR has shown to be effective; it gives a bump in performance and steadly improves the network. However, more research is needed due to the unexpected surge in rating after the first epoch.
 
 \newpage
 \subsection{Future work}
@@ -23,7 +23,7 @@ Training NNUEs is a daunting task, and there are lots of variables that affect d
 The following are some key points that could be explored in a future work: \\
 
 % not much is known what makes a dataset good
-\textbf{Dataset:} A great deal of effort is put into good training data. The training data I used was generated using very specific parameters: depth 9, 5000 nodes and selected opening books. It is known that higher depth data results in worse networks. It is believed that the reason is that data becomes too hard for the network to learn. Also datasets generated with different books also affect the performance of the network.  Generating new data is a very slow process so it is harder to experiment with, which means that not that much reasearch has been done in this area. \\
+\textbf{Dataset:} A great deal of effort is put into good training data. The training data I used was generated using very specific parameters: depth 9, 5000 nodes, and selected opening books. It is known that higher depth data results in worse networks. It is believed that the reason is that data becomes too hard for the network to learn. Also datasets generated with different books also affect the performance of the network.  Generating new data is a very slow process, so it is harder to experiment with, which means that not that much research has been done in this area. \\
 Filtering of the data (skipping checks, captures, etc.) also affects the performance dramatically, but it is a lot easier to work with since it can be done after the data has been generated. New filtering conditions can be tried. \\
 
 \textbf{Alternative to PQR:} Instead of the loss function used to train PQR, the triplet loss function could be tried, where the anchor is the $P$ position, the positive is the observed position $Q$ and the negative is the random position $R$. I don't expect this to improve that much, but it is worth trying. \\
@@ -31,4 +31,4 @@ Filtering of the data (skipping checks, captures, etc.) also affects the perform
 \textbf{Network architecture:} The architecture of NNUE-like networks has gone through multiple iterations since its inception. This work focused on the first and most basic iteration of it. Maybe it is worth exploring more complex architectures with a fixed feature set rather than a fixed architecture with a variable feature set.
 Almost certainly try lower values of L2, which may bring better results. \\
 
-\textbf{Feature sets:} There are many aspects of the game that could be tried as features. A good place to start looking for new features are existing handcrafted evaluations. I had many ideas for new feature sets but I had to discard them because the thesis was already too long.
+\textbf{Feature sets:} There are many aspects of the game that could be tried as features. A good place to start looking for new features are existing handcrafted evaluations. I had many ideas for new feature sets, but I had to discard them because the thesis was already too long.

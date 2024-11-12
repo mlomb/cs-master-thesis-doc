@@ -2,11 +2,11 @@
 
 \section{Appendix}
 
-The experiments are all run in the same hardware: Intel 14900K CPU (24 cores, 32 threads) for dataset generation, batching and evaluation, and a single NVIDIA RTX 4090 24GB GPU for training.
+The experiments are all run on the same hardware: an Intel 14900K CPU (24 cores, 32 threads) for dataset generation, batching, and evaluation, and a single NVIDIA RTX 4090 24GB GPU for training.
 
 Runtime may be affected by other processes running on the machine. They are listed here for reference. \\
 
-Tournaments are held with 100ms per move, and the opening book used is \path{UHO_Lichess_4852_v1.epd}. Each network plays \textbf{at least} 10000 games. Ratings are computed using Ordo, relative to the average (rating=0 is the average) or to the best network (rating=0 is the best network), depending on the experiment. \\
+Tournaments are held with 100 milliseconds per move, and the opening book used is \path{UHO_Lichess_4852_v1.epd}. Each network plays \textbf{at least} 10000 games. Ratings are computed using Ordo, relative to the average (rating=0 is the average) or to the best network (rating=0 is the best network), depending on the experiment. \\
 
 \subsection{Baseline}
 \label{appendix:baseline}
@@ -54,7 +54,7 @@ Tournaments are held with 100ms per move, and the opening book used is \path{UHO
 \qquad
 \subfloat[\centering $\black$ Black]{{\includegraphics[width=4.65cm]{../assets/results/piece_weights/black_knight_weights.png} }} \\
 
-\caption{Weights of different neurons in the L1 layer, which are connected to features in \featureset{All} with different roles. The intensity represents the weight value, and the color represents the sign. The number is the feature index, specifically \featureset{VH} instead of \featureset{HV} (both are \featureset{All}), because it was prior to the first experiment. Refer to section \ref{sec:axis_encoding}.}
+\caption{Weights of different neurons in the L1 layer that are connected to features in \featureset{All} with different roles. The intensity represents the weight value, and the color represents the sign. The number is the feature index, specifically \featureset{VH} instead of \featureset{HV} (both are \featureset{All}), because it was prior to the first experiment. Refer to section \ref{sec:axis_encoding}.}
 \end{figure}
 
 

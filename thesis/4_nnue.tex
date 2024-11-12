@@ -6,18 +6,18 @@ NNUE operates on the following principles:
 
 \begin{itemize}
     \item \textbf{Input sparsity}: The network should have a relatively low amount of non-zero inputs, determined by the chosen feature set. The presented feature sets have between 0.1\% and 2\% of non-zero inputs for a typical position. Having a low amount of non-zero inputs places a low upper bound on the time required to evaluate the network in its entirety, which can happen using some feature sets like \featureset{King-All} that triggers a complete refresh when the king is moved.
-    \item \textbf{Efficient updates}: From one evaluation to the next, the number of inputs changes should be as low as possible. This allows for the most expensive part of the network to be efficiently updated, instead of recomputed from scratch.
-    \item \textbf{Simple architecture}: The network should be composed of a few and simple operators, that can be efficiently implemented with low-precision arithmetic in integer domain using CPU hardware (quantization).
+    \item \textbf{Efficient updates}: From one evaluation to the next, the number of input changes should be as low as possible. This allows for the most expensive part of the network to be efficiently updated instead of recomputed from scratch.
+    \item \textbf{Simple architecture}: The network should be composed of a few and simple operators that can be efficiently implemented with low-precision arithmetic in integer domain using CPU hardware (quantization).
 
 \end{itemize}
 
-There is a tradeoff between inference time and quality of the predictions, which affect the amount of nodes evaluated. If the inference is faster, more nodes can be evaluated thus reaching deeper in the search tree. Having higher quality predictions, which usually comes with a more complex model and/or feature set, can make stronger moves with shallower searches, and may improve prunning.
+There is a tradeoff between inference time and quality of the predictions, which affect the number of nodes evaluated. If the inference is faster, more nodes can be evaluated, thus reaching deeper in the search tree. Having higher quality predictions, which usually come with a more complex model and/or feature set, can make stronger moves with shallower searches and may improve prunning.
 
 Models must be so much better to compensate the slowdown in inference when using bigger models or more complex feature sets. This is a tradeoff that will appear further in the experiments.
 
 \subsection{Layers}
 
-For this thesis, I have chosen to use a very simple NNUE architecture, which consist of two linear (fully connected) layers and clipped ReLU activations. In the literature, there are other architectures that make use of polling layers, sigmoid activations and others. Since this work is about experimenting with feature sets, I have chosen to stick with something simple that has been proven to achieve good results.
+For this thesis, I have chosen to use a very simple NNUE architecture, which consists of two linear (fully connected) layers and clipped ReLU activations. In the literature, there are other architectures that make use of polling layers, sigmoid activations, and others. Since this work is about experimenting with feature sets, I have chosen to stick with something simple that has been proven to achieve good results.
 
 \paragraph[short]{Linear layer} A linear layer is a matrix multiplication followed by a bias addition. It takes \textbf{in\_features} input values and produces \textbf{out\_features} output values. The operation is $\bm{y} = \bm{W} \bm{x} + \bm{b}$, where:
 
@@ -39,15 +39,15 @@ If we call $\bm{A_i}$ the $i$-th column of the weight matrix $\bm{W}$, the opera
 \label{fig:linear_comparison}
 \end{figure}
 
-In the case of the first layer, the input is a very sparse one-hot encoded vector. This means that very few columns will have to be processed and the multiplication can be skipped altogether, due all inputs being either 0 or 1. Skipping the multiplication reduces the operations to only additions and subtractions.
+In the case of the first layer, the input is a very sparse one-hot encoded vector. This means that very few columns will have to be processed, and the multiplication can be skipped altogether due to all inputs being either 0 or 1. Skipping the multiplication reduces the operations to only additions and subtractions.
 
 \paragraph[short]{Clipped ReLU} This is a simple activation that clips the output in the range $[0, 1]$. The operation is $\bm{y=\min(\max(x,0),1)}$.
-The output of this activation function is the input for the next layer, and because of the aggresive \textit{quantization} that will be described later, it is necessary to restrain the values so it does not overflow. \\
+The output of this activation function is the input for the next layer, and because of the aggressive \textit{quantization} that will be described later, it is necessary to restrain the values so it does not overflow. \\
 
 \subsection{Efficient updates}
 
 When running a depth-first search algorithm, the state of the position is updated every time the algorithm \textit{makes} and \textit{unmakes} moves, usually before and after the recursion.
-NNUEs are designed to work with this kind of search, since every time the algorithm \textit{makes} (or \textit{unmakes}) a move, the changes in the position are minimal (at most two pieces are affected in \featureset{All}), meaning that the amount of features becoming active or inactive is minimal as well. This is depicted in figure \ref{fig:updates_tree}.
+NNUEs are designed to work with this kind of search since every time the algorithm \textit{makes} (or \textit{unmakes}) a move, the changes in the position are minimal (at most two pieces are affected in \featureset{All}), meaning that the amount of features becoming active or inactive is minimal as well. This is depicted in figure \ref{fig:updates_tree}.
 
 \begin{figure}[H]
 \centering
@@ -87,9 +87,9 @@ NNUEs are designed to work with this kind of search, since every time the algori
 \label{fig:updates_tree}
 \end{figure}
 
-To take advantage of this during search, instead of computing all the features active in a position and then evaluate the network in its entirety, we can \textbf{accumulate} the output of the first linear layer and update it with when the position changes. Linear layers can be computed adding the corresponding columns of the weight matrix into the output, so when a feature becomes active or inactive, we can add or subtract the corresponding column to the output. When the evaluation is needed, only the next layers (usually small) have to be computed. \\
+To take advantage of this during search, instead of computing all the features active in a position and then evaluate the network in its entirety, we can \textbf{accumulate} the output of the first linear layer and update it when the position changes. Linear layers can be computed by adding the corresponding columns of the weight matrix into the output, so when a feature becomes active or inactive, we can add or subtract the corresponding column from the output. When the evaluation is needed, only the next layers (usually small) have to be computed. \\
 
-Recall that the way I defined feature sets, they always encode the position from one white's point of view. This means that its not possible to use the same \textbf{accumulator} for both players. So when running the search, we have to keep two accumulators, one for white and one for black, where the black board is flipped and has the colors swapped to match the point of view.
+Recall that the way I defined feature sets, they always encode the position from white's point of view. This means that its not possible to use the same \textbf{accumulator} for both players. So when running the search, we have to keep two accumulators, one for white and one for black, where the black board is flipped and has the colors swapped to match the point of view.
 
 % [agregar grafico de black → white board → encode, para mostrar como se flipea / swapea. arriba el white → encode; poner los features activos quizas?]
 
@@ -150,18 +150,18 @@ Recall that the way I defined feature sets, they always encode the position from
 %\end{figure}
 
 
-During search, the first layer is replaced by two accumualtors to take advantage of this. Figure \ref{fig:incr_update} depicts how the output of both accumulators is concatenated depending on which player is moving, to later be passed through the rest of the network which is computed as usual. 
+During search, the first layer is replaced by two accumualtors to take advantage of this. Figure \ref{fig:incr_update} depicts how the output of both accumulators is concatenated depending on which player is moving, to later be passed through the rest of the network, which is computed as usual. 
 
 \begin{figure}[H]
 \centering
 \makebox[\textwidth]{\includegraphics[width=\textwidth]{../assets/nnue/incremental_update.pdf}}
-\caption{Concatenation of the first layer's output after a move is made. Inspired in a CPW figure.}
+\caption{Concatenation of the first layer's output after a move is made. Inspired by a CPW figure.}
 \label{fig:incr_update}
 \end{figure}
 
 \subsection{Network}
 
-The network will be composed of three linear layers $L_1$ through $L_3$, each but the last one followed by a clipped ReLU activation $C_1$ and $C_2$. The network has two inputs: it takes the encoding (feature set) of a position from each player's point of view. Each encoding is passed through the same $L_1$ layer (same weights) and then the output is concatenated before passing it through the rest of the network. The first layer can be seen as a feature transformer, and it must share weights to allow for efficient updates. The network can be described as follows: \\
+The network will be composed of three linear layers $L_1$ through $L_3$, each but the last one followed by a clipped ReLU activation $C_1$ and $C_2$. The network has two inputs: it takes the encoding (feature set) of a position from each player's point of view. Each encoding is passed through the same $L_1$ layer (same weights), and then the output is concatenated before passing it through the rest of the network. The first layer can be seen as a feature transformer, and it must share weights to allow for efficient updates. The network can be described as follows: \\
 
 $\bm{N}$: number of features in the feature set
 
@@ -193,17 +193,17 @@ The size of each layer is not fixed since it is a hyperparameter I will experime
 
 Quantization is the process of converting the operations and parameters of a network to a lower precision. It is a step performed after all training has been done, which do happen in float domain. Floating point operations are too slow to achieve acceptable performance, as it sacrifices too much speed. This was necessary to implement to have a working engine.
 
-Quantizing the network to integer domain will inevitable introduce some error, but it far outweights the performance gain. In general, the deeper the network, the more error is accumulated, but since NNUEs are very shallow by design, the error is negligible. At the end of the chapter I do an analysis of the error introduced by quantization.
+Quantizing the network to integer domain will inevitable introduce some error, but it far outweighs the performance gain. In general, the deeper the network, the more error is accumulated, but since NNUEs are very shallow by design, the error is negligible. At the end of the chapter, I do an analysis of the error introduced by quantization.
 
-Since the objective is to take advantage of modern CPUs that allow doing low-precision integer arithmetic in parallel with 8, 16, 32 or even 64 8-bit integer values at a time, we want to use the smallest integer type possible everywhere, to process more values at once.
+Since the objective is to take advantage of modern CPUs that allow doing low-precision integer arithmetic in parallel with 8, 16, 32, or even 64 8-bit integer values at a time, we want to use the smallest integer type possible everywhere to process more values at once.
 
 \newpage
 \subsubsection{Stockfish quantization scheme}
 
 \def\int#1{\texttt{int#1}}
 
-In this thesis, I will use the same quantization scheme used in the engine Stockfish \cite{nnue-pytorch}, due its simplicity and it has been battle tested. It uses \int{8} $[-128, 127]$ for inputs and weights, and \int{16} $[-32768, 32767]$ where \int{8} does not fit the range of values we need.
-To convert the float values to integer, we need to multiply the weights and biases by some constant to translate them to a different range of values. Each layer is different, so I'll go through each one.
+In this thesis, I will use the same quantization scheme used in the engine Stockfish \cite{nnue-pytorch}, due to its simplicity, and it has been battle tested. It uses \int{8} $[-128, 127]$ for inputs and weights, and \int{16} $[-32768, 32767]$ where \int{8} does not fit the range of values we need.
+To convert the float values to integers, we need to multiply the weights and biases by some constant to translate them to a different range of values. Each layer is different, so I'll go through each one.
 
 %\begin{figure}[H]
 %\centering
@@ -212,7 +212,7 @@ To convert the float values to integer, we need to multiply the weights and bias
 %\label{fig:quantization}
 %\end{figure}
 
-\paragraph[short]{Input} In float domain inputs are either $0.0$ or $1.0$, and since they are quantized to \int{8} we must scale them by $s_a=127$ (activation scale), so inputs are either $0$ or $127$. During inference, the input values are not computed since the first layer is an accumulator. However it is important to note that the rows being accumulated are scaled by $s_a=127$.
+\paragraph[short]{Input} In float domain, inputs are either $0.0$ or $1.0$, and since they are quantized to \int{8} we must scale them by $s_a=127$ (activation scale), so inputs are either $0$ or $127$. During inference, the input values are not computed since the first layer is an accumulator. However, it is important to note that the rows being accumulated are scaled by $s_a=127$.
 
 \paragraph[short]{ClippedReLU} The output of the activation in float domain is in the range $[0, 1]$ and we want to use \int{8} in the quantized version, so we can multiply by $s_a=127$ and clamp in the range [0, 127]. The input data type may change depending on the previous layer: if it comes from the accumulator, it will be \int{32}, and if it comes from a linear layer, it will be \int{16}.
 
@@ -223,11 +223,11 @@ To convert the float values to integer, we need to multiply the weights and bias
 
 
 
-The purpose of this layer is to accumulate rows of the first layer's weight matrix, which is stored in \int{16}. The values are stored in column-major order so a single row is contiguous in memory. Since we are accumulating potentially hundreds of values which are stored in \int{16} and scaled by $s_a=127$, we must accumulate in \int{32} to avoid overflows. The output of this layer will be the input for the ClippedReLU activation.
+The purpose of this layer is to accumulate rows of the first layer's weight matrix, which is stored in \int{16}. The values are stored in column-major order, so a single row is contiguous in memory. Since we are accumulating potentially hundreds of values, which are stored in \int{16} and scaled by $s_a=127$, we must accumulate in \int{32} to avoid overflows. The output of this layer will be the input for the ClippedReLU activation.
 
 \paragraph[short]{Linear layer (L2 and L3)} The input to this layer will be scaled to the activation range because it takes the output of the previous ClippedReLU activation: $s_a \bm{x}$. We want the output to also be scaled to the activation range so it can be passed to the next: $s_a \bm{y}$.
 
-To convert the weights to \int{8}, we must scale them by some factor $s_W=64$ (value used in Stockfish, efficient in SIMD because is just a shift): $s_W \bm{W}$. The value $s_W$ depends on how much precision we want to keep, but if it is too large the weights will be limited in magnitude. The range of the weights in floating point is then determined by \mbox{$\pm \frac{s_a}{s_W}=\frac{127}{64}=1.984375$}, and to make sure weights don't overflow, it is necessary to clip them to this range during training. The value $s_W$ also determinates the minimum representable weight step, which is $\frac{1}{s_W}=\frac{1}{64}=0.015625$.
+To convert the weights to \int{8}, we must scale them by some factor $s_W=64$ (value used in Stockfish, efficient in SIMD because is just a shift): $s_W \bm{W}$. The value $s_W$ depends on how much precision we want to keep, but if it is too large, the weights will be limited in magnitude. The range of the weights in floating point is then determined by \mbox{$\pm \frac{s_a}{s_W}=\frac{127}{64}=1.984375$}, and to make sure weights don't overflow, it is necessary to clip them to this range during training. The value $s_W$ also determines the minimum representable weight step, which is $\frac{1}{s_W}=\frac{1}{64}=0.015625$.
 
 The linear layer operation with the scaling factors applied looks like:
 
@@ -273,4 +273,4 @@ To make sure the quantization is working as expected, I compared the actual outp
 
 In figure \ref{fig:quant_errors} we can see that the distribution of the evaluation of both models is almost identical, indicating that the implementation is correct.
 
-To measure the error introduced it is better to do it in WDL-space, since we can make sense of values in that space. The errors are near zero, and almost all errors are within 0.03 units, which is a 3\% difference in winrate. The Stockfish team has reported that errors in quantization up to 5\% do not affect the engine's strength \footnote{\href{https://discord.com/channels/435943710472011776/718853716266188890/814260897040039977}{Sopel's message on Discord about this} (official Stockfish server).}.
+To measure the error introduced, it is better to do it in WDL-space since we can make sense of values in that space. The errors are near zero, and almost all errors are within 0.03 units, which is a 3\% difference in winrate. The Stockfish team has reported that errors in quantization up to 5\% do not affect the engine's strength \footnote{\href{https://discord.com/channels/435943710472011776/718853716266188890/814260897040039977}{Sopel's message on Discord about this} (official Stockfish server).}.

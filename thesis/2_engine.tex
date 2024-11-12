@@ -1,12 +1,12 @@
 \section{Engine implementation}
 
-Building chess engines is a very discussed topic in the history of chess and thus very well documented. The Chess Programming Wiki (CPW) \cite{cpw} is a well known source of information to reference, which I will base my engine on. I aim to build a single-threaded classic engine and only make use of the most prominent optimizations to keep it simple. The engine strength is not that relevant, as it is only a tool to measure the relative performance of board encodings. However, a competent one is required. \\
+Building chess engines is a very discussed topic in the history of chess and thus very well documented. The Chess Programming Wiki (CPW) \cite{cpw} is a well-known source of information to reference, which I will base my engine on. I aim to build a single-threaded classic engine and only make use of the most prominent optimizations to keep it simple. The engine strength is not that relevant, as it is only a tool to measure the relative performance of board encodings. However, a competent one is required. \\
 
-Classic chess engines are composed of two main components: \textbf{the search} and \textbf{the evaluation}. The search is the process of exploring the tree of possible moves, which is what this chapter is about. The evaluation determines how good the positions are for who plays. As I mentioned in the introduction, classic engines used to use hand-crafted evaluations based on human knowledge. In my case, I will replace it entirely with a neural network, explained in the following chapters.
+Classic chess engines are composed of two main components: \textbf{the search} and \textbf{the evaluation}. The search is the process of exploring the tree of possible moves, which is what this chapter is about. The evaluation determines how good the positions are for who plays. As I mentioned in the introduction, classic engines used to use handcrafted evaluations based on human knowledge. In my case, I will replace it entirely with a neural network, explained in the following chapters.
 
 \subsection{Minimax search}
 
-A position $P$ in chess is the state of the board along with any relevant information, like castling rights, en passant and the 50-move clock. Given a position $P$, we can call $f(P)$ its evaluation, a number that provides an assessment of how good the position is, computed either by a hand-crafted function or a neural network.
+A position $P$ in chess is the state of the board along with any relevant information, like castling rights, en passant, and the 50-move clock. Given a position $P$, we can call $f(P)$ its evaluation, a number that provides an assessment of how good the position is, computed either by a handcrafted function or a neural network.
 
 One approach to approximate a good move given a reasonable function $f$ could be to evaluate all possible positions that can be reached with a single move and choose the one that leads to the highest evaluation for the player who made the move. This idea can be extended to consider actions taken by the other player, and so on, to a fixed depth. Formally, this is called the minimax search algorithm \cite{minimax-survey:1995}.
 
@@ -97,13 +97,13 @@ child {
 
 The algorithm recursively explores the tree to a fixed depth, evaluating the positions at the leaves with $f$. The evaluation is then propagated up the tree, alternating between maximizing and minimizing nodes, until it reaches the root node. After computing the whole tree to a fixed depth, the \enquote{best} move is defined by the move from the root node that maximizes the recursively computed evaluation (maximizing node).
 
-Usually we do not want to run the search to a fixed depth, but rather for a fixed amount of time. The algorithm itself runs to a fixed depth, so what we can do is to run the search in a loop, staring from depth 1 and increasing it by one each iteration until the time runs out. This way the \enquote{best} move found so far is always available. Note that we can not draw conclusions from any unfinished search, so the \enquote{best} move is the one found at the last iteration. This approach is called iterative deepening, and when combined with a transposition table (a cache for evaluations) is very effective, making following iterations faster. \\
+Usually we do not want to run the search to a fixed depth, but rather for a fixed amount of time. The algorithm itself runs to a fixed depth, so what we can do is run the search in a loop, staring from depth 1 and increasing it by one each iteration until the time runs out. This way the \enquote{best} move found so far is always available. Note that we cannot draw conclusions from any unfinished search, so the \enquote{best} move is the one found at the last iteration. This approach is called iterative deepening, and when combined with a transposition table (a cache for evaluations), it is very effective, making following iterations faster. \\
 
-My implementation uses a variation of the minimax algorithm called \textit{negamax}. Negamax is a simplification of minimax that takes advantage of the zero-sum property of chess, meaning that an evaluation for a player is equivalent to the negation of the evaluation in the opponent's point of view. Instead of having two kinds of nodes, all nodes are maximizing nodes and the evaluation is negated after the recursion. This simplifies the implementation.
+My implementation uses a variation of the minimax algorithm called \textit{negamax}. Negamax is a simplification of minimax that takes advantage of the zero-sum property of chess, meaning that an evaluation for a player is equivalent to the negation of the evaluation from the opponent's point of view. Instead of having two kinds of nodes, all nodes are maximizing nodes, and the evaluation is negated after the recursion. This simplifies the implementation.
 
 \subsection{Quiescence search}
 
-The search algorithm runs to a fixed depth, which causes a horizon effect. The horizon effect manifests when the search stops at a position where a negative event (such a capture) is inevitable but due the fixed depth, the search results in weaker moves in an effort to avoid the inevitable, prefering branches where the negative event (the capture) has not happened yet.
+The search algorithm runs to a fixed depth, which causes a horizon effect. The horizon effect manifests when the search stops at a position where a negative event (such as a capture) is inevitable, but due to the fixed depth, the search results in weaker moves in an effort to avoid the inevitable, preferring branches where the negative event (the capture) has not happened yet.
 
 \begin{figure}[H]
 \centering
@@ -153,17 +153,17 @@ child{
 \node[text=blue] at($(2-0)+(-1.8,-0.75)$){\makecell{horizon}};
 
 \end{tikzpicture}
-\caption{Demonstration of the horizon effect (not a minimax tree, only showing opponent nodes), when the search stops at depth 2. The capture PxQ (\sympawn\ Pawn takes \symqueen\ Queen) is inevitable. In the \textcolor{red}{red branches}, the capture has already happened. In the \textcolor{ForestGreen}{green branches}, the capture has not happened yet. Evaluations at the leaves favour the \textcolor{ForestGreen}{green positions} because those have an extra \symqueen\ Queen. Since losing the piece is inevitable, \textcolor{ForestGreen}{green positions} may actually be weaker than \textcolor{red}{red positions}, but the search does not know that.}
+\caption{Demonstration of the horizon effect (not a minimax tree, only showing opponent nodes) when the search stops at depth 2. The capture PxQ (\sympawn\ Pawn takes \symqueen\ Queen) is inevitable. In the \textcolor{red}{red branches}, the capture has already happened. In the \textcolor{ForestGreen}{green branches}, the capture has not happened yet. Evaluations at the leaves favor the \textcolor{ForestGreen}{green positions} because those have an extra \symqueen\ Queen. Since losing the piece is inevitable, \textcolor{ForestGreen}{green positions} may actually be weaker than \textcolor{red}{red positions}, but the search does not know that.}
 \end{figure}
 
-To fix this, instead of returning the evaluation of the position at the leaves, an additional smaller search is done which only considers captures. This way the search can continue until a \enquote{quiet} position is reached, where no captures are available.
+To fix this, instead of returning the evaluation of the position at the leaves, an additional smaller search is done that only considers captures. This way the search can continue until a \enquote{quiet} position is reached, where no captures are available.
 
-Since most of the positions the network will be evaluating are quiet due the quiescence search, it is important to make sure that the training set reflect that. Later on, only positions that are quiet will be used to train the network.
+Since most of the positions the network will be evaluating are quiet due to the quiescence search, it is important to make sure that the training set reflects that. Later on, only positions that are quiet will be used to train the networks.
 
 \newpage
 \subsection{Optimizations}
 
-Many optimizations were made to the engine to make it reach a decent depth in a reasonable time, which makes the engine stronger. There are no novel improvements, most are well-known techniques that have been used in engines for decades and can be found in the Chess Programming Wiki \cite{cpw}.
+Many optimizations were made to the engine to make it reach a decent depth in a reasonable time, which makes the engine stronger. There are no novel improvements; most are well-known techniques that have been used in engines for decades and can be found in the Chess Programming Wiki \cite{cpw}.
 
 The most prominent optimizations implemented are:
 
@@ -202,10 +202,10 @@ Many other optimizations were made: history moves, killer moves, late move reduc
 
 The engine is implemented in the Rust programming language. It uses the standard UCI protocol \footnote{Universal Chess Interface specification can be found \href{https://www.shredderchess.com/chess-features/uci-universal-chess-interface.html}{here}.} to communicate via standard input/output.
 
-The most performance critical part of the engine aside from the evaluation is move generation, that is, given a position, list all available moves and make them.
-Fortunately there is a battle-tested library for it called \textit{shakmaty}. The library provides a copy-make interface instead of a make-unmake one, so I have to rely on a stack of positions when doing recursion.
+The most performance-critical part of the engine aside from the evaluation is move generation, that is, given a position, list all available moves and make them.
+Fortunately, there is a battle-tested library for it called \textit{shakmaty}. The library provides a copy-make interface instead of a make-unmake one, so I have to rely on a stack of positions when doing recursion.
 
 Time control is hard-coded to use the increment plus 2\% of the remaining time per move. Experiments run at a fixed time per move, so this is used in the Lichess arena.
 
-By default the engine uses 128 MB of memory for the transposition table. This value will be used throughout the experiments and in the arena.
+By default, the engine uses 128 MB of memory for the transposition table. This value will be used throughout the experiments and in the arena.
 

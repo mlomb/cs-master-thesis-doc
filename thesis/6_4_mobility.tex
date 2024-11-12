@@ -1,7 +1,7 @@
 
 \subsection{Mobility}
 
-\textbf{Motivation.} Mobility in chess is a measure of the available moves a player can make in a given position. The idea is that if a player has more available moves, the position is stronger. In \cite{slater:1950} it was shown that there is a strong correlation between a player's mobility and the number of games won. This metric has been used extensively in hand crafted evaluations, and I propose to include this information as features for the neural network. \\
+\textbf{Motivation.} Mobility in chess is a measure of the available moves a player can make in a given position. The idea is that if a player has more available moves, the position is stronger. In \cite{slater:1950} it was shown that there is a strong correlation between a player's mobility and the number of games won. This metric has been used extensively in handcrafted evaluations, and I propose to include this information as features for the neural network. \\
 
 \textbf{Experiment.} There are two ways to go about encoding mobility:
 
@@ -67,7 +67,7 @@ Board &
 \end{figure}
 
 
-\item \textbf{Counts (per piece type):} Use the number of available moves per piece type as features. This means having a feature for each possible count value, which are a lot less feature updates. To find which values to include as features I computed the total mobility for each piece role in 2 billion boards, shown in figure \ref{fig:mobility}. From the data we can extract the range of values to use as features:
+\item \textbf{Counts (per piece type):} Use the number of available moves per piece type as features. This means having a feature for each possible count value, which are a lot less feature updates. To find which values to include as features I computed the total mobility for each piece role in 2 billion boards, shown in figure \ref{fig:mobility}. From the data, we can extract the range of values to use as features:
 
 \begin{table}[H]
 \centering
@@ -88,7 +88,7 @@ Board &
 \begin{figure}[H]
 \centering
 \makebox[\textwidth]{\includegraphics[width=\textwidth]{./dynamic/output/mobility.pdf}}
-\caption{Total mobility values for each piece on the board. Computed using 2 billion boards. The value 0 for the \symknight\ Knight, \symbishop\ Bishop, \symrook\ Rook and \symqueen\ Queen has been excluded from the plot, as it is very common.}
+\caption{Total mobility values for each piece on the board. Computed using 2 billion boards. The value 0 for the \symknight\ Knight, \symbishop\ Bishop, \symrook\ Rook, and \symqueen\ Queen has been excluded from the plot, as it is very common.}
 \label{fig:mobility}
 \end{figure}
 \end{itemize}
@@ -120,11 +120,11 @@ a piece of role $r$ and color $c$ is $m$
 \end{tabular}
 \end{table}
 
-The blocks will be combined with the \featureset{All} feature set. Neither of the blocks can be used alone, since they do not carry the information to deduce every piece on the board (trivially).
+The blocks will be combined with the \featureset{All} feature set. Neither of the blocks can be used alone since they do not carry the information to deduce every piece on the board (trivially).
 
 The feature sets to be trained and evaluated are \featureset{All} $\oplus$ \featureset{MB} (1536 features) and \featureset{All} $\oplus$ \featureset{MC} (974 features). Like prior experiments, a network will be trained for each feature set and evaluated in a tournament. \\
 
-\textbf{Results.} The results in table \ref{tab:mobility_results} show that the blocks did not provide features of enough quality to improve the network predictions enough to overcome the cost of making more feature updates. I have underestimated the cost of a feature update, that was not a problem in previous experiments. The block \featureset{MB} has, in average, 10.03 feature updates per move on average and the block \featureset{MC} has 3.82 (see Appendix \ref{appendix:fs}). In comparison, the \featureset{All} feature set has 1.58 feature updates per move on average. Even though the block \featureset{MB} has almost 3 times the number of feature updates, it has a better performance than \featureset{MC}. This is attributed to having a 7\% lower loss, which compensates the cost of the updates. \\
+\textbf{Results.} The results in table \ref{tab:mobility_results} show that the blocks did not provide features of enough quality to improve the network predictions enough to overcome the cost of making more feature updates. I have underestimated the cost of a feature update; that was not a problem in previous experiments. The block \featureset{MB} has, on average, 10.03 feature updates per move on average, and the block \featureset{MC} has 3.82 (see Appendix \ref{appendix:fs}). In comparison, the \featureset{All} feature set has 1.58 feature updates per move on average. Even though the block \featureset{MB} has almost 3 times the number of feature updates, it has better performance than \featureset{MC}. This is attributed to having a 7\% lower loss, which compensates the cost of the updates. \\
 
 \begin{table}[H]
 \caption{Mobility encodings results}

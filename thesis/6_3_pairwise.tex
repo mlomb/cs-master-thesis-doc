@@ -1,8 +1,8 @@
 \subsection{Pairwise axes}
 
-\textbf{Motivation.} Imagine that in a file there are three pieces: an enemy $\symrook$ Rook, a $\sympawn$ Pawn and a $\symknight$ Knight. There are many possible configurations for these pieces on the file. The influence in the evaluation by those pieces is very related with the position of pieces everywhere else, however I want to see if to understand a single file, the actual position of the pieces is less important than the relative order between them: $\sympawn\symknight\symrook, \sympawn\symrook\symknight, \symknight\sympawn\symrook, \symknight\symrook\sympawn, \symrook\sympawn\symknight, \symrook\symknight\sympawn$. In other words, provide the network features based on the order of the pieces instead of the actual position. This way, I believe that the network can pick up whether pieces are pinned, protected by other pieces or can attack other pieces.
+\textbf{Motivation.} Imagine that in a file there are three pieces: an enemy $\symrook$ Rook, a $\sympawn$ Pawn and a $\symknight$ Knight. There are many possible configurations for these pieces on the file. The influence in the evaluation by those pieces is very related to the position of pieces everywhere else. However, I want to see if to understand a single file, the actual position of the pieces is less important than the relative order between them: $\sympawn\symknight\symrook, \sympawn\symrook\symknight, \symknight\sympawn\symrook, \symknight\symrook\sympawn, \symrook\sympawn\symknight, \symrook\symknight\sympawn$. In other words, provide the network features based on the order of the pieces instead of the actual position. This way, I believe that the network can pick up whether pieces are pinned, protected by other pieces, or can attack other pieces.
 
-I propose to make a feature for each possible pair of adjacent role and color over an axis. Lets consider the \textit{a} file (vertical axis), following the example before:
+I propose to make a feature for each possible pair of adjacent role and color over an axis. Let's consider the \textit{a} file (vertical axis), following the example before:
 
 \storechessboardstyle{smallvert}{
     tinyboard,
@@ -93,9 +93,9 @@ $ \rightarrow$
 \end{tabular}
 \end{figure}
 
-There are many configurations for the three pieces and the idea is to collapse all of these into two features: the pair of pieces ($\symrook$$\black$, $\sympawn$$\white$) and the pair of pieces ($\sympawn$$\white$, $\symknight$$\white$). This way, the network can learn that the $\symrook$ Rook can capture the $\sympawn$ Pawn, and that the $\symknight$ Knight is protected behind the $\sympawn$ Pawn. The network can learn this situation using two features instead of learning it for every possible configuration.
+There are many configurations for the three pieces, and the idea is to collapse all of these into two features: the pair of pieces ($\symrook$$\black$, $\sympawn$$\white$) and the pair of pieces ($\sympawn$$\white$, $\symknight$$\white$). This way, the network can learn that the $\symrook$ Rook can capture the $\sympawn$ Pawn, and that the $\symknight$ Knight is protected behind the $\sympawn$ Pawn. The network can learn this situation using two features instead of learning it for every possible configuration.
 
-In contrast to the previous experiment where the features were more general (\textit{\enquote{there is a $\white$ White $\rook$ Rook in the 4th rank}}) the proposed features here are more specific: \textit{\enquote{there is a $\black$ Black $\rook$ Rook next to a $\white$ White $\sympawn$ Pawn in the \enquote{a} file}}. \\
+In contrast to the previous experiment where the features were more general (\textit{\enquote{there is a $\white$ White $\rook$ Rook in the 4th rank}}), the proposed features here are more specific: \textit{\enquote{there is a $\black$ Black $\rook$ Rook next to a $\white$ White $\sympawn$ Pawn in the \enquote{a} file}}. \\
 
 \textbf{Experiment.} I developed two feature blocks: for the horizonal and vertical axis. The blocks are defined in table \ref{tab:pairwise_blocks}:
 
@@ -124,7 +124,7 @@ Q($\langle f, r_1, c_1, r_2, c_2 \rangle$): there is a piece in file $f$ with ro
 \end{table}
 
 Note that it is important to consider the order of the pieces in the pair, as expressed in the direction of the definition (left and below).
-This makes sure features are not mirrored, since we want to differentiate between both. In code this is handled by iterating over the pieces and building the pair in the same order every time.
+This makes sure features are not mirrored, since we want to differentiate between both. In code, this is handled by iterating over the pieces and building the pair in the same order every time.
 
 The following figure shows what pairs of pieces (features) are considered for the horizonal and vertical axes in a complete board:
 
@@ -377,17 +377,17 @@ The following figure shows what pairs of pieces (features) are considered for th
 \end{tabular}
 \end{figure}
 
-Since the blocks need at least two pieces to generate a feature, if there is only one piece over an axis, there are no active features. So, this blocks can't be used alone, they need to be combined with other features that provide that information. The most obvious choice is to combine them with the \featureset{All} block.
+Since the blocks need at least two pieces to generate a feature, if there is only one piece over an axis, there are no active features. So, these blocks can't be used alone; they need to be combined with other features that provide that information. The most obvious choice is to combine them with the \featureset{All} block.
 
-The feature sets to be evaluated are \featureset{All} $\oplus$ \featureset{PH} (1920 features), \featureset{All} $\oplus$ \featureset{PV} (1920 features) and \featureset{All} $\oplus$ \featureset{PH} $\oplus$ \featureset{PV} (3072 features). Like before, a network will be trained for each feature set and a tournament will be played to determinate the relative elo to the \featureset{All} baseline.
+The feature sets to be evaluated are \featureset{All} $\oplus$ \featureset{PH} (1920 features), \featureset{All} $\oplus$ \featureset{PV} (1920 features), and \featureset{All} $\oplus$ \featureset{PH} $\oplus$ \featureset{PV} (3072 features). Like before, a network will be trained for each feature set, and a tournament will be played to determine the relative elo to the \featureset{All} baseline.
 
-I expect that the networks are able to take advantage of the specific features, enough to conteract the loss in performance due to the big increase in the number of features and slower updates. \\
+I expect that the networks are able to take advantage of the specific features, enough to counteract the loss in performance due to the big increase in the number of features and slower updates. \\
 
-\textbf{Results.} The results in table \ref{tab:pairwise_results} show that there is a clear difference in performance between \depictionSM{PH} and \depictionSM{PV}. The feature set \featureset{All} $\oplus$ \depictionSM{PV} has a lower loss and rating than its counterpart \featureset{All} $\oplus$ \depictionSM{PH}. It is not clear why the vertical pairs achieve a better rating than the horizontal pairs, since they have a similar amount of feature updates (Appendix \ref{appendix:fs}).
+\textbf{Results.} The results in table \ref{tab:pairwise_results} show that there is a clear difference in performance between \depictionSM{PH} and \depictionSM{PV}. The feature set \featureset{All} $\oplus$ \depictionSM{PV} has a lower loss and rating than its counterpart \featureset{All} $\oplus$ \depictionSM{PH}. It is not clear why the vertical pairs achieve a better rating than the horizontal pairs since they have a similar amount of feature updates (Appendix \ref{appendix:fs}).
 
-Both \featureset{All} $\oplus$ \depictionSM{PV} and \featureset{All} $\oplus$ \depictionSM{PH} perform worse than \featureset{All}. It seems that the networks were able to take advantage of the pairs, since the loss is lower than the reference. However, it is not enough to conteract the increase in feature updates.
+Both \featureset{All} $\oplus$ \depictionSM{PV} and \featureset{All} $\oplus$ \depictionSM{PH} perform worse than \featureset{All}. It seems that the networks were able to take advantage of the pairs since the loss is lower than the reference. However, it is not enough to counteract the increase in feature updates.
 
-Suprisingly the feature set with both axes (\featureset{All} $\oplus$ \depictionSM{PH} $\oplus$ \depictionSM{PV}) has a similar rating to \featureset{All} $\oplus$ \depictionSM{PV}, probably counteracted by having an even lower loss.
+Surprisingly, the feature set with both axes (\featureset{All} $\oplus$ \depictionSM{PH} $\oplus$ \depictionSM{PV}) has a similar rating to \featureset{All} $\oplus$ \depictionSM{PV}, probably counteracted by having an even lower loss.
 
 \begin{table}[H]
 \caption{Pairwise encodings results}
@@ -409,6 +409,6 @@ Suprisingly the feature set with both axes (\featureset{All} $\oplus$ \depiction
 \end{tabular}
 \end{table}
 
-Future work could gather some statistics about the pairs and determinate if skipping some pairs is worth it. For example, pairs related to pawns cause many updates since it is the most common piece and may not be that useful. Reducing the amount of pairs would lower the amount of updates and may overtake \featureset{All}.
+Future work could gather some statistics about the pairs and determine if skipping some pairs is worth it. For example, pairs related to pawns cause many updates since it is the most common piece and may not be that useful. Reducing the number of pairs would lower the number of updates and may overtake \featureset{All}.
 
-I did not bother implementing diagonal pairs (\depiction{PD1} and \depiction{PD2}) due the adverse result of the other axes.
+I did not bother implementing diagonal pairs (\depiction{PD1} and \depiction{PD2}) due to the adverse result of the other axes.
