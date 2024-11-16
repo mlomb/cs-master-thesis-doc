@@ -15,50 +15,27 @@
 %gets rid of footer
 \setbeamertemplate{footline}{}
 
+\AtBeginSection[]{
+  \begin{frame}
+  \vfill
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center,shadow=false,rounded=false]{title}
+    \usebeamerfont{title}\insertsectionhead\par%
+  \end{beamercolorbox}
+  \vfill
+  \end{frame}
+}
+
 \begin{document}
 
 \frame{\titlepage}
 
 \include{1_intro}
-
-\section{Parte 1}
-
-\subsection{Pepe}
-
-\begin{frame}
-\frametitle{Sample frame title}
-This is some text in the first frame.\pause This is some text in the first frame. This is some text in the first frame.
-\end{frame}
-
-\begin{frame}
-\frametitle{Sample frame title}
-
-\begin{figure}[H]
-\centering
-\makebox[\textwidth]{\includegraphics[width=\textwidth]{../assets/sigmoid_fit.pdf}}
-\caption{WDL model function (sigmoid) fitted to 100 million evaluations in the dataset.}
-\label{wdl-fit}
-\end{figure}
-
-\end{frame}
-
-\section{Parte 2}
-
-\begin{frame}
-\frametitle{Sample frame title}
-
-\begin{figure}[H]
-\centering
-\makebox[\textwidth]{\includegraphics[width=\textwidth]{../assets/training-loop.pdf}}
-\caption{Sequence of steps to send a batch from the \texttt{batch-loader} subprocess in Rust to Pytorch.}
-\label{training-loop}
-\end{figure}
-\end{frame}
-
-
-\begin{frame}
-\frametitle{Sample frame title}
-WORK IN PROGRESS
-\end{frame}
+\include{2_engine}
+\include{3_featureset}
+\include{4_nnue}
+\include{5_training}
+\include{6_experiments}
+\include{7_conclusions}
 
 \end{document}
