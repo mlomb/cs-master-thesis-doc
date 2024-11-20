@@ -134,18 +134,29 @@ La codificación más natural de una posición de ajedrez \\
 
 \begin{frame}
 \frametitle{Feature set: \featureset{King-All} ó \enquote{KA}}
-
 Los engines modernos usan variaciones del siguiente feature set. Permite entender la posición en relación a la posición del rey:
-
 \begin{center}
     $\featureset{King-All} = \featureset{Square}_{K} \times \featureset{All}$ \\
     $K(s)$: $s$ is the square of the king of the side to move\\
 \end{center}
-
 \begin{itemize}
     \item<2-> Es grande: $64 \times 768 = 49152$ \textit{features}
     \item<3-> Es muy rápido como \featureset{All}
     \item<4-> Entrenarlo require un dataset más grande y lleva más tiempo (no me meto acá)
 \end{itemize}
+\end{frame}
 
+\begin{frame}
+\frametitle{Resumen}
+\begin{itemize}
+\item $\bm S$: set of concepts (roles, colors, squares, files, ranks, etc.).
+\item $\bm{P(e)}$: predicate that defines when the feature $e$ is present in the (implicit) position.
+\item ${\bm S}_{\bm P}$: a feature set. Every element in $S_P$ is a feature. Features that satisfy $P$ are \textit{active}.
+\item $S_P \times T_Q={(S \times T)}_{R}$ where $R(\langle e_0, e_1 \rangle) = P(e_0)\ \land\ Q(e_1)$
+\item $S_P \oplus T_Q={(S \cup T)}_R$ where $R(e) = \begin{cases}
+        P(e) & \text{if } e \in S \\
+        Q(e) & \text{if } e \in T
+    \end{cases}
+$
+\end{itemize}
 \end{frame}
