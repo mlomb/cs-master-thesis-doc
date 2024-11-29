@@ -13,11 +13,10 @@ NNUE operates on the following principles:
 
 There is a tradeoff between inference time and quality of the predictions, which affect the number of nodes evaluated. If the inference is faster, more nodes can be evaluated, thus reaching deeper in the search tree. Having higher quality predictions, which usually come with a more complex model and/or feature set, can make stronger moves with shallower searches and may improve prunning.
 
-Models must be so much better to compensate the slowdown in inference when using bigger models or more complex feature sets. This is a tradeoff that will appear further in the experiments.
-
 \subsection{Layers}
 
 For this thesis, I have chosen to use a very simple NNUE architecture, which consists of three linear (fully connected) layers and clipped ReLU activations. In the literature, there are other architectures that make use of polling layers, sigmoid activations, and others. Since this work is about experimenting with feature sets, I have chosen to stick with something simple that has been proven to achieve good results.
+\clearpage
 
 \paragraph[short]{Linear layer} A linear layer is a matrix multiplication followed by a bias addition. It takes \textbf{in\_features} input values and produces \textbf{out\_features} output values. The operation is $\bm{y} = \bm{W} \bm{x} + \bm{b}$, where:
 
