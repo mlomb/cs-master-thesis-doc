@@ -183,9 +183,10 @@ When a node is visited, the algorithm checks if $\alpha \ge \beta$. If this is t
 
 Even if the depth of the stored evaluation is lower than the current depth (insufficient to draw conclusions at the current depth), it can still be used to improve the move ordering.
 
-\end{itemize}
+\item \textbf{Null move prunning}: the null move observation states that there is almost always a better move than doing noting (passing the turn or making a \textit{null move}). When visiting a node, the engine tries to make a shallower search with the null move. If the score is greater than or equal to $\beta$, the engine can assume that the position is good enough to prune the search. The reasoning is that if the null move does not worsen the position, then the real move will not either.
 
-Many other optimizations were made: history moves, killer moves, late move reductions, null move pruning, and more. They can be found in the documented code.
+\item \textbf{Late move reductions}: the idea is to reduce the depth for less promising moves, that is, moves that are \enquote{late} in the move ordering. If the reduced search indicates the move might be strong, the search is re-run with the full depth. This way the engine can save computation time by reducing the depth of less promising moves.
+\end{itemize}
 
 %- principal variation (mainline)
 %- null move pruning
