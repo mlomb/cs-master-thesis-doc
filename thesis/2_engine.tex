@@ -97,7 +97,7 @@ child {
 
 The algorithm recursively explores the tree to a fixed depth, evaluating the positions at the leaves with $f$. The evaluation is then propagated up the tree, alternating between maximizing and minimizing nodes, until it reaches the root node. After computing the whole tree to a fixed depth, the \enquote{best} move is defined by the move from the root node that maximizes the recursively computed evaluation (maximizing node).
 
-Usually we do not want to run the search to a fixed depth, but rather for a fixed amount of time. The algorithm itself runs to a fixed depth, so what we can do is run the search in a loop, staring from depth 1 and increasing it by one each iteration until the time runs out. This way the \enquote{best} move found so far is always available. Note that we cannot draw conclusions from any unfinished search, so the \enquote{best} move is the one found at the last iteration. This approach is called iterative deepening, and when combined with a transposition table (a cache for evaluations), it is very effective, making following iterations faster. \\
+Usually we do not want to run the search to a fixed depth, but rather for a fixed amount of time. The algorithm itself runs to a fixed depth, so what we can do is run the search in a loop, staring from depth 1 and increasing it by one each iteration until the time runs out. This way, the \enquote{best} move found so far is always available. Note that we cannot draw conclusions from any unfinished search, so the \enquote{best} move is the one found at the last iteration. This approach is called iterative deepening, and when combined with a transposition table (a cache for evaluations), it is very effective, making following iterations faster. \\
 
 My implementation uses a variation of the minimax algorithm called \textit{negamax}. Negamax is a simplification of minimax that takes advantage of the zero-sum property of chess, meaning that an evaluation for a player is equivalent to the negation of the evaluation from the opponent's point of view. Instead of having two kinds of nodes, all nodes are maximizing nodes, and the evaluation is negated after the recursion. This simplifies the implementation.
 
@@ -156,7 +156,7 @@ child{
 \caption{Demonstration of the horizon effect (not a minimax tree, only showing opponent nodes) when the search stops at depth 2. The capture PxQ (\sympawn\ Pawn takes \symqueen\ Queen) is inevitable. In the \textcolor{red}{red branches}, the capture has already happened. In the \textcolor{ForestGreen}{green branches}, the capture has not happened yet. Evaluations at the leaves favor the \textcolor{ForestGreen}{green positions} because those have an extra \symqueen\ Queen. Since losing the piece is inevitable, \textcolor{ForestGreen}{green positions} may actually be weaker than \textcolor{red}{red positions}, but the search does not know that.}
 \end{figure}
 
-To fix this, instead of returning the evaluation of the position at the leaves, an additional smaller search is done that only considers captures. This way the search can continue until a \enquote{quiet} position is reached, where no captures are available.
+To fix this, instead of returning the evaluation of the position at the leaves, an additional smaller search is done that only considers captures. This way, the search can continue until a \enquote{quiet} position is reached, where no captures are available.
 
 Since most of the positions the network will be evaluating are quiet due to the quiescence search, it is important to make sure that the training set reflects that. Later on, only positions that are quiet will be used to train the networks.
 
@@ -176,7 +176,7 @@ When a node is visited, the algorithm checks if $\alpha \ge \beta$. If this is t
 
 \item \textbf{Move ordering}: the order in which the moves are visited can have a big impact on the effectiveness of the alpha-beta pruning. If the move ordering is optimal, the effective branching factor is reduced to its square root, which means that the search can go twice as deep for the same amount of computation \cite[section 5.3.1]{ai_modern_approach}. In the worst case, it is identical to minimax. There are a couple of ways to improve move ordering, the most important being:
 \begin{itemize}
-\item \textbf{MVV/LVA} the most valuable victim, least valuable attacker is a simple heuristic that orders the moves by the value of the captured piece minus the value of the attacking piece. This way the most valuable captures are evaluated first, which are more likely to cause a cutoff.
+\item \textbf{MVV/LVA} the most valuable victim, least valuable attacker is a simple heuristic that orders the moves by the value of the captured piece minus the value of the attacking piece. This way, the most valuable captures are evaluated first, which are more likely to cause a cutoff.
 \end{itemize}
 
 \item \textbf{Transposition table}: during search, a position may be visited many times with different sequences of moves. This is called a transposition. The transposition table is a large hash table storing information about positions that have already been visited. This way, if a position is visited again, the engine can use the stored information to avoid re-evaluating it.
@@ -185,7 +185,7 @@ Even if the depth of the stored evaluation is lower than the current depth (insu
 
 \item \textbf{Null move prunning}: the null move observation states that there is almost always a better move than doing noting (passing the turn or making a \textit{null move}). When visiting a node, the engine tries to make a shallower search with the null move. If the score is greater than or equal to $\beta$, the engine can assume that the position is good enough to prune the search. The reasoning is that if the null move does not worsen the position, then the real move will not either.
 
-\item \textbf{Late move reductions}: the idea is to reduce the depth for less promising moves, that is, moves that are \enquote{late} in the move ordering. If the reduced search indicates the move might be strong, the search is re-run with the full depth. This way the engine can save computation time by reducing the depth of less promising moves.
+\item \textbf{Late move reductions}: the idea is to reduce the depth for less promising moves, that is, moves that are \enquote{late} in the move ordering. If the reduced search indicates the move might be strong, the search is re-run with the full depth. This way, the engine can save computation time by reducing the depth of less promising moves.
 \end{itemize}
 
 %- principal variation (mainline)
@@ -195,7 +195,7 @@ Even if the depth of the stored evaluation is lower than the current depth (insu
 
 \subsection{Time control}
 
-When running a tournament, it is important to limit the time of matches so that they can finish in a reasonable time. This mechanism is called \textit{time control}. Each player has a certain amount of time to make all their moves and possibly an increment per move. Choosing a good strategy to allocate time for each move is a complex problem on its own. For this reason, I will use a fixed 100 milliseconds per move for all experiments. This way the results are not affected by an arbitrary strategy.
+When running a tournament, it is important to limit the time of matches so that they can finish in a reasonable time. This mechanism is called \textit{time control}. Each player has a certain amount of time to make all their moves and possibly an increment per move. Choosing a good strategy to allocate time for each move is a complex problem on its own. For this reason, I will use a fixed 100 milliseconds per move for all experiments. This way, the results are not affected by an arbitrary strategy.
 
 \subsection{Implementation details}
 
