@@ -193,6 +193,10 @@ Even if the depth of the stored evaluation is lower than the current depth (insu
 %- late move reductions
 %- history moves, killer moves
 
+\subsection{Time control}
+
+When running a tournament, it is important to limit the time of matches so that they can finish in a reasonable time. This mechanism is called \textit{time control}. Each player has a certain amount of time to make all their moves and possibly an increment per move. Choosing a good strategy to allocate time for each move is a complex problem on its own. For this reason, I will use a fixed 100 milliseconds per move for all experiments. This way the results are not affected by an arbitrary strategy.
+
 \subsection{Implementation details}
 
 %- Rust
@@ -206,7 +210,14 @@ The engine is implemented in the Rust programming language. It uses the standard
 The most performance-critical part of the engine aside from the evaluation is move generation, that is, given a position, list all available moves and make them.
 Fortunately, there is a battle-tested library for it called \textit{shakmaty}. The library provides a copy-make interface instead of a make-unmake one, so I have to rely on a stack of positions when doing recursion.
 
-Time control is hard-coded to use the increment plus 2\% of the remaining time per move. Experiments run at a fixed time per move, so this is used in the Lichess arena.
+By default, the engine uses 128 MB of memory for the transposition table.
 
-By default, the engine uses 128 MB of memory for the transposition table. This value will be used throughout the experiments and in the arena.
+\subsection{Lichess arena}
 
+Lichess is a popular online chess platform that allows users and engines to play against each other. The engine developed for this thesis is available to be challenged on Lichess at the following link:
+
+\begin{center}
+\url{https://lichess.org/@/LimboBot}
+\end{center}
+
+Since the engine cannot use the fixed time per move in the Lichess arena, the engine uses the increment plus 2\% of the remaining time per move.
