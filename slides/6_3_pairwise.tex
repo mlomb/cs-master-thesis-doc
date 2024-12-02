@@ -1,0 +1,424 @@
+
+\begin{frame}
+\frametitle{Pairwise axes: motivación}
+
+\storechessboardstyle{smallvert}{
+    tinyboard,
+    maxfield=a8,
+    showmover=false,
+    hmargin=false,
+    hlabel=false,
+    boardfontsize=15pt,
+}
+
+\newcommand{\raiseby}{-11.5ex}
+
+\begin{figure}
+\centering
+
+\begin{tabular}{ccc}
+
+\raisebox{\raiseby}{\chessboard[
+    style=smallvert,
+    clearboard,
+    addblack={Ra7},
+    addwhite={na3,pa4},
+]}
+\raisebox{\raiseby}{\chessboard[
+    style=smallvert,
+    clearboard,
+    addblack={Ra8},
+    addwhite={na2,pa3},
+]}
+\raisebox{\raiseby}{\chessboard[
+    style=smallvert,
+    clearboard,
+    addblack={Ra6},
+    addwhite={na3,pa4},
+]}
+\raisebox{\raiseby}{\chessboard[
+    style=smallvert,
+    clearboard,
+    addblack={Ra5},
+    addwhite={na1,pa3},
+]}
+\raisebox{\raiseby}{\chessboard[
+    style=smallvert,
+    clearboard,
+    addblack={Ra6},
+    addwhite={na2,pa3},
+]}
+
+$\hdots$
+
+&
+$ \rightarrow$
+&
+
+\raisebox{-9.5ex}{\chessboard[
+    blackfieldcolor=white,
+    blackfieldmaskcolor=white,
+    maxfield=a8,
+    style=smallvert,
+    vlabel=false,
+    border=false,
+    trim=false,
+    opacity=0.6,
+    clearboard,
+    addblack={Ra6},
+    addwhite={na2,pa4},
+    %
+    color=red,
+    shortenend=1.88ex,shortenstart=1.88ex, % espacio
+    padding=-1ex,
+    markstyle=leftborder,
+    linewidth=0.4ex,
+    markregion=a4-a6,
+    linewidth=1.6ex,
+    pgfstyle=circle,
+    markfields={a4,a6},
+    %
+    color=blue,
+    shortenend=1.88ex,shortenstart=1.88ex, % espacio
+    padding=-1ex,
+    markstyle=leftborder,
+    linewidth=0.4ex,
+    markregion=a2-a4,
+    linewidth=1.6ex,
+    pgfstyle=circle,
+    markfields={a2,a4},
+    %
+]}
+
+\\
+
+\makecell{Configuraciones distintas,\\situaciones similares} &  & \makecell{Las mismas dos features\\(par rojo y par azul)}
+
+\end{tabular}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Pairwise axes: motivación}
+Comparando con el experimento anterior, es más específico en vez de más general:
+\begin{center}
+\enquote{\textit{there is a $\white$ White $\rook$ Rook in the 4th rank}} \\
+vs. \\
+\enquote{\textit{there is a $\black$ Black $\rook$ Rook next to a $\white$ White $\sympawn$ Pawn in the \enquote{a} file}}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Pairwise axes: experimento}
+\begin{table}
+\small
+\centering
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{ccccc}
+\toprule
+\bf D. & \bf \makecell{Block\\name} & \bf Definition & \bf \makecell{Num. of\\features} \\
+\toprule
+\depiction{PH} & PH & \makecell{
+\vspace{0.2cm}
+$(\featureset{Ranks} \times (\featureset{Roles} \times \featureset{Colors}) \times (\featureset{Roles} \times \featureset{Colors}))_{P}$ \\
+P($\langle r, r_1, c_1, r_2, c_2 \rangle$): there is a piece in rank $r$ with role $r_1$\\ and color $c_1$ to the left of a piece with role $r_2$ and color $c_2$
+} & 1152 \\
+\toprule
+\depiction{PV} & PV & \makecell{
+\vspace{0.2cm}
+$(\featureset{Files} \times (\featureset{Roles} \times \featureset{Colors}) \times (\featureset{Roles} \times \featureset{Colors}))_Q$ \\
+Q($\langle f, r_1, c_1, r_2, c_2 \rangle$): there is a piece in file $f$ with role $r_1$\\ and color $c_1$ below a piece with role $r_2$ and color $c_2$
+} & 1152 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+\end{frame}
+
+\begin{frame}
+\frametitle{Pairwise axes: experimento}
+\begin{figure}[h]
+\centering
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{cc}
+
+\raisebox{-7ex}{\chessboard[
+    setfen=2r4k/p5p1/Kpqp3p/8/1PP2Q2/P2P1RP1/8/8 b - - 12 45,
+    showmover=false,
+    opacity=0.6,
+    %
+    % TEMPLATE HORIZONTAL
+    %color=red,
+    %shortenend=1.88ex,shortenstart=1.88ex, % espacio
+    %padding=-1ex,
+    %markstyle=topborder,
+    %linewidth=0.4ex,
+    %markregion=d6-d3,
+    %linewidth=1.6ex,
+    %pgfstyle=circle,
+    %markfields={d6,d3},
+    %
+    color=red,
+    shortenend=1.88ex,shortenstart=1.88ex, % espacio
+    padding=-1ex,
+    markstyle=topborder,
+    linewidth=0.4ex,
+    markregion=a3-d3,
+    linewidth=1.6ex,
+    pgfstyle=circle,
+    markfields={a3,d3},
+    %
+    color=red,
+    shortenend=1.88ex,shortenstart=1.88ex, % espacio
+    padding=-1ex,
+    markstyle=topborder,
+    linewidth=0.4ex,
+    markregion=f3-g3,
+    linewidth=1.6ex,
+    pgfstyle=circle,
+    markfields={f3,g3},
+    %
+    color=blue,
+    shortenend=1.88ex,shortenstart=1.88ex, % espacio
+    padding=-1ex,
+    markstyle=topborder,
+    linewidth=0.4ex,
+    markregion=d3-f3,
+    linewidth=1.6ex,
+    pgfstyle=circle,
+    markfields={d3,f3},
+    %
+    color=red,
+    shortenend=1.88ex,shortenstart=1.88ex, % espacio
+    padding=-1ex,
+    markstyle=topborder,
+    linewidth=0.4ex,
+    markregion=b4-c4,
+    linewidth=1.6ex,
+    pgfstyle=circle,
+    markfields={b4,c4},
+    %
+    color=blue,
+    shortenend=1.88ex,shortenstart=1.88ex, % espacio
+    padding=-1ex,
+    markstyle=topborder,
+    linewidth=0.4ex,
+    markregion=c4-f4,
+    linewidth=1.6ex,
+    pgfstyle=circle,
+    markfields={c4,f4},
+    %
+    color=red,
+    shortenend=1.88ex,shortenstart=1.88ex, % espacio
+    padding=-1ex,
+    markstyle=topborder,
+    linewidth=0.4ex,
+    markregion=a6-b6,
+    linewidth=1.6ex,
+    pgfstyle=circle,
+    markfields={a6,b6},
+    %
+    color=red,
+    shortenend=1.88ex,shortenstart=1.88ex, % espacio
+    padding=-1ex,
+    markstyle=topborder,
+    linewidth=0.4ex,
+    markregion=c6-d6,
+    linewidth=1.6ex,
+    pgfstyle=circle,
+    markfields={c6,d6},
+    %
+    color=blue,
+    shortenend=1.88ex,shortenstart=1.88ex, % espacio
+    padding=-1ex,
+    markstyle=topborder,
+    linewidth=0.4ex,
+    markregion=b6-c6,
+    linewidth=1.6ex,
+    pgfstyle=circle,
+    markfields={b6,c6},
+    %
+    color=blue,
+    shortenend=1.88ex,shortenstart=1.88ex, % espacio
+    padding=-1ex,
+    markstyle=topborder,
+    linewidth=0.4ex,
+    markregion=d6-h6,
+    linewidth=1.6ex,
+    pgfstyle=circle,
+    markfields={d6,h6},
+    %
+    color=red,
+    shortenend=1.88ex,shortenstart=1.88ex, % espacio
+    padding=-1ex,
+    markstyle=topborder,
+    linewidth=0.4ex,
+    markregion=a7-g7,
+    linewidth=1.6ex,
+    pgfstyle=circle,
+    markfields={a7,g7},
+    %
+    color=blue,
+    shortenend=1.88ex,shortenstart=1.88ex, % espacio
+    padding=-1ex,
+    markstyle=topborder,
+    linewidth=0.4ex,
+    markregion=c8-h8,
+    linewidth=1.6ex,
+    pgfstyle=circle,
+    markfields={c8,h8},
+]}
+
+&
+
+\raisebox{-7ex}{\chessboard[
+    setfen=2r4k/p5p1/Kpqp3p/8/1PP2Q2/P2P1RP1/8/8 b - - 12 45,
+    showmover=false,
+    opacity=0.6,
+    %
+    % TEMPLATE VERTICAL
+    %color=red,
+    %shortenend=1.88ex,shortenstart=1.88ex, % espacio
+    %padding=-1ex,
+    %markstyle=leftborder,
+    %linewidth=0.4ex,
+    %markregion=d6-d3,
+    %linewidth=1.6ex,
+    %pgfstyle=circle,
+    %markfields={d6,d3},
+    %
+    color=red,
+    shortenend=1.88ex,shortenstart=1.88ex, % espacio
+    padding=-1ex,
+    markstyle=leftborder,
+    linewidth=0.4ex,
+    markregion=a3-a6,
+    linewidth=1.6ex,
+    pgfstyle=circle,
+    markfields={a3,a6},
+    %
+    color=blue,
+    shortenend=1.88ex,shortenstart=1.88ex, % espacio
+    padding=-1ex,
+    markstyle=leftborder,
+    linewidth=0.4ex,
+    markregion=a6-a7,
+    linewidth=1.6ex,
+    pgfstyle=circle,
+    markfields={a6,a7},
+    %
+    color=red,
+    shortenend=1.88ex,shortenstart=1.88ex, % espacio
+    padding=-1ex,
+    markstyle=leftborder,
+    linewidth=0.4ex,
+    markregion=b4-b6,
+    linewidth=1.6ex,
+    pgfstyle=circle,
+    markfields={b4,b6},
+    %
+    color=red,
+    shortenend=1.88ex,shortenstart=1.88ex, % espacio
+    padding=-1ex,
+    markstyle=leftborder,
+    linewidth=0.4ex,
+    markregion=c4-c6,
+    linewidth=1.6ex,
+    pgfstyle=circle,
+    markfields={c4,c6},
+    %
+    color=blue,
+    shortenend=1.88ex,shortenstart=1.88ex, % espacio
+    padding=-1ex,
+    markstyle=leftborder,
+    linewidth=0.4ex,
+    markregion=c6-c8,
+    linewidth=1.6ex,
+    pgfstyle=circle,
+    markfields={c6,c8},
+    %
+    color=red,
+    shortenend=1.88ex,shortenstart=1.88ex, % espacio
+    padding=-1ex,
+    markstyle=leftborder,
+    linewidth=0.4ex,
+    markregion=d3-d6,
+    linewidth=1.6ex,
+    pgfstyle=circle,
+    markfields={d3,d6},
+    %
+    color=red,
+    shortenend=1.88ex,shortenstart=1.88ex, % espacio
+    padding=-1ex,
+    markstyle=leftborder,
+    linewidth=0.4ex,
+    markregion=f3-f4,
+    linewidth=1.6ex,
+    pgfstyle=circle,
+    markfields={f3,f4},
+    %
+    color=red,
+    shortenend=1.88ex,shortenstart=1.88ex, % espacio
+    padding=-1ex,
+    markstyle=leftborder,
+    linewidth=0.4ex,
+    markregion=g3-g7,
+    linewidth=1.6ex,
+    pgfstyle=circle,
+    markfields={g3,g7},
+    %
+    color=red,
+    shortenend=1.88ex,shortenstart=1.88ex, % espacio
+    padding=-1ex,
+    markstyle=leftborder,
+    linewidth=0.4ex,
+    markregion=h6-h8,
+    linewidth=1.6ex,
+    pgfstyle=circle,
+    markfields={h6,h8},
+]}
+
+
+\\
+
+\makecell{\depiction{PH} Pairwise horizontal (\featureset{PH})} &
+\makecell{\depiction{PV} Pairwise vertical (\featureset{PV})}
+
+\end{tabular}
+\end{adjustbox}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Pairwise axes: experimento}
+Los feature sets a entrenar son:
+\begin{itemize}
+\item \featureset{All} $\oplus$ \featureset{PH} (1920 features)
+\item \featureset{All} $\oplus$ \featureset{PV} (1920 features)
+\item \featureset{All} $\oplus$ \featureset{PH} $\oplus$ \featureset{PV} (3072 features)
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Pairwise axes: resultados}
+\begin{table}
+\centering
+\begin{tabular}{ccccc}
+\toprule
+\bf Feature set  & \bf \makecell{Number\\of features} & \makecell{\bf Val. loss\\\textit{min}} & \makecell{\bf Rating\\\textit{elo (rel. to \featureset{All})}} \\
+\toprule
+\featureset{All} (reference) & 768 & 0.003134 & \textbf{0.0} \\
+\midrule
+\featureset{All} $\oplus$ \depiction{PH} & 1920 & 0.003033 & -38.2 $\pm$ 4.8 \\
+\midrule
+\featureset{All} $\oplus$ \depiction{PV} & 1920 & 0.002946 & -8.4 $\pm$ 5.0 \\
+\midrule
+\featureset{All} $\oplus$ \depiction{PH} $\oplus$ \depiction{PV} & 3072 & \textbf{0.002868} & -37.6 $\pm$ 4.9 \\
+\bottomrule
+\end{tabular}
+\end{table}
+\begin{itemize}
+    \item Reducir el número de pairs puede llevar a una mejora por sobre \featureset{All} (ej. $\sympawn$)
+\end{itemize}
+\end{frame}
