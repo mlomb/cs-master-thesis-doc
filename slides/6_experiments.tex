@@ -37,4 +37,36 @@ Recapitulando... ¿Qué hay que definir para entrenar una red? \pause
 \input{6_1_baseline}
 \input{6_2_axes}
 \input{6_3_pairwise}
+\input{6_4_mobility}
 
+\begin{frame}[shrink=5]
+\frametitle{Feature set statistics}
+\begin{table}
+\small
+\centering
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{cccccc}
+\toprule
+\multirow{2}{*}{\bf Depiction} & \multirow{2}{*}{\bf Feature block} & \multirow{2}{*}{\bf Number of features} & \multicolumn{3}{c}{\bf Average features...} \\
+\cmidrule(lr){4-6}
+& & & \makecell{\bf active\\\bf per position} & \makecell{\bf added\\\bf per move} & \makecell{\bf removed\\\bf per move} \\
+\midrule
+\depiction{HV} & \featureset{All} & 768 & 14.68 & 0.98 & 0.60 \\
+\midrule
+\depiction{H} & \featureset{H} & ~~96 & 14.68 & 0.60 & 0.43 \\
+\depiction{V} & \featureset{V} & ~~96 & 14.68 & 0.61 & 0.43\\
+\depiction{D1} & \featureset{D1} & ~180 & 14.68 & 0.77 & 0.52 \\
+\depiction{D2} & \featureset{D2} & ~180 & 14.68 & 0.77 & 0.52 \\
+\midrule
+\depiction{PH} & \featureset{PH} & 1152 & ~8.23 & 0.92 & 0.57 \\
+\depiction{PV} & \featureset{PV} & 1152 & ~8.30 & 0.83 & 0.53 \\
+\midrule
+\featureset{MB} & \featureset{MB} & ~768 & 48.93 & 5.68 & 4.35 \\
+\featureset{MC} & \featureset{MC} & ~206 & 12.00 & 2.34 & 1.48 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+\end{frame}
+
+\input{6_5_pqr}
