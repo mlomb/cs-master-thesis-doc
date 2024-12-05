@@ -1,5 +1,52 @@
 
 \begin{frame}
-\frametitle{PQR}
-:)
+\frametitle{PQR: motivación}
+Recordando...
+\begin{itemize}
+\item $\bf P$: Una posición en el dataset
+\item \textbf{Q}: La posición obtenida a partir de aplicar el \enquote{mejor} movimiento a P, según el dataset
+\item \textbf{R}: Una posición aleatoria obtenida a partir de P, tal que $R \neq Q$
+\end{itemize}
+\pause
+Y los principios:
+\begin{enumerate}
+\item Si $P \rightarrow Q$, entonces $f(P)=-f(Q)$ (suma cero)
+\item Si $P \rightarrow R$ tal que $R \neq Q$, entonces $f(R) > f(Q)$
+\end{enumerate}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{PQR: motivación}
+¿Los principios funcionan en la práctica? Veamos...
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{../thesis/dynamic/output/pqr_eval.pdf}
+\caption{Analysis of $N=4000$ PQR samples using a model trained with target scores and the feature set \featureset{All}.}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{PQR: experimento}
+\begin{enumerate}[A.]
+\item Entrenar de cero, directamente con PQR
+\begin{itemize}
+\item no espero que sea mejor que target scores
+\end{itemize}
+\pause
+\item Continuar de un checkpoint entrenado con el otro método
+\begin{itemize}
+\item no tiene que aprender tanto de entrada
+\item mejor caso: mejora lentamente
+\item peor caso: se \enquote{olvida} todo lo anterior (resulta peor)
+\item se entrena con distintos learning rates
+\end{itemize}
+\end{enumerate}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{PQR: experimento}
+\textbf{Eligiendo} $\mathbf{R}$.
+
 \end{frame}
