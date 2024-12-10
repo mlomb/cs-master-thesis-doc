@@ -1,3 +1,5 @@
+% Hasta acá tenemos definido como funciona el motor con una f
+% Y como se transforma la posición en un input para la red
 
 \section{\reflectbox{NNUE} (NNUE)}
 
@@ -20,10 +22,21 @@
 \begin{itemize}
     \item Debe tener pocos \textit{features} activos (rala): introduce una cota superior.
 \end{itemize}
-\item La red es una \textit{feedforward} clásica con dos capas ocultas.
+\item La red es una \textit{feedforward} clásica de 3 fully connected.
+\begin{itemize}
+    \item con activaciones ClippedReLU
+\end{itemize}
 \end{itemize}
 \end{frame}
 
+\begin{frame}[shrink=13]
+\frametitle{\reflectbox{NNUE}: La red}
+\begin{figure}[H]
+\centering
+\makebox[\textwidth]{\includegraphics[width=10cm]{../assets/nnue/network.pdf}}
+\caption{Neural network architecture with $\bm{N}=768$, $\bm{M}=256$, $\bm{O}=32$. Not to scale.}
+\end{figure}
+\end{frame}
 
 \begin{frame}
 \frametitle{Linear layer}
@@ -33,7 +46,15 @@
 \qquad
 \subfloat[\centering Linear layer with sparse inputs]{{\includegraphics[width=4cm]{../assets/nnue/mvs.pdf} }}%
 \caption{Linear layer operation comparison. Figures from [18].}
-\label{fig:linear_comparison}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Concatenación de la primera capa}
+\begin{figure}[H]
+\centering
+\makebox[\textwidth]{\includegraphics[width=\textwidth]{../assets/nnue/incremental_update.pdf}}
+\caption{Concatenation of the first layer's output after a move is made. Inspired by a CPW figure.}
 \end{figure}
 \end{frame}
 
@@ -76,14 +97,20 @@
 
 \end{tikzpicture}
 }
-\caption{Partial tree of feature updates (\textcolor{Red}{removals} and \textcolor{Green}{additions}) for $(\featureset{Squares} \times \featureset{Colors})$ (white's point of view) in a simplified 3x3 pawn-only board.}
-\label{fig:updates_tree}
+\caption{Árbol parcial de feature updates (\textcolor{Green}{agregados} y \textcolor{Red}{borrados}) para $(\featureset{Squares} \times \featureset{Colors})$ (POV blanco) en un tablero simplificado 3x3 de peones.}
 \end{figure}
 \end{frame}
 
 
 \begin{frame}
 \frametitle{\reflectbox{NNUE}: Tradeoff}
+\textbf{Tiempo de inferencia} vs. \textbf{nodos visitados}. \\
+\vspace{1em}
+\pause
+Si la red es rápida (y por lo tanto débil), se pueden visitar más nodos y llegar más profundo. \\
+\pause
+Si se tienen predicciones de mayor calidad (y por lo tanto más lento), se visitan menos nodos pero con evaluaciones más precisas. \\
+\pause
+\vspace{1em}
+\textbf{No es directo determinar qué resulta más fuerte.}
 \end{frame}
-motivacion comparacion de burns
-
