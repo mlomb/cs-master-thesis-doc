@@ -1,27 +1,123 @@
 
-\section{Engine}
+\section{Motor}
 
 \begin{frame}
-\frametitle{Engine}
-Construir un motor clásico de ajedrez, con optimizaciones clásicas, pero que use NNUE para evaluar posiciones.
-\end{frame}
-
-\begin{frame}
-\frametitle{Engine}
-Primera idea: evaluar todas las posiciones a las que me puedo mover y elegir la mejor.
-Extender la idea recursivamente. Ojo que ahora está min...
-min nodes, max nodes
+\frametitle{Motor de ajedrez}
+Para evaluar las redes NNUEs es necesario un motor de ajedrez. \pause \\
+\vspace{1em}
+Buscamos construir un \textbf{motor de ajedrez clásico}, con \textbf{optimizaciones clásicas} pero \textbf{que use NNUEs} para evaluar posiciones.
 \end{frame}
 
 \begin{frame}
 \frametitle{Minimax}
-el dibujo
+\textbf{Primera idea}: evalúo todas las posiciones a las que me puedo mover y elijo la mejor. \\
+\vspace{1em}
+\pause
+Pero si extendemos la idea recursivamente... es el algoritmo \textbf{minimax}.
+\begin{itemize}
+\item \textcolor{ForestGreen}{$\triangle$} \textbf{Maximizing nodes}: nuestro jugador. Elige el movimiento que maximice la evaluación.
+\item \textcolor{red}{\raisebox{0.1em}{\rotatebox[origin = c]{180}{$\triangle$}}} \textbf{Minimizing nodes}: el oponente. Elige el movimiento que minimiza la evaluación.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[shrink=7]
+\frametitle{Minimax}
+\begin{figure}
+\centering
+% https://tikz.dev/tikz-trees
+\begin{tikzpicture}[level distance=18mm,level/.style={sibling distance=70mm/####1},line width=0.5mm,minimum size=1.5cm, inner sep=-10mm]
+    % regular polygon, regular polygon sides=3
+\tikzstyle{max node}=[regular polygon, regular polygon sides=3,draw=ForestGreen]
+\tikzstyle{min node}=[regular polygon, regular polygon sides=3,shape border rotate=180,draw=red]
+\node[max node]{-7}
+child{
+    node[min node]{-10} edge from parent[draw=black]
+    child {
+        node[max node]{10} edge from parent[draw=black]
+        child {
+            node[min node]{10} edge from parent[draw=black]
+            child {
+                node[max node]{10} edge from parent[draw=black]
+            }
+            child {
+                node[max node]{$+\infty$} edge from parent[draw=black]
+            }
+        }
+        child {
+            node[min node]{5} edge from parent[draw=black]
+            child {
+                node[max node]{5} edge from parent[draw=black]
+            }
+        }
+    }
+    child {
+        node[max node]{-10} edge from parent[draw=black]
+        child {
+            node[min node]{-10} edge from parent[draw=black]
+            child {
+                node[max node]{-10} edge from parent[draw=black]
+            }
+        }
+    }
+}
+child {
+    node[min node]{-7} edge from parent[draw=blue]
+    child {
+        node[max node]{5} edge from parent[draw=black]
+        child {
+            node[min node]{5} edge from parent[draw=black]
+            child {
+                node[max node]{7} edge from parent[draw=black]
+            }
+            child {
+                node[max node]{5} edge from parent[draw=black]
+            }
+        }
+        child {
+            node[min node]{$-\infty$} edge from parent[draw=black]
+            child {
+                node[max node]{$-\infty$} edge from parent[draw=black]
+            }
+        }
+    }
+    child {
+        node[max node]{-7} edge from parent[draw=black]
+        child {
+            node[min node]{-7} edge from parent[draw=black]
+            child {
+                node[max node]{-7} edge from parent[draw=black]
+            }
+            child {
+                node[max node]{-5} edge from parent[draw=black]
+            }
+        }
+    }
+};
+\end{tikzpicture}
+\caption{Un árbol minimax de 4 de profundidad. El \enquote{mejor} movimiento para el jugador maximizador es el que lleva a la evaluación más alta, macada en \textcolor{blue}{azul}.}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Iterative deepening}
+No queremos hacer minimax a una profundidad fija, si no a un tiempo fijo (100 milisegundos). \\
+\vspace{1em}
+\pause
+\textbf{Iterative deepening} es una técnica que consiste en hacer minimax a profundidades crecientes, hasta que se acabe el tiempo. \\
+\vspace{1em}
+\pause
+Che pero no pierdo todo el cómputo que hice en la iteración anterior? \pause \textbf{Si, pero...} \\
 \end{frame}
 
 \begin{frame}
 \frametitle{Optimizaciones}
 \begin{itemize}
-\item Alpha-beta pruning
-\item etc
+\item<1-> Poda Alpha-beta (\href{https://mlomb.dev/slides/mcts}{anim})
+\item<2-> Reordenamiento de movimientos (peor caso Minimax)
+\begin{itemize}
+\item MVV/LVA (Most Valuable Victim/Least Valuable Attacker)
+\item ↓
+\end{itemize}
+\item<3-> Tablas de transposición: un caché
 \end{itemize}
 \end{frame}
