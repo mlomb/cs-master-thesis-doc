@@ -47,6 +47,41 @@ Y los principios:
 
 \begin{frame}
 \frametitle{PQR: experimento}
-\textbf{Eligiendo} $\mathbf{R}$.
+\textbf{Eligiendo} $\mathbf{R}$: más opciones para elegir $R$ $\Rightarrow$ es más probable que $R$ sea peor que $Q$.
+\\
+\pause
+No podemos elegir un número fijo (por ejemplo, $> 10$) porque la cantidad de movimientos disponibles varía a lo largo de la partida.
+\pause
+\begin{figure}[H]
+\centering
+\makebox[0.78\textwidth]{\includegraphics[width=0.78\textwidth]{../thesis/dynamic/output/avg_moves.pdf}}
+\end{figure}
+\end{frame}
 
+\begin{frame}
+\frametitle{PQR: resultados (A)}
+\begin{figure}[H]
+\centering
+\makebox[\textwidth]{\includegraphics[width=\textwidth]{../thesis/dynamic/output/pqr_comparison.pdf}}
+\caption{Performance of networks trained from scratch using the PQR method varying the filtering parameter ($p=0,\ 0.25,\ 0.5,\ 0.75$). A network trained with target scores is shown for comparison.}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{PQR: resultados (A)}
+\begin{figure}[H]
+\centering
+\makebox[\textwidth]{\includegraphics[width=\textwidth]{../thesis/dynamic/output/pqr_scratch.pdf}}
+\caption{Analysis of $N=4000$ PQR samples using the epoch 256 of the model trained from scratch with no filtering ($p=0.0$) and the feature set \featureset{All}.}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{PQR: resultados (B)}
+\begin{figure}[H]
+\centering
+\makebox[\textwidth]{\includegraphics[width=\textwidth]{../thesis/dynamic/output/pqr_ckp.pdf}}
+\caption{Performance of networks fine-tuned with the PQR method, starting from a target scores checkpoint. The dotted line represents the rating of the checkpoint, which all ratings are relative to.}
+\end{figure}
 \end{frame}
