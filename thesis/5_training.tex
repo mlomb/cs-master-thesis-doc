@@ -76,7 +76,7 @@ where $a$ and $b$ need to be fitted to the data. The value of $a$ is the evaluat
 During training, it is better to use a loss function with the target and output of the model in WDL-space instead of score-space. WDL-space has some advantages over score-space:
 
 \begin{itemize}
-\item Large evaluations are \enquote{closer} together in WDL-space., since having a score of 7500 or 8000 is not that different in terms of winrate (less than 1\%) than between 50 and 550 (more than 30\%). This is desirable because the evaluations do not need to be that precise when the outcome of the game is almost decided.
+\item Large evaluations are \enquote{closer} together in WDL-space, since having a score of 7500 or 8000 is not that different in terms of winrate (less than 1\%) than between 50 and 550 (more than 30\%). This is desirable because the evaluations do not need to be that precise when the outcome of the game is almost decided.
 \item The result of a game can be interpolated in WDL-space. If we introduce a new parameter $\lambda$, we can interpolate the evaluation $f(P)$ and the game result $r$ (in WDL-space) using: $\lambda \cdot \mathcal{W}(f(P)) + (1 - \lambda) \cdot r$. This way, the information about the outcome of the game can be used to steer the network in the right direction. This is not implemented in this work.
 \item Values in WDL-space are smaller than in score-space, so it avoids large gradients.
 \end{itemize}
