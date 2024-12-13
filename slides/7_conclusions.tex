@@ -4,13 +4,28 @@
 \begin{frame}
 \frametitle{Conclusiones: feature sets}
 \begin{itemize}
-\item asdasd
+\item \featureset{All} está en un sweet spot difícil de mejorar
+\begin{itemize}
+    \item es fácil de implementar
+    \item barato de computar qué features están activas
+    \item tiene pocos updates por movimiento
+\end{itemize}
+\pause
+%\item No se puede subestimar en feature set más complejos \pause
+\item Nuevos features por encima deben tener pocos updates y ser aprovechables por la red
+\begin{itemize}
+    \item esto se ve reforzado por el hecho de que no se encontró nada nuevo por años
+\end{itemize}
 \end{itemize}
 \end{frame}
 
 \begin{frame}
 \frametitle{Conclusiones: PQR}
 \begin{itemize}
-\item asdasd
+\item Es una ténica interesante \textbf{que funciona} pero produce redes inferiores \pause
+\begin{itemize}
+    \item puede servir para otros juegos sin datasets \pause
+\end{itemize}
+\item Es prometedor para finetunear luego de entrenar con target scores \pause
 \end{itemize}
 \end{frame}
