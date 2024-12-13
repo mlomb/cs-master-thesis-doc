@@ -13,33 +13,38 @@
 \vfill
 \end{frame}
 
+\begin{frame}
+\frametitle{\reflectbox{NNUE}: \textbf{N}eural \textbf{N}etwork}
+Ya tenemos definido el input* y el output: \pause
+\begin{itemize}
+\item El input es un vector one-hot generado por el \textit{feature set}. \pause
+\item El output es un número real.
+\end{itemize}
+%\pause
+%*: los feature sets dependen de la perspectiva!
+\end{frame}
 
 
 \begin{frame}
-\frametitle{\reflectbox{NNUE}: \textbf{N}eural \textbf{N}etworks}
-\begin{itemize}
-\item El input es un vector one-hot generado por el \textit{feature set}.
-\begin{itemize}
-    \item Debe tener pocos \textit{features} activos (rala): introduce una cota superior.
-\end{itemize}
-\item La red es una \textit{feedforward} clásica de 3 fully connected.
+\frametitle{\reflectbox{NNUE}: \textbf{N}eural \textbf{N}etwork}
+La red es una \textit{feedforward} clásica de 3 layers fully connected.
 \begin{itemize}
     \item con activaciones ClippedReLU
-\end{itemize}
+    \item es siamés en la primera capa
 \end{itemize}
 \end{frame}
 
-\begin{frame}[shrink=13]
-\frametitle{\reflectbox{NNUE}: La red}
+\begin{frame}
+\frametitle{\reflectbox{NNUE}: \textbf{N}eural \textbf{N}etwork}
 \begin{figure}[H]
 \centering
-\makebox[\textwidth]{\includegraphics[width=10cm]{../assets/nnue/network.pdf}}
-\caption{Neural network architecture with $\bm{N}=768$, $\bm{M}=256$, $\bm{O}=32$. Not to scale.}
+\makebox[\textwidth]{\includegraphics[width=6.5cm]{../assets/nnue/network.pdf}}
+%\caption{Neural network architecture with $\bm{|S_P|}=768$, $\bm{L1}=256$, $\bm{L2}=32$. Not to scale.}
 \end{figure}
 \end{frame}
 
 \begin{frame}
-\frametitle{Linear layer}
+\frametitle{\reflectbox{NNUE}: \textbf{E}fficient \textbf{U}pdates (primera capa)}
 \begin{figure}[H]
 \centering
 \subfloat[\centering Linear layer]{{\includegraphics[width=4cm]{../assets/nnue/mv.pdf} }}%
@@ -50,17 +55,16 @@
 \end{frame}
 
 \begin{frame}
-\frametitle{Concatenación de la primera capa}
+\frametitle{\reflectbox{NNUE}: Concatenación de la primera capa}
 \begin{figure}[H]
 \centering
-\makebox[\textwidth]{\includegraphics[width=\textwidth]{../assets/nnue/incremental_update.pdf}}
+\makebox[1.05\textwidth]{\includegraphics[width=1.05\textwidth]{../assets/nnue/incremental_update.pdf}}
 \caption{Concatenation of the first layer's output after a move is made. Inspired by a CPW figure.}
 \end{figure}
 \end{frame}
 
 \begin{frame}
 \frametitle{\reflectbox{NNUE}: \textbf{E}fficient \textbf{U}pdates}
-
 \begin{figure}[H]
 \centering
 \storechessboardstyle{3x3}{tinyboard,clearboard,maxfield=c3,margin=false,showmover=false,hlabel=true,vlabel=true,pgfstyle=color,color=blue}
@@ -101,6 +105,14 @@
 \end{figure}
 \end{frame}
 
+\begin{frame}
+\frametitle{\reflectbox{NNUE}: Resumen}
+\begin{itemize}
+\item<1-> La red son 3 capas fully connected, con parámetros $L1$ y $L2$.
+\item<2-> Tenemos un acumulador de la primera capa por cada jugador.
+\item<3-> Los acumuladores se actualizan eficientemente con cada movimiento, en la recursión.
+\end{itemize}
+\end{frame}
 
 \begin{frame}
 \frametitle{\reflectbox{NNUE}: Tradeoff}
