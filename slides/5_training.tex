@@ -10,11 +10,10 @@
 \begin{center}
 \begin{tabular}{|cp{0.0005cm}cp{0.0005cm}c|}
 \hline
-\textbf{FEN} & , & \textbf{Score} & , & \textbf{Best move} \\
+\textbf{Position} & , & \textbf{Score} & , & \textbf{Best move} \\
 \hline
 \end{tabular}
 \end{center}
-\item<4-> 130 GB → 2 TB → 522 GB
 \end{itemize}
 \end{frame}
 
@@ -26,52 +25,21 @@
 \end{enumerate}
 \end{frame}
 
-
 \begin{frame}
 \frametitle{Score-space a WDL-space}
 \begin{itemize}
-\item \textbf{Score-space}: los scores en el dataset están entre [-10000, 10000] (\textit{centipawn} o proporcional)
-\item \textbf{WDL-space}: otra escala donde 0 es perder, 0.5 es empate y 1 es ganar
+\item \textbf{Score-space}: los scores en el dataset $\subseteq$ [-10000, 10000]
+\item \textbf{WDL-space}: escala donde 0 es loss, 0.5 es tie y 1 es win
 \end{itemize}
 \pause
-Queremos que la red genere valores en \textbf{score-space}, pero para las funciones de pérdida es mejor usar \textbf{WDL-space}.
-\end{frame}
-
-\begin{frame}
-\frametitle{Score-space a WDL-space}
-El modelo WDL dice que el winrate se puede modelar como una función de la evaluación. \pause \\
-
-Los datos muestran que la función sigmoide da una buena aproximación:
-\[
-\mathcal{W}(f(P)) = \sigma\left(\frac{f(P)-a}{b}\right) = \frac{1}{1 + e^{-\frac{f(P)-a}{b}}}
-\]
-\end{frame}
-
-\begin{frame}
-\frametitle{Score-space a WDL-space}
+Queremos que la red genere valores en \textbf{score-space}, pero para las funciones de pérdida es mejor usar \textbf{WDL-space}. \\
+\pause
+El modelo WDL dice que el winrate se puede modelar como una función de la evaluación: $\mathcal{W}(f(P))$ \pause \\
 \begin{figure}[H]
 \centering
-\makebox[\textwidth]{\includegraphics[width=\textwidth]{../assets/sigmoid_fit.pdf}}
-\caption{Modelo WDL ajustado a 100 million de evaluaciones en el dataset.}
+\makebox[0.85\textwidth]{\includegraphics[width=0.85\textwidth]{../assets/sigmoid_fit.pdf}}
+\caption{Modelo WDL ajustado a 100 million de evaluaciones.}
 \end{figure}
-\end{frame}
-
-\begin{frame}
-\frametitle{Score-space a WDL-space}
-¿Para qué WDL? \pause
-\begin{itemize}
-\item<2-> Las evaluaciones están mas \enquote{cerca} en WDL-space:
-\begin{itemize}
-\item 7500 vs 8000: 1\% winrate
-\item 50 vs 550 : 30\% winrate
-\end{itemize}
-\item<3-> Se puede interpolar con los resultados (no lo hago)
-\begin{itemize}
-\item $\lambda \cdot \mathcal{W}(f(P)) + (1 - \lambda) \cdot r$
-\end{itemize}
-\item<4-> Gradientes más chicos
-\end{itemize}
-
 \end{frame}
 
 \begin{frame}
@@ -99,7 +67,7 @@ donde\dots
 Técnica vista en un blogpost de 2014 por Erik Bernhardsson, que se basa en dos principios: \pause \\
 \begin{enumerate}
 \item Para dos posiciones en suseción $P \rightarrow Q$ observadas en el dataset, tenemos que \mbox{$f(P)=-f(Q)$}. Esto es porque el juego es de suma cero. \pause
-\item Ir desde $P$, no a la posición observada $Q$, sino a una posición \textit{random} $P \rightarrow R$, se debe cumplir $f(R) > f(Q)$ porque un movimiento random es mejor para el siguiente jugador y peor para el que hizo el movimiento.
+\item Ir desde $P$, no a la posición observada $Q$, sino a una posición \textit{random} $P \rightarrow R$, se debe cumplir $f(R) > f(Q)$ porque un movimiento random es mejor para el siguiente jugador y peor para el que hizo el movimiento. ($-f(Q) > -f(R)$)
 \end{enumerate}
 \pause
 Se puede construir una función de pérdida que refleje la igualdad en (1) y la desigualdad en (2).
@@ -109,7 +77,7 @@ Se puede construir una función de pérdida que refleje la igualdad en (1) y la 
 \begin{frame}
 \frametitle{Método 2: PQR}
 % sum of negative log likelihood
-La función de pérdida es la suma de la log-verosimilitud negativa de las inecuaciones:
+La función de pérdida es la suma de la log-likelihood negativa de las inecuaciones:
 \begin{itemize}
 \item ${f(R) > f(Q)}$
 \item ${f(P) > - f(Q)}$
@@ -171,11 +139,11 @@ Veamos cada uno de los términos:
 El término (1) sostiene la inecuación $f(R) > f(Q)$, y los términos (2) y (3) la igualdad $f(P) = -f(Q)$.
 \end{frame}
 
-\begin{frame}
-\frametitle{Setup}
-\begin{figure}[H]
-\centering
-\makebox[\textwidth]{\includegraphics[width=\textwidth]{../assets/training-loop.pdf}}
-\caption{Secuencia de pasos para enviar un batch del subproceso \texttt{batch-loader} en Rust a Pytorch.}
-\end{figure}
-\end{frame}
+%\begin{frame}
+%\frametitle{Setup}
+%\begin{figure}[H]
+%\centering
+%\makebox[\textwidth]{\includegraphics[width=\textwidth]{../assets/training-loop.pdf}}
+%\caption{Secuencia de pasos para enviar un batch del subproceso \texttt{batch-loader} en Rust a Pytorch.}
+%\end{figure}
+%\end{frame}
