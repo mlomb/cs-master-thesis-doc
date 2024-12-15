@@ -110,33 +110,6 @@ vs. \\
 
 \begin{frame}
 \frametitle{Pairwise axes: experimento}
-\begin{table}
-\small
-\centering
-\begin{adjustbox}{max width=\textwidth}
-\begin{tabular}{ccccc}
-\toprule
-\bf D. & \bf \makecell{Block\\name} & \bf Definition & \bf \makecell{Num. of\\features} \\
-\toprule
-\depiction{PH} & PH & \makecell{
-\vspace{0.2cm}
-$(\featureset{Ranks} \times (\featureset{Roles} \times \featureset{Colors}) \times (\featureset{Roles} \times \featureset{Colors}))_{P}$ \\
-P($\langle r, r_1, c_1, r_2, c_2 \rangle$): there is a piece in rank $r$ with role $r_1$\\ and color $c_1$ to the left of a piece with role $r_2$ and color $c_2$
-} & 1152 \\
-\toprule
-\depiction{PV} & PV & \makecell{
-\vspace{0.2cm}
-$(\featureset{Files} \times (\featureset{Roles} \times \featureset{Colors}) \times (\featureset{Roles} \times \featureset{Colors}))_Q$ \\
-Q($\langle f, r_1, c_1, r_2, c_2 \rangle$): there is a piece in file $f$ with role $r_1$\\ and color $c_1$ below a piece with role $r_2$ and color $c_2$
-} & 1152 \\
-\bottomrule
-\end{tabular}
-\end{adjustbox}
-\end{table}
-\end{frame}
-
-\begin{frame}
-\frametitle{Pairwise axes: experimento}
 \begin{figure}[h]
 \centering
 \begin{adjustbox}{max width=\textwidth}
@@ -387,6 +360,33 @@ Q($\langle f, r_1, c_1, r_2, c_2 \rangle$): there is a piece in file $f$ with ro
 \end{tabular}
 \end{adjustbox}
 \end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Pairwise axes: experimento}
+\begin{table}
+\small
+\centering
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{ccccc}
+\toprule
+\bf D. & \bf \makecell{Block\\name} & \bf Definition & \bf \makecell{Num. of\\features} \\
+\toprule
+\depiction{PH} & PH & \makecell{
+\vspace{0.2cm}
+$(\featureset{Ranks} \times (\featureset{Roles} \times \featureset{Colors}) \times (\featureset{Roles} \times \featureset{Colors}))_{P}$ \\
+P($\langle r, r_1, c_1, r_2, c_2 \rangle$): there is a piece in rank $r$ with role $r_1$\\ and color $c_1$ to the left of a piece with role $r_2$ and color $c_2$
+} & 1152 \\
+\toprule
+\depiction{PV} & PV & \makecell{
+\vspace{0.2cm}
+$(\featureset{Files} \times (\featureset{Roles} \times \featureset{Colors}) \times (\featureset{Roles} \times \featureset{Colors}))_Q$ \\
+Q($\langle f, r_1, c_1, r_2, c_2 \rangle$): there is a piece in file $f$ with role $r_1$\\ and color $c_1$ below a piece with role $r_2$ and color $c_2$
+} & 1152 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
 \end{frame}
 
 

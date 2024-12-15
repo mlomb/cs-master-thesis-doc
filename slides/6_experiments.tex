@@ -1,40 +1,6 @@
 
 \section{Experimentos\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
 
-\begin{frame}
-\frametitle{Setup de training}
-Recapitulando... ¿Qué hay que definir para entrenar una red? \pause
-\begin{itemize}
-\item \textbf{Feature set}: determina la codificación y los patrones que se pueden aprender \pause
-\item \textbf{Dataset}: datos de entrenamiento, visto anteriormente \pause
-\item \textbf{Arquitectura de la red}: el tamaño de cada capa; $L_1$ y $L_2$ \pause
-\item \textbf{Método de entrenamiento}: PQR/target scores; determina el formato de las muestras y la loss function  \pause
-\item \textbf{Hiperparámetros}: learning rate, batch size, epochs, etc.
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-\frametitle{Setup de evaluación}
-¿Cómo evalúo el performance de una red entrenada? \pause
-\begin{itemize}
-\item \textbf{Loss} (train y val.): indica la calidad de las predicciones.
-\begin{itemize}
-    \item Permite detectar overfitting y otros problemas \pause
-\end{itemize}
-\item \textbf{Puzzle accuracy}: porcentaje de movimientos acertados en puzzles de Lichess.
-\begin{itemize}
-    \item Sólo hay un movimiento correcto
-    \item Proxy (muy malo) de la fuerza de la red \pause
-\end{itemize}
-\item \textbf{Elo relativo}: la medida más común para comparar engines.
-\begin{itemize}
-    \item Se realizan torneos de 100ms por movimiento
-    \item El elo es calculado a partir de Ordo
-\end{itemize}
-\end{itemize}
-\end{frame}
-
-
 \input{6_1_baseline}
 
 \subsection{Exps}
