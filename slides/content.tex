@@ -11,6 +11,43 @@
 \date{2024}
 \titlegraphic{\includegraphics[height=1cm]{../assets/wN.pdf}}
 \usetheme{Berlin}
+\newcommand{\director}{Director:\\Agustín Sansone}
+\newcommand{\codirector}{Co-director:\\Diego Fernández Slezak}
+
+% re-definition of the title page
+\setbeamertemplate{title page}{
+\centering
+\begin{beamercolorbox}[sep=8pt,center,shadow=false,rounded=false]{title}
+    \Large \inserttitle \par
+    \normalsize \insertsubtitle \par
+\end{beamercolorbox}
+\vfill
+\centering
+\insertauthor
+\vfill
+\begin{beamercolorbox}[leftskip=8cm,center,wd=0.7\textwidth]{author}
+    \begin{columns}[T]
+        \begin{column}{.49\textwidth}%
+        \centering
+        \footnotesize \director
+        \end{column}
+
+        \begin{column}{.49\textwidth}%
+        \centering
+        \footnotesize \codirector
+        \end{column}
+    \end{columns}
+\end{beamercolorbox}
+\vfill
+\usebeamerfont{institute}\insertinstitute \par
+\vfill
+\centering
+\normalsize \insertdate\par
+\vfill
+\begin{center}
+\includegraphics[height=1cm]{../assets/wN.pdf}
+\end{center}
+}
 
 %gets rid of bottom navigation bars
 \setbeamertemplate{footline}[frame number]{}
